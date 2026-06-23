@@ -12,7 +12,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&amp;family=Spectral:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 <script src="https://js.paystack.co/v1/inline.js"></script>
 
 <style>
@@ -489,21 +489,20 @@
 
 <script>
 // ─── CONFIGURATION ────────────────────────────────────────────────────────
-// PUBLIC key only — used to open the Paystack popup.
-// ⚠ BEFORE GO-LIVE: swap pk_test_ → pk_live_ here AND update
-//   PAYSTACK_SECRET_KEY in your Vercel environment variables.
+// pk_test_ is correct for testing. Before go-live:
+//   1. Replace pk_test_ → pk_live_ here.
+//   2. Set PAYSTACK_SECRET_KEY=sk_live_... in Vercel environment variables.
+//   3. Set PAYSTACK_WEBHOOK_SECRET in Vercel environment variables.
 const CONFIG = {
   paystackPublicKey: 'pk_test_afadbeac8159af4291c0a3af060fa77b705a9bfb',
 
-  // Calendly event-type links
   calendlyUrls: {
     'Quick Review':           'https://calendly.com/greywrightpublishing/quick-manuscript-review-15-minutes-clone',
     'Standard Consultation':  'https://calendly.com/greywrightpublishing/quick-manuscript-review-15-minutes-clone-clone',
     'Full Strategy Session':  'https://calendly.com/greywrightpublishing/quick-manuscript-review-15-minutes-clone-1',
   },
 
-  // Backend endpoints
-  initUrl:   '/api/initialize-payment', // NEW — creates server-side reference
+  initUrl:   '/api/initialize-payment',
   verifyUrl: '/api/verify-payment',
 };
 // ─────────────────────────────────────────────────────────────────────────
@@ -528,9 +527,7 @@ document.querySelectorAll('.service-card').forEach(card => {
   card.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); selectCard(); } });
 });
 
-// Pre-select a session tier from a ?session= query param, e.g. when
-// arriving here from one of the "Book Consultation" buttons on the
-// homepage's pricing cards.
+// Pre-select a session tier from a ?session= query param
 (function preselectSession() {
   const sessionToService = {
     quick:    'Quick Review',
@@ -591,11 +588,11 @@ function clearStatus() {
 
 // ── Pay button
 // Flow:
-//   1. Client calls /api/initialize-payment → gets access_code + reference
-//      (amount is now set SERVER-SIDE — cannot be tampered in DevTools)
-//   2. Paystack popup opens via access_code
-//   3. On popup success → /api/verify-payment confirms & logs to Supabase
-//   4. Calendly panel revealed
+//   1. POST /api/initialize-payment → { access_code, reference }
+//      Amount is set SERVER-SIDE — cannot be tampered in DevTools.
+//   2. PaystackPop opens via access_code (Paystack enforces our amount).
+//   3. On popup success → POST /api/verify-payment confirms server-side.
+//   4. Calendly panel revealed.
 document.getElementById('payBtn').addEventListener('click', async () => {
   clearStatus();
   if (!validateForm()) return;
@@ -603,12 +600,12 @@ document.getElementById('payBtn').addEventListener('click', async () => {
   const name    = document.getElementById('cust-name').value.trim();
   const email   = document.getElementById('cust-email').value.trim();
   const service = selectedCard.dataset.service;
+  const payBtn  = document.getElementById('payBtn');
 
-  const payBtn = document.getElementById('payBtn');
   payBtn.disabled = true;
   showStatus('info', 'Starting secure checkout…');
 
-  // ── Step 1: Initialize payment server-side ───────────────────────────
+  // ── Step 1: Initialise payment server-side ───────────────────────────
   let initData;
   try {
     const initRes = await fetch(CONFIG.initUrl, {
@@ -623,7 +620,6 @@ document.getElementById('payBtn').addEventListener('click', async () => {
     }
   } catch (err) {
     payBtn.disabled = false;
-    // Distinguish a network/offline error from a server error
     const isOffline = !navigator.onLine || err instanceof TypeError;
     showStatus('error', isOffline
       ? 'You appear to be offline. Please check your connection and try again.'
@@ -635,9 +631,6 @@ document.getElementById('payBtn').addEventListener('click', async () => {
   clearStatus();
 
   // ── Step 2: Open Paystack popup with server-issued access_code ───────
-  // Using access_code means Paystack enforces the amount we set, not
-  // anything the browser sent. The public key is still required to
-  // authenticate the popup itself.
   const handler = PaystackPop.setup({
     key:         CONFIG.paystackPublicKey,
     access_code: initData.access_code,
@@ -664,7 +657,7 @@ document.getElementById('payBtn').addEventListener('click', async () => {
           // Response body wasn't JSON (e.g. Vercel cold-start HTML error page)
           throw new Error(
             `Server returned an unexpected response (HTTP ${verifyRes.status}). ` +
-            `Please email us at greywrightpublishing@gmail.com with reference: ${response.reference}`
+            `Please email greywrightpublishing@gmail.com with reference: ${response.reference}`
           );
         }
 
@@ -680,8 +673,8 @@ document.getElementById('payBtn').addEventListener('click', async () => {
         payBtn.disabled = false;
         const isOffline = !navigator.onLine || err instanceof TypeError;
         showStatus('error', isOffline
-          ? `Your payment went through but we couldn't verify it (you appear offline). Please email greywrightpublishing@gmail.com with reference: ${response.reference}`
-          : (err.message || 'Something went wrong. Please email us at greywrightpublishing@gmail.com')
+          ? `Your payment went through but we could not verify it (you appear offline). Please email greywrightpublishing@gmail.com with reference: ${response.reference}`
+          : (err.message || 'Something went wrong. Please email greywrightpublishing@gmail.com')
         );
       }
     },

@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Book a Consultation | Greywright Publishing House</title>
+<meta name="description" content="Book an editorial consultation with Greywright Publishing House. Pay securely with Paystack and receive your Google Meet link instantly." />
+<link rel="canonical" href="https://www.greywrightpublishing.com/book.html" />
+<link rel="icon" type="image/png" sizes="32x32" href="images/img-01.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="images/img-02.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="images/img-03.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<style>
+  :root{
+    --paper: #F4EEDF;
+    --paper-deep: #EAE0C5;
+    --ink: #1B1814;
+    --ink-soft: #564E42;
+    --ink-faint: #8C8270;
+    --oxblood: #6E1B26;
+    --oxblood-deep: #4F1219;
+    --brass: #9C7B2E;
+    --line: rgba(27,24,20,0.16);
+    --display: 'Cormorant Garamond', serif;
+    --body: 'Spectral', Georgia, serif;
+    --maxw: 1180px;
+    --success: #3C5E45;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; overflow-x: hidden; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ transition-duration: 0.001ms !important; animation-duration: 0.001ms !important; }
+  }
+
+  body{
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body::before{
+    content:"";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  a{ color: inherit; text-decoration: none; }
+  img{ max-width: 100%; display: block; }
+  h1,h2,h3,h4{ font-family: var(--display); font-weight: 600; margin: 0; color: var(--ink); }
+
+  .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ── NAV ─────────────────────────────────────────────────────── */
+  header.site-header{
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(244,238,223,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner{
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .brandmark{
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    display:flex;
+    align-items:baseline;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .brandmark em{ font-style: italic; color: var(--oxblood); font-weight: 600; }
+  nav a{ font-size: 13.5px; letter-spacing: 0.04em; color: var(--ink-soft); margin-left: 28px; transition: color .2s; }
+  nav a:hover{ color: var(--oxblood); }
+  nav a.active{ color: var(--oxblood); font-weight: 600; }
+
+  /* ── EYEBROW ─────────────────────────────────────────────────── */
+  .eyebrow{
+    font-family: var(--display); font-style: italic; font-weight: 600;
+    font-size: 14px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--oxblood); display: flex; align-items: center; gap: 14px; margin-bottom: 18px;
+  }
+  .eyebrow .stroke{ flex: 0 0 38px; height: 1px; background: var(--brass); }
+
+  /* ── PAGE HERO ───────────────────────────────────────────────── */
+  .booking-hero{
+    padding: 72px 0 56px;
+    border-bottom: 1px solid var(--line);
+  }
+  .booking-hero-inner{
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 64px;
+    align-items: center;
+  }
+  .booking-hero-text{ min-width: 0; }
+  .booking-hero h1{ font-size: clamp(36px, 5vw, 58px); line-height: 1.1; max-width: 680px; }
+  .booking-hero h1 em{ font-style: italic; color: var(--oxblood); }
+  .booking-hero p{ color: var(--ink-soft); font-size: 17px; max-width: 520px; margin-top: 18px; }
+  .booking-hero-crest{ position: relative; }
+  .booking-hero-crest .frame{
+    position: relative;
+    padding: 18px;
+    border: 1px solid var(--line);
+  }
+  .booking-hero-crest .frame::before, .booking-hero-crest .frame::after{
+    content:""; position:absolute; width:14px; height:14px;
+    border: 1px solid var(--brass);
+  }
+  .booking-hero-crest .frame::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .booking-hero-crest .frame::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+  .booking-hero-crest img{ width:100%; display:block; }
+  .booking-hero-crest figcaption{
+    text-align:center; margin-top: 16px;
+    font-family: var(--display); font-style: italic;
+    font-size: 14px; color: var(--ink-faint); letter-spacing: 0.03em;
+  }
+
+  .divider{ display: flex; align-items: center; gap: 18px; margin: 28px 0; }
+  .divider .line{ flex: 1; height: 1px; background: linear-gradient(to right, transparent, var(--line) 30%, var(--line) 70%, transparent); }
+  .divider svg{ color: var(--brass); width: 20px; height: 20px; }
+
+  /* ── LAYOUT ──────────────────────────────────────────────────── */
+  .booking-layout{
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 56px;
+    padding: 64px 0 80px;
+    align-items: start;
+  }
+
+  /* ── SERVICE CARDS ───────────────────────────────────────────── */
+  .section-label{
+    font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--brass); font-family: var(--display); font-style: italic; font-weight: 600;
+    margin-bottom: 20px;
+  }
+  .service-grid{ display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 36px; }
+  .service-card{
+    background: var(--paper); padding: 28px 24px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; cursor: pointer;
+    transition: background .2s, box-shadow .2s;
+    position: relative; user-select: none;
+  }
+  .service-card:hover{ background: var(--paper-deep); }
+  .service-card.selected{ background: var(--ink); }
+  .service-card.selected::after{
+    content: '';
+    position: absolute; top: 10px; right: 10px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--brass);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><polyline points='2,6 5,9 10,3' fill='none' stroke='%23F4EEDF' stroke-width='1.6'/></svg>");
+    background-repeat: no-repeat; background-position: center;
+  }
+  .service-card .badge{
+    font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--brass); border: 1px solid var(--brass); border-radius: 20px;
+    padding: 3px 12px; margin-bottom: 14px;
+  }
+  .service-card.selected .badge{ color: var(--brass); border-color: var(--brass); }
+  .service-card .duration{
+    font-family: var(--display); font-style: italic; font-size: 21px; color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .service-card.selected .duration{ color: var(--paper); }
+  .service-card .desc{ font-size: 13.5px; color: var(--ink-soft); margin-bottom: 18px; min-height: 38px; }
+  .service-card.selected .desc{ color: rgba(244,238,223,0.72); }
+  .price{ font-family: var(--display); font-weight: 700; font-size: 30px; color: var(--ink); margin-bottom: 3px; }
+  .service-card.selected .price{ color: var(--paper); }
+  .price small{ font-family: var(--body); font-weight: 400; font-size: 13px; color: var(--ink-faint); }
+  .service-card.selected .price small{ color: rgba(244,238,223,0.6); }
+  .price-alt{ font-size: 13px; color: var(--ink-faint); }
+  .service-card.selected .price-alt{ color: rgba(244,238,223,0.55); }
+
+  /* ── CUSTOMER FORM ───────────────────────────────────────────── */
+  .customer-form{ margin-bottom: 28px; }
+  .field-row{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .field{ margin-bottom: 20px; }
+  .field label{
+    display: block; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--brass); margin-bottom: 8px;
+    font-family: var(--display); font-style: italic; font-weight: 600;
+  }
+  .field input{
+    width: 100%; font-family: var(--body); font-size: 15px; color: var(--ink);
+    background: transparent; border: none; border-bottom: 1px solid var(--line);
+    padding: 6px 2px 10px; outline: none; letter-spacing: 0.01em;
+    transition: border-color .2s;
+  }
+  .field input:focus{ border-bottom-color: var(--oxblood); }
+  .field input::placeholder{ color: var(--ink-faint); font-style: italic; }
+  .field input.error{ border-bottom-color: #c0392b; }
+
+  /* ── PAY BUTTON ──────────────────────────────────────────────── */
+  .pay-btn{
+    width: 100%;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: var(--body); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 16px 28px; cursor: pointer; border-radius: 2px;
+    background: var(--oxblood); color: var(--paper);
+    border: 1px solid var(--oxblood);
+    transition: background .2s, transform .15s;
+    margin-top: 8px;
+  }
+  .pay-btn:hover:not(:disabled){ background: var(--oxblood-deep); transform: translateY(-1px); }
+  .pay-btn:disabled{ opacity: 0.55; cursor: not-allowed; transform: none; }
+  .pay-btn svg{ width: 16px; height: 16px; flex: 0 0 auto; }
+
+  .pay-note{ font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; }
+
+  /* ── ASIDE ───────────────────────────────────────────────────── */
+  .booking-aside{ display: flex; flex-direction: column; gap: 24px; }
+  .aside-card{ background: var(--paper-deep); border: 1px solid var(--line); padding: 28px; }
+  .aside-card h4{ font-size: 16.5px; margin-bottom: 16px; }
+  .step-row{ display: flex; gap: 14px; margin-bottom: 16px; }
+  .step-row:last-child{ margin-bottom: 0; }
+  .step-num{
+    font-family: var(--display); font-style: italic; font-weight: 600;
+    font-size: 20px; color: var(--brass); flex: 0 0 24px; margin-top: 1px;
+  }
+  .step-text h5{ font-family: var(--body); font-weight: 600; font-size: 14.5px; margin: 0 0 3px; }
+  .step-text p{ font-size: 13px; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+  .trust-row{ display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-soft); margin-bottom: 10px; }
+  .trust-row:last-child{ margin-bottom: 0; }
+  .trust-row svg{ width: 15px; height: 15px; color: var(--brass); flex: 0 0 auto; }
+
+  /* ── CALENDLY PANEL ──────────────────────────────────────────── */
+  #calendly-panel{
+    display: none; margin-top: 40px; padding-top: 40px;
+    border-top: 1px solid var(--line);
+  }
+  #calendly-panel.visible{ display: block; }
+  #calendly-panel h2{ font-size: clamp(26px, 3vw, 34px); margin-bottom: 10px; }
+  #calendly-panel p{ color: var(--ink-soft); font-size: 15.5px; margin-bottom: 28px; }
+  .calendly-inline-widget{ border: 1px solid var(--line); }
+
+  /* ── STATUS MESSAGES ─────────────────────────────────────────── */
+  .status-bar{
+    display: none; padding: 14px 20px; border-radius: 2px; font-size: 14px;
+    margin-bottom: 20px; align-items: center; gap: 10px;
+  }
+  .status-bar.visible{ display: flex; }
+  .status-bar.error{ background: #f9ebea; border: 1px solid #c0392b; color: #922b21; }
+  .status-bar.info{ background: #eaf4fd; border: 1px solid #2980b9; color: #1a5276; }
+  .status-bar svg{ width: 16px; height: 16px; flex: 0 0 auto; }
+
+  /* ── FOOTER ──────────────────────────────────────────────────── */
+  footer{
+    background: var(--ink); color: rgba(244,238,223,0.78);
+    padding: 40px 0; border-top: 1px solid rgba(244,238,223,0.12);
+  }
+  .footer-bottom{
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: rgba(244,238,223,0.5); flex-wrap: wrap; gap: 10px;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────────── */
+  @media (max-width: 860px){
+    .booking-layout{ grid-template-columns: 1fr; }
+    .booking-aside{ order: -1; }
+    .service-grid{ grid-template-columns: 1fr; }
+    .booking-hero-inner{ grid-template-columns: 1fr; gap: 40px; }
+    .booking-hero-crest{ max-width: 340px; }
+  }
+  @media (max-width: 600px){
+    .wrap{ padding: 0 20px; }
+    .field-row{ grid-template-columns: 1fr; gap: 0; }
+    .booking-hero{ padding: 48px 0 36px; }
+    .booking-hero-crest{ display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ──────────────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="index.html" class="brandmark">Greywright <em>Publishing House</em></a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="submit.html">Submit</a>
+        <a href="book.html" class="active">Book a Call</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- ── PAGE HERO ────────────────────────────────────────────────────────── -->
+<main>
+<section class="booking-hero">
+  <div class="wrap">
+    <div class="booking-hero-inner">
+      <div class="booking-hero-text">
+        <div class="eyebrow"><span class="stroke"></span> Editorial Consultations <span class="stroke"></span></div>
+        <h1>Book your<br><em>consultation</em> session.</h1>
+        <p>Pay securely below. Once confirmed, you will be taken directly to choose your slot. Your Google Meet link arrives in your inbox instantly.</p>
+        <div class="divider">
+          <span class="line"></span>
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.4 2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+          <span class="line"></span>
+        </div>
+      </div>
+      <figure class="booking-hero-crest">
+        <div class="frame">
+          <img src="images/img-04.png" alt="Greywright Publishing House crest" />
+        </div>
+        <figcaption>The Greywright Crest</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ── BOOKING LAYOUT ────────────────────────────────────────────────────── -->
+<div class="wrap">
+  <div class="booking-layout">
+
+    <!-- LEFT: FORM -->
+    <div class="booking-main">
+
+      <!-- Service picker -->
+      <p class="section-label">1 — Choose your session</p>
+      <div class="service-grid" role="radiogroup" aria-label="Consultation session type">
+        <div class="service-card" data-service="Quick Review" data-amount-ngn="15000" data-amount-usd="10" tabindex="0" role="radio" aria-checked="false">
+          <span class="badge">Quick Review</span>
+          <div class="duration">15 Minutes</div>
+          <p class="desc">A fast, focused look at a specific question or short excerpt.</p>
+          <div class="price">&#8358;15,000 <small>/ $10</small></div>
+          <div class="price-alt">One-time</div>
+        </div>
+        <div class="service-card selected" data-service="Standard Consultation" data-amount-ngn="30000" data-amount-usd="20" tabindex="0" role="radio" aria-checked="true">
+          <span class="badge">Most Popular</span>
+          <div class="duration">30 Minutes</div>
+          <p class="desc">A standard consultation covering your manuscript or publishing path.</p>
+          <div class="price">&#8358;30,000 <small>/ $20</small></div>
+          <div class="price-alt">One-time</div>
+        </div>
+        <div class="service-card" data-service="Full Strategy Session" data-amount-ngn="55000" data-amount-usd="35" tabindex="0" role="radio" aria-checked="false">
+          <span class="badge">Full Session</span>
+          <div class="duration">60 Minutes</div>
+          <p class="desc">A complete manuscript strategy session, start to finish.</p>
+          <div class="price">&#8358;55,000 <small>/ $35</small></div>
+          <div class="price-alt">One-time</div>
+        </div>
+      </div>
+
+      <!-- Customer details -->
+      <p class="section-label">2 — Your details</p>
+      <div class="customer-form">
+        <div class="field-row">
+          <div class="field">
+            <label for="cust-name">Full name</label>
+            <input type="text" id="cust-name" placeholder="Your name" autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="cust-email">Email address</label>
+            <input type="email" id="cust-email" placeholder="you@email.com" autocomplete="email" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Status bar -->
+      <div class="status-bar" id="statusBar" role="alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg>
+        <span id="statusMsg"></span>
+      </div>
+
+      <!-- Pay button -->
+      <p class="section-label">3 — Pay &amp; book</p>
+      <button class="pay-btn" id="payBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span id="payBtnLabel">Pay &#8358;30,000 &amp; Book Slot</span>
+      </button>
+      <p class="pay-note">Secured by Paystack &nbsp;·&nbsp; No card details stored on this site</p>
+
+      <!-- Calendly section — revealed after payment confirmed -->
+      <div id="calendly-panel">
+        <h2>Choose your slot</h2>
+        <p id="calendly-intro">Payment confirmed. Pick a time below — your Google Meet link will arrive in your inbox the moment you confirm.</p>
+        <div
+          class="calendly-inline-widget"
+          id="calendlyWidget"
+          style="min-width:320px;height:700px;"
+          data-auto-load="false">
+        </div>
+      </div>
+
+    </div><!-- /booking-main -->
+
+    <!-- RIGHT: ASIDE -->
+    <aside class="booking-aside">
+
+      <div class="aside-card">
+        <h4>How it works</h4>
+        <div class="step-row">
+          <span class="step-num">1.</span>
+          <div class="step-text">
+            <h5>Pick your session</h5>
+            <p>15, 30, or 60 minutes — choose what fits your manuscript stage.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-num">2.</span>
+          <div class="step-text">
+            <h5>Pay securely</h5>
+            <p>Paystack processes your card or bank transfer. Your payment is verified server-side before anything else happens.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-num">3.</span>
+          <div class="step-text">
+            <h5>Choose your slot</h5>
+            <p>A scheduling calendar appears instantly. Pick any available time.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-num">4.</span>
+          <div class="step-text">
+            <h5>Get your meeting link</h5>
+            <p>Calendly emails your confirmed slot and Google Meet link immediately.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="aside-card">
+        <h4>Frequently asked</h4>
+        <p style="font-size:14px;color:var(--ink-soft);margin:0 0 14px;line-height:1.6;">
+          <strong>What if I need to reschedule?</strong><br>
+          Use the link in your Calendly confirmation email to move your slot.
+        </p>
+        <p style="font-size:14px;color:var(--ink-soft);margin:0 0 14px;line-height:1.6;">
+          <strong>Can I pay in USD?</strong><br>
+          Yes — Paystack accepts both NGN and USD cards.
+        </p>
+        <p style="font-size:14px;color:var(--ink-soft);margin:0;line-height:1.6;">
+          <strong>Will I receive a receipt?</strong><br>
+          Paystack sends an automatic email receipt after every successful payment.
+        </p>
+      </div>
+
+      <div class="aside-card">
+        <div class="trust-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>256-bit SSL encryption on all transactions</span>
+        </div>
+        <div class="trust-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.21 1.2 2 2 0 012.19.21h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.56-1.56a2 2 0 012.11-.45c.9.33 1.83.55 2.81.7A2 2 0 0122 14.92z"/></svg>
+          <span>Questions? Email <a href="mailto:greywrightpublishing@gmail.com" style="color:var(--oxblood);text-decoration:underline;">greywrightpublishing@gmail.com</a></span>
+        </div>
+      </div>
+
+    </aside>
+  </div><!-- /booking-layout -->
+</div><!-- /wrap -->
+</main>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="wrap">
+    <div class="footer-bottom">
+      <span>© 2026 Greywright Publishing House Limited. All rights reserved.</span>
+      <span>Crafted in Abuja, Nigeria.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── CALENDLY WIDGET LOADER ─────────────────────────────────────────────── -->
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+<script>
+// ─── CONFIGURATION ────────────────────────────────────────────────────────
+// PUBLIC key only — used to open the Paystack popup.
+// ⚠ BEFORE GO-LIVE: swap pk_test_ → pk_live_ here AND update
+//   PAYSTACK_SECRET_KEY in your Vercel environment variables.
+const CONFIG = {
+  paystackPublicKey: 'pk_test_afadbeac8159af4291c0a3af060fa77b705a9bfb',
+
+  // Calendly event-type links
+  calendlyUrls: {
+    'Quick Review':           'https://calendly.com/greywrightpublishing/quick-manuscript-review-15-minutes-clone',
+    'Standard Consultation':  'https://calendly.com/greywrightpublishing/quick-manuscript-review-15-minutes-clone-clone',
+    'Full Strategy Session':  'https://calendly.com/greywrightpublishing/quick-manuscript-review-15-minutes-clone-1',
+  },
+
+  // Backend endpoints
+  initUrl:   '/api/initialize-payment', // NEW — creates server-side reference
+  verifyUrl: '/api/verify-payment',
+};
+// ─────────────────────────────────────────────────────────────────────────
+
+// State
+let selectedCard = document.querySelector('.service-card.selected');
+let calendlyLoaded = false;
+
+// ── Service card selection
+document.querySelectorAll('.service-card').forEach(card => {
+  function selectCard() {
+    document.querySelectorAll('.service-card').forEach(c => {
+      c.classList.remove('selected');
+      c.setAttribute('aria-checked', 'false');
+    });
+    card.classList.add('selected');
+    card.setAttribute('aria-checked', 'true');
+    selectedCard = card;
+    updatePayButton();
+  }
+  card.addEventListener('click', selectCard);
+  card.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); selectCard(); } });
+});
+
+// Pre-select a session tier from a ?session= query param, e.g. when
+// arriving here from one of the "Book Consultation" buttons on the
+// homepage's pricing cards.
+(function preselectSession() {
+  const sessionToService = {
+    quick:    'Quick Review',
+    standard: 'Standard Consultation',
+    full:     'Full Strategy Session',
+  };
+  const params = new URLSearchParams(window.location.search);
+  const key = (params.get('session') || '').trim().toLowerCase();
+  const serviceName = sessionToService[key];
+  if (!serviceName) return;
+
+  const targetCard = document.querySelector(`.service-card[data-service="${serviceName}"]`);
+  if (!targetCard) return;
+
+  document.querySelectorAll('.service-card').forEach(c => {
+    c.classList.remove('selected');
+    c.setAttribute('aria-checked', 'false');
+  });
+  targetCard.classList.add('selected');
+  targetCard.setAttribute('aria-checked', 'true');
+  selectedCard = targetCard;
+})();
+
+function updatePayButton() {
+  if (!selectedCard) return;
+  const ngn = parseInt(selectedCard.dataset.amountNgn, 10);
+  const usd = selectedCard.dataset.amountUsd;
+  document.getElementById('payBtnLabel').innerHTML =
+    `Pay &#8358;${ngn.toLocaleString()} / $${usd} &amp; Book Slot`;
+}
+updatePayButton();
+
+// ── Validation
+function validateForm() {
+  const name  = document.getElementById('cust-name').value.trim();
+  const email = document.getElementById('cust-email').value.trim();
+  let valid = true;
+
+  ['cust-name', 'cust-email'].forEach(id => document.getElementById(id).classList.remove('error'));
+
+  if (!name) { document.getElementById('cust-name').classList.add('error'); valid = false; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    document.getElementById('cust-email').classList.add('error'); valid = false;
+  }
+  if (!valid) showStatus('error', 'Please fill in your name and a valid email address.');
+  return valid;
+}
+
+// ── Status helpers
+function showStatus(type, msg) {
+  const bar = document.getElementById('statusBar');
+  bar.className = `status-bar visible ${type}`;
+  document.getElementById('statusMsg').textContent = msg;
+}
+function clearStatus() {
+  document.getElementById('statusBar').className = 'status-bar';
+}
+
+// ── Pay button
+// Flow:
+//   1. Client calls /api/initialize-payment → gets access_code + reference
+//      (amount is now set SERVER-SIDE — cannot be tampered in DevTools)
+//   2. Paystack popup opens via access_code
+//   3. On popup success → /api/verify-payment confirms & logs to Supabase
+//   4. Calendly panel revealed
+document.getElementById('payBtn').addEventListener('click', async () => {
+  clearStatus();
+  if (!validateForm()) return;
+
+  const name    = document.getElementById('cust-name').value.trim();
+  const email   = document.getElementById('cust-email').value.trim();
+  const service = selectedCard.dataset.service;
+
+  const payBtn = document.getElementById('payBtn');
+  payBtn.disabled = true;
+  showStatus('info', 'Starting secure checkout…');
+
+  // ── Step 1: Initialize payment server-side ───────────────────────────
+  let initData;
+  try {
+    const initRes = await fetch(CONFIG.initUrl, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ service, name, email }),
+    });
+    initData = await initRes.json();
+
+    if (!initRes.ok || !initData.access_code) {
+      throw new Error(initData.error || 'Could not start checkout. Please try again.');
+    }
+  } catch (err) {
+    payBtn.disabled = false;
+    // Distinguish a network/offline error from a server error
+    const isOffline = !navigator.onLine || err instanceof TypeError;
+    showStatus('error', isOffline
+      ? 'You appear to be offline. Please check your connection and try again.'
+      : (err.message || 'Could not start checkout. Please email us at greywrightpublishing@gmail.com.')
+    );
+    return;
+  }
+
+  clearStatus();
+
+  // ── Step 2: Open Paystack popup with server-issued access_code ───────
+  // Using access_code means Paystack enforces the amount we set, not
+  // anything the browser sent. The public key is still required to
+  // authenticate the popup itself.
+  const handler = PaystackPop.setup({
+    key:         CONFIG.paystackPublicKey,
+    access_code: initData.access_code,
+    onClose() {
+      payBtn.disabled = false;
+      showStatus('info', 'Payment window closed. Click the button again whenever you\'re ready.');
+    },
+    async callback(response) {
+      // ── Step 3: Verify server-side ──────────────────────────────────
+      showStatus('info', 'Verifying your payment…');
+      payBtn.disabled = true;
+
+      try {
+        const verifyRes = await fetch(CONFIG.verifyUrl, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ reference: response.reference }),
+        });
+
+        let result;
+        try {
+          result = await verifyRes.json();
+        } catch {
+          // Response body wasn't JSON (e.g. Vercel cold-start HTML error page)
+          throw new Error(
+            `Server returned an unexpected response (HTTP ${verifyRes.status}). ` +
+            `Please email us at greywrightpublishing@gmail.com with reference: ${response.reference}`
+          );
+        }
+
+        if (!verifyRes.ok || !result.verified) {
+          throw new Error(result.error || 'Payment could not be verified. Please contact us.');
+        }
+
+        // ── Step 4: Payment confirmed — reveal Calendly ─────────────
+        clearStatus();
+        showCalendlyPanel(result.customer, service);
+
+      } catch (err) {
+        payBtn.disabled = false;
+        const isOffline = !navigator.onLine || err instanceof TypeError;
+        showStatus('error', isOffline
+          ? `Your payment went through but we couldn't verify it (you appear offline). Please email greywrightpublishing@gmail.com with reference: ${response.reference}`
+          : (err.message || 'Something went wrong. Please email us at greywrightpublishing@gmail.com')
+        );
+      }
+    },
+  });
+
+  handler.openIframe();
+});
+
+// ── Reveal Calendly widget
+function showCalendlyPanel(customer, service) {
+  const panel = document.getElementById('calendly-panel');
+  panel.classList.add('visible');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  document.getElementById('calendly-intro').textContent =
+    `Payment confirmed, ${customer.name || 'friend'}. Pick a time below — your Google Meet link arrives in your inbox the moment you confirm.`;
+
+  if (!calendlyLoaded) {
+    const url = CONFIG.calendlyUrls[service] || CONFIG.calendlyUrls['Standard Consultation'];
+    Calendly.initInlineWidget({
+      url: `${url}?hide_gdpr_banner=1&name=${encodeURIComponent(customer.name || '')}&email=${encodeURIComponent(customer.email || '')}`,
+      parentElement: document.getElementById('calendlyWidget'),
+      prefill: { name: customer.name, email: customer.email },
+    });
+    calendlyLoaded = true;
+  }
+
+  // Lock the pay button — job is done
+  const payBtn = document.getElementById('payBtn');
+  payBtn.disabled = true;
+  document.getElementById('payBtnLabel').textContent = '✓ Payment complete';
+}
+</script>
+
+</body>
+</html>

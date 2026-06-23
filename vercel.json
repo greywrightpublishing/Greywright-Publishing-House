@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/verify-payment.js": {
+      "maxDuration": 10
+    },
+    "api/paystack-webhook.js": {
+      "maxDuration": 10
+    }
+  }
+}

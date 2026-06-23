@@ -6,5 +6,11 @@
     "api/paystack-webhook.js": {
       "maxDuration": 10
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
+    }
+  ]
 }

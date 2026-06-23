@@ -1,0 +1,20 @@
+{
+  "name": "greywright-booking",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Booking, payment verification, and Calendly handoff backend for Greywright Publishing House.",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "next": "^14.2.29"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0"
+  },
+  "scripts": {
+    "dev":   "next dev",
+    "build": "next build",
+    "start": "next start"
+  }
+}

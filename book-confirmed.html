@@ -441,7 +441,7 @@ function showSuccess(customer, service, reference) {
   // Calendly widget.js loads async — wait for it if needed
   function initCalendly() {
     Calendly.initInlineWidget({
-      url: `${calendlyUrl}?hide_gdpr_banner=1`,
+      url: `${calendlyUrl}?hide_gdpr_banner=1&background_color=EAE0C5&text_color=1B1814&primary_color=6E1B26`,
       parentElement: document.getElementById('calendlyWidget'),
       prefill: {
         name:  customer.name  || '',

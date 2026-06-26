@@ -3,9 +3,11 @@
 // Receives charge.success events from Paystack and writes to Supabase.
 // bodyParser MUST be disabled so we can verify the raw HMAC-SHA512 signature.
 //
-// Fixes applied vs original:
-//   Supabase failure is now logged with a full structured payload so you can
-//   recover the record manually from Vercel logs by searching the reference.
+// Fixes applied:
+//   - Email is now normalised (.toLowerCase().trim()) before the upsert so it
+//     always matches the retrieve-booking.js query, which also normalises on
+//     lookup. Without this, mixed-case emails from Paystack would cause
+//     retrieve-booking to return "no booking found" even though the row exists.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import crypto from 'crypto';
@@ -75,7 +77,11 @@ export default async function handler(req, res) {
     (f) => f.variable_name === 'service'
   )?.value || 'Unknown';
   const name      = tx.metadata?.name || tx.customer?.first_name || '';
-  const email     = tx.customer?.email || '';
+
+  // ── Normalise email ─────────────────────────────────────────────────────
+  // Must match the normalisation in retrieve-booking.js (.eq('email', ...))
+  // so lookups always succeed regardless of how Paystack cased the address.
+  const email = (tx.customer?.email || '').toLowerCase().trim();
 
   // ── Step 4: Upsert into Supabase ────────────────────────────────────────
   // merge-duplicates strategy: if verify-payment already wrote the row,

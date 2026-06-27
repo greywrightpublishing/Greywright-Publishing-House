@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Quote Generator | Greywright Admin</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" sizes="32x32" href="../images/img-01.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper:        #F4EEDF;
+    --paper-deep:   #EAE0C5;
+    --ink:          #1B1814;
+    --ink-soft:     #564E42;
+    --ink-faint:    #8C8270;
+    --oxblood:      #6E1B26;
+    --oxblood-deep: #4F1219;
+    --brass:        #9C7B2E;
+    --line:         rgba(27,24,20,0.16);
+    --success:      #3C5E45;
+    --display:      'Cormorant Garamond', serif;
+    --body:         'Spectral', Georgia, serif;
+    --maxw:         860px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none; opacity: 0.05; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  a { color: inherit; text-decoration: none; }
+  h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; margin: 0; }
+
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ── HEADER ──────────────────────────────────────────────────── */
+  header {
+    background: var(--ink);
+    border-bottom: 1px solid rgba(244,238,223,0.1);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 58px; max-width: var(--maxw); margin: 0 auto; padding: 0 32px;
+  }
+  .admin-brand {
+    font-family: var(--display); font-size: 18px; font-weight: 700;
+    color: var(--paper); display: flex; align-items: baseline; gap: 8px;
+  }
+  .admin-brand em { font-style: italic; color: var(--brass); }
+  .admin-tag {
+    font-family: var(--body); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(244,238,223,0.4);
+    border: 1px solid rgba(244,238,223,0.15); padding: 3px 10px; border-radius: 20px;
+  }
+  .logout-btn {
+    font-family: var(--body); font-size: 12.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: rgba(244,238,223,0.5);
+    background: none; border: 1px solid rgba(244,238,223,0.15);
+    padding: 6px 14px; cursor: pointer; border-radius: 2px;
+    transition: color .2s, border-color .2s;
+  }
+  .logout-btn:hover { color: var(--paper); border-color: rgba(244,238,223,0.4); }
+
+  /* ── LOGIN SCREEN ────────────────────────────────────────────── */
+  #screen-login {
+    display: flex; align-items: center; justify-content: center;
+    min-height: calc(100vh - 58px); padding: 40px 20px;
+  }
+  .login-card {
+    background: var(--paper-deep); border: 1px solid var(--line);
+    padding: 48px 44px; width: 100%; max-width: 400px;
+  }
+  .login-eyebrow {
+    font-family: var(--display); font-style: italic; font-size: 12px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--brass);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+  }
+  .login-eyebrow .stroke { flex: 0 0 24px; height: 1px; background: var(--brass); }
+  .login-card h2 { font-size: 28px; margin-bottom: 28px; }
+  .login-card h2 em { font-style: italic; color: var(--oxblood); }
+
+  /* ── SCREENS ─────────────────────────────────────────────────── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── MAIN ADMIN ──────────────────────────────────────────────── */
+  #screen-admin { padding: 48px 0 80px; }
+
+  .page-eyebrow {
+    font-family: var(--display); font-style: italic; font-size: 12px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--oxblood);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+  }
+  .page-eyebrow .stroke { flex: 0 0 28px; height: 1px; background: var(--brass); }
+
+  .page-head { margin-bottom: 40px; }
+  .page-head h1 { font-size: clamp(28px, 4vw, 38px); margin-bottom: 8px; }
+  .page-head h1 em { font-style: italic; color: var(--oxblood); }
+  .page-head p { color: var(--ink-soft); font-size: 15px; margin: 0; }
+
+  /* ── FORM CARD ───────────────────────────────────────────────── */
+  .form-card {
+    background: var(--paper-deep); border: 1px solid var(--line); padding: 36px;
+    margin-bottom: 28px;
+  }
+  .form-card h3 {
+    font-size: 17px; margin-bottom: 24px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .field { margin-bottom: 22px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label {
+    display: block; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--brass); margin-bottom: 8px;
+    font-family: var(--display); font-style: italic; font-weight: 600;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%; font-family: var(--body); font-size: 15px; color: var(--ink);
+    background: transparent; border: none; border-bottom: 1px solid var(--line);
+    padding: 6px 2px 10px; outline: none; transition: border-color .2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-bottom-color: var(--oxblood);
+  }
+  .field input::placeholder, .field textarea::placeholder {
+    color: var(--ink-faint); font-style: italic;
+  }
+  .field input.error { border-bottom-color: #c0392b; }
+  .field select {
+    appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1 L6 6 L11 1' fill='none' stroke='%239C7B2E' stroke-width='1.4'/></svg>");
+    background-repeat: no-repeat; background-position: right 4px center; padding-right: 22px;
+  }
+  .field textarea { resize: vertical; min-height: 80px; }
+
+  /* Amount row */
+  .amount-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: end; }
+  .currency-toggle { display: flex; gap: 0; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; }
+  .currency-toggle button {
+    flex: 1; font-family: var(--body); font-size: 13px; padding: 8px 0;
+    background: transparent; border: none; cursor: pointer; color: var(--ink-soft);
+    transition: background .2s, color .2s;
+  }
+  .currency-toggle button.active { background: var(--ink); color: var(--paper); }
+
+  .amount-display {
+    font-family: var(--display); font-size: 13px; color: var(--ink-faint);
+    margin-top: 8px;
+  }
+
+  /* Expiry */
+  .expiry-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+
+  /* ── GENERATE BUTTON ─────────────────────────────────────────── */
+  .generate-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: var(--body); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 16px 28px; cursor: pointer; border-radius: 2px;
+    background: var(--oxblood); color: var(--paper);
+    border: 1px solid var(--oxblood); transition: background .2s, transform .15s;
+  }
+  .generate-btn:hover:not(:disabled) { background: var(--oxblood-deep); transform: translateY(-1px); }
+  .generate-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+  /* ── STATUS ──────────────────────────────────────────────────── */
+  .status-bar {
+    display: none; padding: 13px 18px; border-radius: 2px; font-size: 14px;
+    margin-bottom: 20px; align-items: center; gap: 10px; line-height: 1.5;
+  }
+  .status-bar.visible { display: flex; }
+  .status-bar.error { background: #f9ebea; border: 1px solid #c0392b; color: #922b21; }
+  .status-bar.info  { background: #eaf4fd; border: 1px solid #2980b9; color: #1a5276; }
+
+  /* ── RESULT CARD ─────────────────────────────────────────────── */
+  #result-card {
+    display: none;
+    background: var(--ink); border: 1px solid rgba(244,238,223,0.12);
+    padding: 32px 36px; margin-top: 28px;
+  }
+  #result-card.visible { display: block; }
+  .result-label {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--brass); font-family: var(--display); font-style: italic;
+    margin-bottom: 10px;
+  }
+  .result-summary {
+    font-family: var(--display); font-size: 20px; color: var(--paper);
+    margin-bottom: 20px; line-height: 1.3;
+  }
+  .result-summary em { font-style: italic; color: var(--brass); }
+  .link-box {
+    display: flex; gap: 0; border: 1px solid rgba(244,238,223,0.2); border-radius: 2px;
+    overflow: hidden; margin-bottom: 16px;
+  }
+  .link-box input {
+    flex: 1; font-family: 'Courier New', monospace; font-size: 13px;
+    color: rgba(244,238,223,0.8); background: rgba(244,238,223,0.06);
+    border: none; padding: 12px 16px; outline: none;
+  }
+  .copy-btn {
+    font-family: var(--body); font-size: 12.5px; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 12px 20px; cursor: pointer;
+    background: var(--brass); color: var(--ink); border: none;
+    transition: background .2s; white-space: nowrap; flex: 0 0 auto;
+  }
+  .copy-btn:hover { background: #876a28; }
+  .copy-btn.copied { background: var(--success); color: var(--paper); }
+
+  .result-meta {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-size: 13px; color: rgba(244,238,223,0.5);
+  }
+  .result-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* ── QUOTE LOG ───────────────────────────────────────────────── */
+  .log-section { margin-top: 48px; }
+  .log-section h3 { font-size: 17px; margin-bottom: 20px; }
+  .log-empty { font-size: 14px; color: var(--ink-faint); font-style: italic; }
+  .log-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .log-table th {
+    text-align: left; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--brass); font-family: var(--display); font-style: italic; font-weight: 600;
+    padding: 0 12px 12px 0; border-bottom: 1px solid var(--line);
+  }
+  .log-table td {
+    padding: 12px 12px 12px 0; border-bottom: 1px solid var(--line);
+    color: var(--ink-soft); vertical-align: top;
+  }
+  .log-table td:first-child { color: var(--ink); font-weight: 500; }
+  .log-copy-btn {
+    font-size: 11.5px; color: var(--oxblood); cursor: pointer;
+    background: none; border: none; padding: 0; font-family: var(--body);
+    text-decoration: underline;
+  }
+  .log-copy-btn:hover { color: var(--oxblood-deep); }
+
+  /* ── SHARED FIELD STYLES ─────────────────────────────────────── */
+  .field input[type="password"] { letter-spacing: 0.1em; }
+
+  /* ── FOOTER ──────────────────────────────────────────────────── */
+  .admin-footer {
+    background: var(--ink); padding: 24px 0; margin-top: 80px;
+    border-top: 1px solid rgba(244,238,223,0.08);
+  }
+  .admin-footer p {
+    font-size: 12.5px; color: rgba(244,238,223,0.3);
+    text-align: center; margin: 0;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .wrap, .header-inner { padding-left: 20px; padding-right: 20px; }
+    .field-row, .amount-row, .expiry-row { grid-template-columns: 1fr; gap: 0; }
+    .form-card { padding: 24px 20px; }
+    .login-card { padding: 32px 24px; }
+    #result-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="admin-brand">Greywright <em>Admin</em></div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="admin-tag">Quote Generator</span>
+      <button class="logout-btn" id="logoutBtn" style="display:none;">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<!-- ── LOGIN SCREEN ──────────────────────────────────────────────────────── -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="login-eyebrow"><span class="stroke"></span> Admin Access <span class="stroke"></span></div>
+    <h2>Sign <em>in</em></h2>
+    <div id="login-status" class="status-bar error" style="margin-bottom:20px;"></div>
+    <div class="field">
+      <label for="login-pass">Password</label>
+      <input type="password" id="login-pass" placeholder="Enter admin password" autocomplete="current-password" />
+    </div>
+    <button class="generate-btn" id="loginBtn" style="margin-top:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Sign in
+    </button>
+  </div>
+</div>
+
+<!-- ── ADMIN SCREEN ──────────────────────────────────────────────────────── -->
+<div id="screen-admin" class="screen">
+  <div class="wrap">
+
+    <div class="page-head">
+      <div class="page-eyebrow"><span class="stroke"></span> Quote Generator</div>
+      <h1>Generate a <em>payment link</em></h1>
+      <p>Fill in the client details and quote amount. Copy the link and send it directly to the client.</p>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar" id="statusBar" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg>
+      <span id="statusMsg"></span>
+    </div>
+
+    <!-- Client details -->
+    <div class="form-card">
+      <h3>Client Details</h3>
+      <div class="field-row">
+        <div class="field">
+          <label for="client-name">Client Full Name</label>
+          <input type="text" id="client-name" placeholder="Jane Doe" />
+        </div>
+        <div class="field">
+          <label for="client-email">Client Email</label>
+          <input type="email" id="client-email" placeholder="jane@email.com" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="manuscript-title">Manuscript Title</label>
+        <input type="text" id="manuscript-title" placeholder="e.g. The Weight of Morning" />
+      </div>
+    </div>
+
+    <!-- Service & amount -->
+    <div class="form-card">
+      <h3>Service & Quote</h3>
+      <div class="field">
+        <label for="service-type">Service</label>
+        <select id="service-type">
+          <option value="">Select a service</option>
+          <option>Developmental Editing</option>
+          <option>Line Editing</option>
+          <option>Copyediting</option>
+          <option>Proofreading</option>
+          <option>Academic Editing</option>
+          <option>Ghostwriting</option>
+          <option>Publishing Consultation</option>
+          <option>KDP Publishing Support</option>
+          <option>Full Manuscript Package</option>
+          <option>Custom Service</option>
+        </select>
+      </div>
+
+      <div class="amount-row">
+        <div class="field">
+          <label for="quote-amount">Quote Amount</label>
+          <input type="number" id="quote-amount" placeholder="e.g. 85000" min="1000" />
+          <div class="amount-display" id="amount-display"></div>
+        </div>
+        <div class="field">
+          <label>Currency</label>
+          <div class="currency-toggle">
+            <button id="btn-ngn" class="active" type="button">₦ NGN</button>
+            <button id="btn-usd" type="button">$ USD</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="quote-notes">Notes for Client <span style="font-style:italic;color:var(--ink-faint);text-transform:none;letter-spacing:0;">(optional — appears on payment page)</span></label>
+        <textarea id="quote-notes" placeholder="e.g. Includes two revision rounds. Final manuscript delivered in 14 days."></textarea>
+      </div>
+    </div>
+
+    <!-- Expiry -->
+    <div class="form-card">
+      <h3>Link Expiry</h3>
+      <p style="font-size:14px;color:var(--ink-soft);margin:0 0 20px;">The payment link expires after this many days. After expiry, the client will see an error if they try to pay.</p>
+      <div class="expiry-row">
+        <div class="field">
+          <label for="expiry-days">Expires In</label>
+          <select id="expiry-days">
+            <option value="3">3 days</option>
+            <option value="7" selected>7 days</option>
+            <option value="14">14 days</option>
+            <option value="30">30 days</option>
+            <option value="0">Never</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Generated by</label>
+          <input type="text" id="generated-by" placeholder="Gabriel" />
+        </div>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="generateBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Generate Payment Link
+    </button>
+
+    <!-- Result -->
+    <div id="result-card">
+      <div class="result-label">Payment link ready</div>
+      <div class="result-summary" id="result-summary"></div>
+      <div class="link-box">
+        <input type="text" id="result-link" readonly />
+        <button class="copy-btn" id="copyBtn" type="button">Copy link</button>
+      </div>
+      <div class="result-meta" id="result-meta"></div>
+    </div>
+
+    <!-- Quote log -->
+    <div class="log-section">
+      <h3>Recent Quotes</h3>
+      <div id="log-container"><p class="log-empty">No quotes generated yet this session.</p></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="admin-footer">
+  <p>Greywright Publishing House · Admin · Internal use only</p>
+</div>
+
+<script>
+// ─── CONFIG ──────────────────────────────────────────────────────────────────
+const CONFIG = {
+  // Change this password to something strong before going live.
+  // For production, move auth to a proper backend.
+  adminPassword: 'greywright2026',
+  generateUrl:   '/api/generate-quote',
+  siteUrl:       'https://www.greywrightpublishing.com',
+};
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+const SESSION_KEY = 'gw_admin_auth';
+
+function isAuthed() {
+  return sessionStorage.getItem(SESSION_KEY) === 'true';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// Check session on load
+if (isAuthed()) {
+  showScreen('screen-admin');
+  document.getElementById('logoutBtn').style.display = 'block';
+}
+
+// Login
+document.getElementById('loginBtn').addEventListener('click', () => {
+  const pass = document.getElementById('login-pass').value;
+  const status = document.getElementById('login-status');
+
+  if (pass === CONFIG.adminPassword) {
+    sessionStorage.setItem(SESSION_KEY, 'true');
+    showScreen('screen-admin');
+    document.getElementById('logoutBtn').style.display = 'block';
+    status.style.display = 'none';
+  } else {
+    status.style.display = 'flex';
+    status.textContent = 'Incorrect password. Try again.';
+  }
+});
+
+document.getElementById('login-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('loginBtn').click();
+});
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem(SESSION_KEY);
+  showScreen('screen-login');
+  document.getElementById('logoutBtn').style.display = 'none';
+  document.getElementById('login-pass').value = '';
+});
+
+// ─── CURRENCY TOGGLE ──────────────────────────────────────────────────────────
+let currency = 'NGN';
+document.getElementById('btn-ngn').addEventListener('click', () => {
+  currency = 'NGN';
+  document.getElementById('btn-ngn').classList.add('active');
+  document.getElementById('btn-usd').classList.remove('active');
+  updateAmountDisplay();
+});
+document.getElementById('btn-usd').addEventListener('click', () => {
+  currency = 'USD';
+  document.getElementById('btn-usd').classList.add('active');
+  document.getElementById('btn-ngn').classList.remove('active');
+  updateAmountDisplay();
+});
+
+function updateAmountDisplay() {
+  const amount = parseFloat(document.getElementById('quote-amount').value);
+  const display = document.getElementById('amount-display');
+  if (!amount || isNaN(amount)) { display.textContent = ''; return; }
+  if (currency === 'NGN') {
+    display.textContent = `₦${amount.toLocaleString('en-NG')} (${(amount / 100).toFixed(0)} kobo)`;
+  } else {
+    display.textContent = `$${amount.toLocaleString('en-US')} USD`;
+  }
+}
+document.getElementById('quote-amount').addEventListener('input', updateAmountDisplay);
+
+// ─── STATUS HELPERS ───────────────────────────────────────────────────────────
+function showStatus(type, msg) {
+  const bar = document.getElementById('statusBar');
+  bar.className = `status-bar visible ${type}`;
+  document.getElementById('statusMsg').textContent = msg;
+  bar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function clearStatus() {
+  document.getElementById('statusBar').className = 'status-bar';
+}
+
+// ─── QUOTE LOG (session only) ─────────────────────────────────────────────────
+const quoteLog = [];
+
+function renderLog() {
+  const container = document.getElementById('log-container');
+  if (quoteLog.length === 0) {
+    container.innerHTML = '<p class="log-empty">No quotes generated yet this session.</p>';
+    return;
+  }
+  const rows = quoteLog.slice().reverse().map(q => `
+    <tr>
+      <td>${q.clientName}</td>
+      <td>${q.service}</td>
+      <td>${q.amountFormatted}</td>
+      <td>${q.expiry}</td>
+      <td><button class="log-copy-btn" data-url="${q.url}">Copy link</button></td>
+    </tr>
+  `).join('');
+  container.innerHTML = `
+    <table class="log-table">
+      <thead><tr>
+        <th>Client</th><th>Service</th><th>Amount</th><th>Expires</th><th></th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  container.querySelectorAll('.log-copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(btn.dataset.url);
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = 'Copy link'; }, 2000);
+    });
+  });
+}
+
+// ─── GENERATE ─────────────────────────────────────────────────────────────────
+document.getElementById('generateBtn').addEventListener('click', async () => {
+  clearStatus();
+
+  const clientName     = document.getElementById('client-name').value.trim();
+  const clientEmail    = document.getElementById('client-email').value.trim();
+  const manuscriptTitle= document.getElementById('manuscript-title').value.trim();
+  const service        = document.getElementById('service-type').value;
+  const amount         = parseFloat(document.getElementById('quote-amount').value);
+  const notes          = document.getElementById('quote-notes').value.trim();
+  const expiryDays     = parseInt(document.getElementById('expiry-days').value, 10);
+  const generatedBy    = document.getElementById('generated-by').value.trim() || 'Greywright';
+
+  // Validate
+  const errors = [];
+  if (!clientName)  errors.push('Client name');
+  if (!clientEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) errors.push('Valid client email');
+  if (!service)     errors.push('Service type');
+  if (!amount || isNaN(amount) || amount < 1000) errors.push('Amount (minimum ₦1,000 or $1)');
+  if (errors.length) {
+    showStatus('error', `Please fill in: ${errors.join(', ')}.`);
+    return;
+  }
+
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  showStatus('info', 'Generating secure payment link…');
+
+  try {
+    const res = await fetch(CONFIG.generateUrl, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clientName, clientEmail, manuscriptTitle,
+        service, amount, currency,
+        notes, expiryDays, generatedBy,
+        adminPassword: CONFIG.adminPassword,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.token) {
+      throw new Error(data.error || 'Could not generate link.');
+    }
+
+    const paymentUrl = `${CONFIG.siteUrl}/quote-checkout.html?token=${data.token}`;
+    const amountFormatted = currency === 'NGN'
+      ? `₦${amount.toLocaleString('en-NG')}`
+      : `$${amount.toLocaleString('en-US')}`;
+    const expiryLabel = expiryDays === 0 ? 'Never' : `${expiryDays} day${expiryDays > 1 ? 's' : ''}`;
+
+    // Show result
+    clearStatus();
+    const resultCard = document.getElementById('result-card');
+    resultCard.classList.add('visible');
+    document.getElementById('result-summary').innerHTML =
+      `${amountFormatted} · ${service} · <em>${clientName}</em>`;
+    document.getElementById('result-link').value = paymentUrl;
+    document.getElementById('result-meta').innerHTML = `
+      <span>Client: ${clientEmail}</span>
+      <span>Expires: ${expiryLabel}</span>
+      <span>By: ${generatedBy}</span>
+    `;
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Add to log
+    quoteLog.push({ clientName, service, amountFormatted, expiry: expiryLabel, url: paymentUrl });
+    renderLog();
+
+  } catch (err) {
+    showStatus('error', err.message || 'Something went wrong. Please try again.');
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// Copy button
+document.getElementById('copyBtn').addEventListener('click', () => {
+  const link = document.getElementById('result-link').value;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copy link';
+      btn.classList.remove('copied');
+    }, 2500);
+  });
+});
+</script>
+
+</body>
+</html>

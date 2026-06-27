@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Your Quote | Greywright Publishing House</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" sizes="32x32" href="images/img-01.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="images/img-02.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="images/img-03.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --paper:        #F4EEDF;
+    --paper-deep:   #EAE0C5;
+    --ink:          #1B1814;
+    --ink-soft:     #564E42;
+    --ink-faint:    #8C8270;
+    --oxblood:      #6E1B26;
+    --oxblood-deep: #4F1219;
+    --brass:        #9C7B2E;
+    --line:         rgba(27,24,20,0.16);
+    --success:      #3C5E45;
+    --display:      'Cormorant Garamond', serif;
+    --body:         'Spectral', Georgia, serif;
+    --maxw:         1100px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none; opacity: 0.05; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  a { color: inherit; text-decoration: none; }
+  h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; margin: 0; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+  /* ── HEADER ──────────────────────────────────────────────────── */
+  header.site-header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(244,238,223,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .brandmark {
+    font-family: var(--display); font-size: 22px; font-weight: 700;
+    letter-spacing: 0.01em; display: flex; align-items: baseline;
+    gap: 6px; white-space: nowrap;
+  }
+  .brandmark em { font-style: italic; color: var(--oxblood); font-weight: 600; }
+  nav a {
+    font-size: 13.5px; letter-spacing: 0.04em; color: var(--ink-soft);
+    margin-left: 28px; transition: color .2s;
+  }
+  nav a:hover { color: var(--oxblood); }
+
+  /* ── STATES ──────────────────────────────────────────────────── */
+  .state { display: none; }
+  .state.active { display: block; }
+
+  /* ── LOADING ─────────────────────────────────────────────────── */
+  #state-loading { padding: 100px 0; text-align: center; }
+  .spinner {
+    width: 40px; height: 40px; margin: 0 auto 28px;
+    border: 2px solid var(--line); border-top-color: var(--brass);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #state-loading p {
+    font-family: var(--display); font-style: italic;
+    font-size: 19px; color: var(--ink-soft);
+  }
+
+  /* ── ERROR ───────────────────────────────────────────────────── */
+  #state-error { padding: 80px 0; }
+  .error-card {
+    max-width: 580px; margin: 0 auto;
+    border: 1px solid var(--line); padding: 48px 40px;
+    background: var(--paper-deep);
+  }
+  .error-eyebrow {
+    font-family: var(--display); font-style: italic; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--oxblood); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .error-eyebrow .stroke { flex: 0 0 28px; height: 1px; background: var(--brass); }
+  #state-error h2 { font-size: 30px; margin-bottom: 14px; }
+  #state-error p { color: var(--ink-soft); font-size: 15.5px; margin: 0 0 10px; line-height: 1.65; }
+  #error-message-detail {
+    margin-top: 20px; padding: 14px 18px;
+    background: rgba(110,27,38,0.06); border-left: 2px solid var(--oxblood);
+    font-size: 14px; color: var(--oxblood); line-height: 1.6;
+  }
+
+  /* ── CHECKOUT ────────────────────────────────────────────────── */
+  #state-checkout { padding: 64px 0 88px; }
+  .checkout-layout {
+    display: grid; grid-template-columns: 1fr 360px;
+    gap: 56px; align-items: start;
+  }
+
+  /* Quote summary card */
+  .quote-summary {
+    background: var(--ink); padding: 36px;
+    border: 1px solid rgba(244,238,223,0.1);
+    margin-bottom: 32px;
+  }
+  .quote-label {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--brass); font-family: var(--display); font-style: italic;
+    margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  }
+  .quote-label .stroke { flex: 0 0 20px; height: 1px; background: var(--brass); opacity: 0.5; }
+  .quote-service {
+    font-family: var(--display); font-size: 26px; color: var(--paper);
+    margin-bottom: 6px; line-height: 1.2;
+  }
+  .quote-manuscript {
+    font-size: 14px; color: rgba(244,238,223,0.55); margin-bottom: 24px;
+    font-style: italic;
+  }
+  .quote-price {
+    font-family: var(--display); font-size: 48px; font-weight: 700;
+    color: var(--paper); line-height: 1; margin-bottom: 4px;
+  }
+  .quote-price-sub { font-size: 13.5px; color: rgba(244,238,223,0.45); margin-bottom: 24px; }
+  .quote-divider { height: 1px; background: rgba(244,238,223,0.1); margin-bottom: 20px; }
+  .quote-meta-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: rgba(244,238,223,0.5); margin-bottom: 8px;
+  }
+  .quote-meta-row:last-child { margin-bottom: 0; }
+  .quote-meta-row span:last-child { color: rgba(244,238,223,0.75); }
+
+  .quote-notes {
+    margin-top: 20px; padding: 16px 18px;
+    background: rgba(244,238,223,0.05);
+    border-left: 2px solid var(--brass);
+    font-size: 14px; color: rgba(244,238,223,0.6); line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* Form section */
+  .checkout-form-head {
+    font-family: var(--display); font-style: italic; font-size: 13px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--oxblood);
+    display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+  }
+  .checkout-form-head .stroke { flex: 0 0 28px; height: 1px; background: var(--brass); }
+
+  #checkout-greeting {
+    font-family: var(--display); font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.1; margin-bottom: 14px;
+  }
+  #checkout-greeting em { font-style: italic; color: var(--oxblood); }
+
+  #checkout-sub { color: var(--ink-soft); font-size: 16px; margin-bottom: 36px; max-width: 480px; }
+
+  /* Status */
+  .status-bar {
+    display: none; padding: 13px 18px; border-radius: 2px; font-size: 14px;
+    margin-bottom: 20px; align-items: center; gap: 10px; line-height: 1.5;
+  }
+  .status-bar.visible { display: flex; }
+  .status-bar.error { background: #f9ebea; border: 1px solid #c0392b; color: #922b21; }
+  .status-bar.info  { background: #eaf4fd; border: 1px solid #2980b9; color: #1a5276; }
+  .status-bar svg { width: 16px; height: 16px; flex: 0 0 auto; }
+
+  /* Pay button */
+  .pay-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+    font-family: var(--body); font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 17px 28px; cursor: pointer; border-radius: 2px;
+    background: var(--oxblood); color: var(--paper);
+    border: 1px solid var(--oxblood); transition: background .2s, transform .15s;
+  }
+  .pay-btn:hover:not(:disabled) { background: var(--oxblood-deep); transform: translateY(-1px); }
+  .pay-btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+  .pay-note { font-size: 12.5px; color: var(--ink-faint); text-align: center; margin-top: 12px; }
+
+  /* Aside */
+  .checkout-aside { display: flex; flex-direction: column; gap: 24px; }
+  .aside-card { background: var(--paper-deep); border: 1px solid var(--line); padding: 26px; }
+  .aside-card h4 { font-size: 16px; margin-bottom: 16px; }
+  .trust-row { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 10px; }
+  .trust-row:last-child { margin-bottom: 0; }
+  .trust-row svg { width: 15px; height: 15px; color: var(--brass); flex: 0 0 auto; }
+  .step-row { display: flex; gap: 14px; margin-bottom: 14px; }
+  .step-row:last-child { margin-bottom: 0; }
+  .step-num {
+    font-family: var(--display); font-style: italic; font-weight: 600;
+    font-size: 20px; color: var(--brass); flex: 0 0 22px; margin-top: 1px;
+  }
+  .step-text h5 { font-family: var(--body); font-weight: 600; font-size: 14px; margin: 0 0 2px; }
+  .step-text p { font-size: 13px; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+
+  /* ── FOOTER ──────────────────────────────────────────────────── */
+  footer {
+    background: var(--ink); color: rgba(244,238,223,0.78);
+    padding: 40px 0; border-top: 1px solid rgba(244,238,223,0.12);
+  }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; color: rgba(244,238,223,0.5); flex-wrap: wrap; gap: 10px;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────────── */
+  @media (max-width: 860px) {
+    .checkout-layout { grid-template-columns: 1fr; }
+    .checkout-aside { order: -1; }
+  }
+  @media (max-width: 600px) {
+    .wrap { padding: 0 20px; }
+    .quote-price { font-size: 36px; }
+    .error-card { padding: 32px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="index.html" class="brandmark">Greywright <em>Publishing House</em></a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="submit.html">Submit</a>
+        <a href="book.html">Book a Call</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- LOADING -->
+  <div id="state-loading" class="state active">
+    <div class="wrap">
+      <div class="spinner"></div>
+      <p>Loading your quote…</p>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div id="state-error" class="state">
+    <div class="wrap">
+      <div class="error-card">
+        <div class="error-eyebrow"><span class="stroke"></span> Quote Error <span class="stroke"></span></div>
+        <h2>This link isn't valid</h2>
+        <p>The payment link may have expired or been modified. Please contact us and we'll send you a fresh one.</p>
+        <p>Email: <a href="mailto:greywrightpublishing@gmail.com" style="color:var(--oxblood);text-decoration:underline;">greywrightpublishing@gmail.com</a></p>
+        <div id="error-message-detail" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT -->
+  <div id="state-checkout" class="state">
+    <div class="wrap">
+      <div class="checkout-layout">
+
+        <!-- Left: greeting + pay button -->
+        <div class="checkout-main">
+          <div class="checkout-form-head"><span class="stroke"></span> Your Editorial Quote <span class="stroke"></span></div>
+          <h1 id="checkout-greeting">Hello, <em id="checkout-name"></em></h1>
+          <p id="checkout-sub">Greywright Publishing House has prepared a personalised quote for your manuscript. Review the details and pay securely below to confirm your project.</p>
+
+          <!-- Quote summary -->
+          <div class="quote-summary">
+            <div class="quote-label"><span class="stroke"></span> Quote Summary</div>
+            <div class="quote-service" id="qs-service"></div>
+            <div class="quote-manuscript" id="qs-manuscript"></div>
+            <div class="quote-price" id="qs-price"></div>
+            <div class="quote-price-sub">One-time payment · Secured by Paystack</div>
+            <div class="quote-divider"></div>
+            <div class="quote-meta-row"><span>Client</span><span id="qs-client"></span></div>
+            <div class="quote-meta-row"><span>Prepared by</span><span id="qs-by"></span></div>
+            <div class="quote-meta-row" id="qs-expiry-row"><span>Offer valid until</span><span id="qs-expiry"></span></div>
+            <div class="quote-notes" id="qs-notes" style="display:none;"></div>
+          </div>
+
+          <!-- Status -->
+          <div class="status-bar" id="statusBar" role="alert">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12" y2="16.01"/></svg>
+            <span id="statusMsg"></span>
+          </div>
+
+          <button class="pay-btn" id="payBtn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <span id="payBtnLabel">Pay & Confirm Project</span>
+          </button>
+          <p class="pay-note">Secured by Paystack &nbsp;·&nbsp; No card details stored on this site</p>
+        </div>
+
+        <!-- Right: aside -->
+        <aside class="checkout-aside">
+          <div class="aside-card">
+            <h4>What happens next</h4>
+            <div class="step-row">
+              <span class="step-num">1.</span>
+              <div class="step-text">
+                <h5>Pay securely</h5>
+                <p>Your payment is processed by Paystack and verified server-side.</p>
+              </div>
+            </div>
+            <div class="step-row">
+              <span class="step-num">2.</span>
+              <div class="step-text">
+                <h5>Schedule your session</h5>
+                <p>Pick a time that works for you — a Google Meet link arrives instantly.</p>
+              </div>
+            </div>
+            <div class="step-row">
+              <span class="step-num">3.</span>
+              <div class="step-text">
+                <h5>Work begins</h5>
+                <p>Your editor gets to work on your manuscript after your session.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="aside-card">
+            <div class="trust-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span>256-bit SSL on all transactions</span>
+            </div>
+            <div class="trust-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.21 1.2 2 2 0 012.19.21h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.56-1.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <span>Questions? <a href="mailto:greywrightpublishing@gmail.com" style="color:var(--oxblood);text-decoration:underline;">Email us</a></span>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-bottom">
+      <span>© 2026 Greywright Publishing House Limited. All rights reserved.</span>
+      <span>Crafted in Abuja, Nigeria.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const CONFIG = { initQuoteUrl: '/api/initialize-quote' };
+
+function showState(id) {
+  document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showError(msg) {
+  showState('state-error');
+  if (msg) {
+    const el = document.getElementById('error-message-detail');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+}
+
+function showStatus(type, msg) {
+  const bar = document.getElementById('statusBar');
+  bar.className = `status-bar visible ${type}`;
+  document.getElementById('statusMsg').textContent = msg;
+}
+function clearStatus() {
+  document.getElementById('statusBar').className = 'status-bar';
+}
+
+// ── Read token from URL and decode payload ────────────────────────────────────
+(function init() {
+  const params = new URLSearchParams(window.location.search);
+  const token  = params.get('token');
+
+  if (!token) {
+    showError('No quote token found in the URL.');
+    return;
+  }
+
+  // Decode payload from token (base64url before the last dot)
+  try {
+    const lastDot = token.lastIndexOf('.');
+    if (lastDot === -1) throw new Error('Malformed token.');
+    const payload = JSON.parse(atob(token.slice(0, lastDot).replace(/-/g, '+').replace(/_/g, '/')));
+
+    // Check expiry client-side (server also checks — this is just UX)
+    if (payload.expiresAt && payload.expiresAt > 0 && Date.now() > payload.expiresAt) {
+      showError('This payment link has expired. Please contact us for a new quote.');
+      return;
+    }
+
+    // Populate the page
+    const firstName = (payload.clientName || '').split(' ')[0];
+    document.getElementById('checkout-name').textContent = firstName || 'there';
+
+    document.getElementById('qs-service').textContent    = payload.service || '—';
+    document.getElementById('qs-client').textContent     = payload.clientName || '—';
+    document.getElementById('qs-by').textContent         = payload.generatedBy || 'Greywright';
+
+    if (payload.manuscriptTitle) {
+      document.getElementById('qs-manuscript').textContent = `"${payload.manuscriptTitle}"`;
+    }
+
+    // Price
+    const symbol = payload.currency === 'NGN' ? '₦' : '$';
+    const formatted = payload.currency === 'NGN'
+      ? payload.amount.toLocaleString('en-NG')
+      : payload.amount.toLocaleString('en-US');
+    document.getElementById('qs-price').textContent = `${symbol}${formatted}`;
+
+    // Pay button label
+    document.getElementById('payBtnLabel').textContent =
+      `Pay ${symbol}${formatted} & Confirm Project`;
+
+    // Expiry
+    if (payload.expiresAt && payload.expiresAt > 0) {
+      document.getElementById('qs-expiry').textContent =
+        new Date(payload.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    } else {
+      document.getElementById('qs-expiry-row').style.display = 'none';
+    }
+
+    // Notes
+    if (payload.notes) {
+      const notesEl = document.getElementById('qs-notes');
+      notesEl.textContent = payload.notes;
+      notesEl.style.display = 'block';
+    }
+
+    // Store token for pay button
+    window.__quoteToken = token;
+    showState('state-checkout');
+
+  } catch (err) {
+    showError('This quote link could not be read. Please contact us for a new one.');
+  }
+})();
+
+// ── Pay button ────────────────────────────────────────────────────────────────
+document.getElementById('payBtn').addEventListener('click', async () => {
+  clearStatus();
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  showStatus('info', 'Starting secure checkout…');
+
+  try {
+    const res = await fetch(CONFIG.initQuoteUrl, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ token: window.__quoteToken }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.authorization_url) {
+      throw new Error(data.error || 'Could not start checkout. Please try again.');
+    }
+
+    window.location.href = data.authorization_url;
+
+  } catch (err) {
+    btn.disabled = false;
+    const isOffline = !navigator.onLine || err instanceof TypeError;
+    showStatus('error', isOffline
+      ? 'You appear to be offline. Please check your connection and try again.'
+      : (err.message || 'Something went wrong. Please email us.')
+    );
+  }
+});
+</script>
+
+</body>
+</html>

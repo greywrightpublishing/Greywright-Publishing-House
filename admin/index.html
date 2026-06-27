@@ -294,7 +294,7 @@
 </header>
 
 <!-- ── LOGIN SCREEN ──────────────────────────────────────────────────────── -->
-<div id="screen-login" class="screen active">
+<div id="screen-login" class="screen">
   <div class="login-card">
     <div class="login-eyebrow"><span class="stroke"></span> Admin Access <span class="stroke"></span></div>
     <h2>Sign <em>in</em></h2>
@@ -440,8 +440,6 @@
 <script>
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
 const CONFIG = {
-  // Change this password to something strong before going live.
-  // For production, move auth to a proper backend.
   adminPassword: 'greywright2026',
   generateUrl:   '/api/generate-quote',
   siteUrl:       'https://www.greywrightpublishing.com',
@@ -450,37 +448,42 @@ const CONFIG = {
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
 const SESSION_KEY = 'gw_admin_auth';
 
-function isAuthed() {
-  return sessionStorage.getItem(SESSION_KEY) === 'true';
-}
-
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  target.style.display = 'block';
+  target.classList.add('active');
 }
 
-// Check session on load
-if (isAuthed()) {
+// On load — always start at login screen, then check session
+showScreen('screen-login');
+
+if (sessionStorage.getItem(SESSION_KEY) === 'true') {
   showScreen('screen-admin');
   document.getElementById('logoutBtn').style.display = 'block';
 }
 
-// Login
+// Login button
 document.getElementById('loginBtn').addEventListener('click', () => {
-  const pass = document.getElementById('login-pass').value;
-  const status = document.getElementById('login-status');
+  const pass      = document.getElementById('login-pass').value.trim();
+  const statusEl  = document.getElementById('login-status');
 
   if (pass === CONFIG.adminPassword) {
     sessionStorage.setItem(SESSION_KEY, 'true');
+    statusEl.style.display = 'none';
     showScreen('screen-admin');
     document.getElementById('logoutBtn').style.display = 'block';
-    status.style.display = 'none';
   } else {
-    status.style.display = 'flex';
-    status.textContent = 'Incorrect password. Try again.';
+    statusEl.style.display    = 'flex';
+    statusEl.className        = 'status-bar error';
+    statusEl.textContent      = 'Incorrect password. Try again.';
   }
 });
 
+// Enter key on password field
 document.getElementById('login-pass').addEventListener('keydown', e => {
   if (e.key === 'Enter') document.getElementById('loginBtn').click();
 });
@@ -488,9 +491,9 @@ document.getElementById('login-pass').addEventListener('keydown', e => {
 // Logout
 document.getElementById('logoutBtn').addEventListener('click', () => {
   sessionStorage.removeItem(SESSION_KEY);
-  showScreen('screen-login');
   document.getElementById('logoutBtn').style.display = 'none';
   document.getElementById('login-pass').value = '';
+  showScreen('screen-login');
 });
 
 // ─── CURRENCY TOGGLE ──────────────────────────────────────────────────────────

@@ -564,6 +564,45 @@
     .service-modal-cols{ grid-template-columns: 1fr; gap: 22px; }
   }
 
+  /* ---------- work / book detail modal ---------- */
+  .work-card{ cursor: pointer; }
+  .work-card:focus-visible{ outline: 2px solid var(--brass); outline-offset: 4px; }
+  .work-modal{ max-width: 640px; }
+  .work-modal-head{
+    display: grid; grid-template-columns: 108px 1fr; gap: 24px; align-items: flex-start;
+    padding-bottom: 22px; border-bottom: 1px solid var(--line);
+  }
+  .work-modal-cover{
+    border: 1px solid var(--line); background: var(--paper-deep);
+    padding: 6px;
+  }
+  .work-modal-cover img{ width: 100%; display:block; }
+  .work-modal-author{
+    font-family: var(--display); font-style: italic; font-size: 15px;
+    color: var(--ink-soft); margin-top: 6px;
+  }
+  .work-modal-genre{
+    font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--brass); margin-top: 10px; font-weight: 600;
+  }
+  .work-modal-background{
+    color: var(--ink-soft); font-size: 15px; line-height: 1.75;
+    margin-top: 22px;
+  }
+  .work-modal-buy{
+    margin-top: 28px; padding: 20px 22px;
+    background: var(--paper-deep); border-left: 3px solid var(--oxblood);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .work-modal-buy p{
+    font-family: var(--display); font-style: italic; font-size: 15.5px;
+    color: var(--ink); margin: 0; line-height: 1.4;
+  }
+  @media (max-width: 640px){
+    .work-modal-head{ grid-template-columns: 84px 1fr; gap: 18px; }
+    .work-modal-buy{ flex-direction: column; align-items: flex-start; }
+  }
+
   /* ---------- submit modal (branded launch card) ---------- */
   .submit-overlay{
     position: fixed; inset: 0; z-index: 300;
@@ -1139,7 +1178,7 @@
         <p>A sample of recent projects across devotional, self-help, nonfiction, and fiction manuscripts.</p>
       </div>
       <div class="works-grid reveal">
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="failure-to-fortune" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-05.jpg" alt="Cover of From Failure to Fortune: The Daily Affirmation Journal by Cortlandt S. Coleman" loading="lazy"/>
           </div></div>
@@ -1147,7 +1186,7 @@
           <p class="work-author">Cortlandt S. Coleman</p>
           <p class="work-genre">Affirmation Journal · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="keep-them-safe" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-06.jpg" alt="Cover of Keep Them Safe by Dr. Mark McMorris Jr." loading="lazy"/>
           </div></div>
@@ -1155,7 +1194,7 @@
           <p class="work-author">Dr. Mark McMorris Jr.</p>
           <p class="work-genre">Nonfiction / Pet Care · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="ai-guide-beginners" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-07.jpg" alt="Cover of The Definitive AI Guide for Beginners by Yaro Rohowsky" loading="lazy"/>
           </div></div>
@@ -1163,7 +1202,7 @@
           <p class="work-author">Yaro Rohowsky</p>
           <p class="work-genre">Nonfiction / Technology · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="chatgpt-guide" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-08.jpg" alt="Cover of The Absolute ChatGPT & Generative AI Beginners Guide by Yaro Rohowsky" loading="lazy"/>
           </div></div>
@@ -1171,7 +1210,7 @@
           <p class="work-author">Yaro Rohowsky</p>
           <p class="work-genre">Nonfiction / Technology · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="unbroken" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-09.jpg" alt="Cover of Unbroken: Rising Above, Thriving Within by Christine Elliott" loading="lazy"/>
           </div></div>
@@ -1179,7 +1218,7 @@
           <p class="work-author">Christine Elliott</p>
           <p class="work-genre">Memoir · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="chosen-courageous" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-10.jpg" alt="Cover of Chosen & Courageous: A Teen's Guide to Faith and Purpose by Michelle Beetz" loading="lazy"/>
           </div></div>
@@ -1187,7 +1226,7 @@
           <p class="work-author">Michelle Beetz</p>
           <p class="work-genre">Devotional / Teen Faith · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="happy-gut" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-11.jpg" alt="Cover of Happy Gut by Farah Arakji" loading="lazy"/>
           </div></div>
@@ -1195,7 +1234,7 @@
           <p class="work-author">Farah Arakji</p>
           <p class="work-genre">Health / Nonfiction · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="deadly-heist" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-12.jpg" alt="Cover of The Deadly Heist by Esha Awais" loading="lazy"/>
           </div></div>
@@ -1203,7 +1242,7 @@
           <p class="work-author">Esha Awais</p>
           <p class="work-genre">Fiction / Thriller · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="getting-over" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-13.jpg" alt="Cover of Getting Over What's Over by Dr. Richard J. Stride" loading="lazy"/>
           </div></div>
@@ -1211,7 +1250,7 @@
           <p class="work-author">Dr. Richard J. Stride</p>
           <p class="work-genre">Grief &amp; Healing · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="animal-welfare" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-14.jpg" alt="Cover of Inside a Broken Animal Welfare System by Dr. Mark McMorris Jr." loading="lazy"/>
           </div></div>
@@ -1219,7 +1258,7 @@
           <p class="work-author">Dr. Mark McMorris Jr.</p>
           <p class="work-genre">Nonfiction / Advocacy · Editing &amp; Formatting</p>
         </article>
-        <article class="work-card">
+        <article class="work-card js-open-work" data-work="grace-across-borders" role="button" tabindex="0" aria-haspopup="dialog">
           <div class="work-cover"><div class="frame-inner">
             <img src="images/img-15.jpg" alt="Cover of Grace Across Borders by Idowu Akinleye" loading="lazy"/>
           </div></div>
@@ -1491,6 +1530,34 @@
     <div class="service-modal-actions">
       <a href="submit.html" class="btn btn-solid" id="serviceModalCta">Request This Service</a>
       <span class="service-modal-note">No obligation — we'll confirm fit before any work begins.</span>
+    </div>
+  </div>
+</div>
+
+<!-- WORK / BOOK DETAIL MODAL -->
+<div class="service-overlay" id="workOverlay" aria-hidden="true">
+  <div class="service-modal work-modal" role="dialog" aria-modal="true" aria-labelledby="workModalTitle">
+    <button class="service-modal-close" id="workModalClose" aria-label="Close book details">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+    </button>
+
+    <div class="work-modal-head">
+      <div class="work-modal-cover">
+        <img id="workModalCover" src="" alt="" />
+      </div>
+      <div>
+        <p class="service-modal-eyebrow">Selected Work</p>
+        <h2 class="service-modal-title" id="workModalTitle" style="font-size: clamp(22px, 2.6vw, 28px);">&nbsp;</h2>
+        <p class="work-modal-author" id="workModalAuthor"></p>
+        <p class="work-modal-genre" id="workModalGenre"></p>
+      </div>
+    </div>
+
+    <p class="work-modal-background" id="workModalBackground"></p>
+
+    <div class="work-modal-buy" id="workModalBuyWrap">
+      <p id="workModalBuyNote">Now available to readers.</p>
+      <a href="#" class="btn btn-solid" id="workModalBuyLink" target="_blank" rel="noopener noreferrer">Buy the Book</a>
     </div>
   </div>
 </div>
@@ -1824,6 +1891,182 @@
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && serviceOverlay.classList.contains('open')) closeServiceModal();
+  });
+
+  // ── Work / book detail modal ────────────────────────────────────────────
+  const workData = {
+    'failure-to-fortune': {
+      title: 'From Failure to Fortune',
+      author: 'Cortlandt S. Coleman',
+      genre: 'Affirmation Journal',
+      cover: 'images/img-05.jpg',
+      background: 'A guided daily affirmation journal designed to help readers reframe setbacks and build a consistent mindset practice. Greywright provided editing and interior formatting to prepare the journal for self-publication.',
+      buyUrl: 'https://a.co/d/0eZ929R6'
+      buyNote: 'Now available on Amazon Kindle.'
+    },
+    'keep-them-safe': {
+      title: 'Keep Them Safe',
+      author: 'Dr. Mark McMorris Jr.',
+      genre: 'Nonfiction / Pet Care',
+      cover: 'images/img-06.jpg',
+      background: 'A practical, welfare-focused guide for pet owners, drawing on the author\u2019s veterinary background. Greywright handled editing and formatting to bring the manuscript to publication standard.',
+      buyUrl: 'https://a.co/d/0j42JCiV'
+      buyNote: 'Now available on Amazon Kindle.'
+    },
+    'ai-guide-beginners': {
+      title: 'The Definitive AI Guide for Beginners',
+      author: 'Yaro Rohowsky',
+      genre: 'Nonfiction / Technology',
+      cover: 'images/img-07.jpg',
+      background: 'An accessible introduction to artificial intelligence written for readers with no technical background. Greywright refined the manuscript for clarity and prepared it for digital and print release.',
+      buyUrl: ''
+    },
+    'chatgpt-guide': {
+      title: 'The Absolute ChatGPT & Generative AI Beginners Guide',
+      author: 'Yaro Rohowsky',
+      genre: 'Nonfiction / Technology',
+      cover: 'images/img-08.jpg',
+      background: 'A companion guide walking beginners through practical, everyday use of ChatGPT and generative AI tools. Greywright provided editing and formatting for publication.',
+      buyUrl: ''
+    },
+    'unbroken': {
+      title: 'Unbroken: Rising Above, Thriving Within',
+      author: 'Christine Elliott',
+      genre: 'Memoir',
+      cover: 'images/img-09.jpg',
+      background: 'A personal memoir of resilience and recovery. Greywright worked closely with the author on editing and formatting while preserving her voice throughout.',
+      buyUrl: 'https://a.co/d/01U6D3dY'
+      'Now available on Amazon Kindle.'
+    },
+    'chosen-courageous': {
+      title: 'Chosen & Courageous',
+      author: 'Michelle Beetz',
+      genre: 'Devotional / Teen Faith',
+      cover: 'images/img-10.jpg',
+      background: 'A devotional written for teens navigating faith and identity. Greywright provided editing and formatting to prepare the book for publication.',
+      buyUrl: ''
+    },
+    'happy-gut': {
+      title: 'Happy Gut',
+      author: 'Farah Arakji',
+      genre: 'Health / Nonfiction',
+      cover: 'images/img-11.jpg',
+      background: 'An evidence-based exploration of gut health, drawing on the author\u2019s extensive personal research into fermentation, the microbiome, and diet. Greywright provided proofreading, reference verification, and formatting to prepare the manuscript for Kindle and Amazon publication.',
+      buyUrl: 'https://share.google/JAvvA5DkAWBEVXpS0',
+      buyNote: 'Now available on Amazon Kindle.'
+    },
+    'deadly-heist': {
+      title: 'The Deadly Heist',
+      author: 'Esha Awais',
+      genre: 'Fiction / Thriller',
+      cover: 'images/img-12.jpg',
+      background: 'A fast-paced fiction thriller. Greywright provided editing and formatting to prepare the manuscript for publication.',
+      buyUrl: ''
+    },
+    'getting-over': {
+      title: 'Getting Over What\u2019s Over',
+      author: 'Dr. Richard J. Stride',
+      genre: 'Grief & Healing',
+      cover: 'images/img-13.jpg',
+      background: 'A compassionate guide to processing grief and moving through loss. Greywright provided editing and formatting to prepare the book for publication.',
+      buyUrl: 'https://a.co/d/0183ic0N'
+      buyNote: 'Now available on Amazon Kindle.'
+    },
+    'animal-welfare': {
+      title: 'Inside a Broken Animal Welfare System',
+      author: 'Dr. Mark McMorris Jr.',
+      genre: 'Nonfiction / Advocacy',
+      cover: 'images/img-14.jpg',
+      background: 'An advocacy-driven look at gaps in animal welfare systems, written from the author\u2019s professional experience. Greywright provided editing and formatting for publication.',
+      buyUrl: 'https://a.co/d/01lG2g22'
+      buyNote: 'Now available on Amazon Kindle.'
+    },
+    'grace-across-borders': {
+      title: 'Grace Across Borders',
+      author: 'Idowu Akinleye',
+      genre: 'Inspirational Fiction',
+      cover: 'images/img-15.jpg',
+      background: 'An inspirational fiction narrative exploring faith and migration. Greywright provided editing and formatting to prepare the manuscript for publication.',
+      buyUrl: 'https://a.co/d/00NPe2vk'
+      buyNote: 'Now available on Amazon Kindle.'
+    }
+  };
+
+  const workOverlay = document.getElementById('workOverlay');
+  const workClose = document.getElementById('workModalClose');
+  const workTriggers = document.querySelectorAll('.js-open-work');
+  const workFields = {
+    cover: document.getElementById('workModalCover'),
+    title: document.getElementById('workModalTitle'),
+    author: document.getElementById('workModalAuthor'),
+    genre: document.getElementById('workModalGenre'),
+    background: document.getElementById('workModalBackground'),
+    buyWrap: document.getElementById('workModalBuyWrap'),
+    buyNote: document.getElementById('workModalBuyNote'),
+    buyLink: document.getElementById('workModalBuyLink')
+  };
+  let workCloseTimer = null;
+
+  function openWorkModal(e){
+    if (e) e.preventDefault();
+    const key = e.currentTarget.getAttribute('data-work');
+    const data = workData[key];
+    if (!data) return;
+
+    clearTimeout(workCloseTimer);
+    workOverlay.classList.remove('closing');
+
+    workFields.cover.src = data.cover;
+    workFields.cover.alt = 'Cover of ' + data.title + ' by ' + data.author;
+    workFields.title.textContent = data.title;
+    workFields.author.textContent = data.author;
+    workFields.genre.textContent = data.genre;
+    workFields.background.textContent = data.background;
+
+    if (data.buyUrl) {
+      workFields.buyNote.textContent = data.buyNote || 'Now available to readers.';
+      workFields.buyLink.setAttribute('href', data.buyUrl);
+    } else {
+      const query = encodeURIComponent(data.title + ' ' + data.author);
+      workFields.buyNote.textContent = 'Find this title on Amazon.';
+      workFields.buyLink.setAttribute('href', 'https://www.amazon.com/s?k=' + query + '&i=digital-text');
+    }
+    workFields.buyWrap.style.display = 'flex';
+
+    workOverlay.querySelector('.work-modal').scrollTop = 0;
+    workOverlay.classList.add('open');
+    workOverlay.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+    nav.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+  }
+
+  function closeWorkModal(){
+    if (!workOverlay.classList.contains('open')) return;
+    workOverlay.classList.add('closing');
+    workOverlay.classList.remove('open');
+    workOverlay.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+    workCloseTimer = setTimeout(() => {
+      workOverlay.classList.remove('closing');
+    }, 180);
+  }
+
+  workTriggers.forEach(el => {
+    el.addEventListener('click', openWorkModal);
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openWorkModal(e);
+      }
+    });
+  });
+  workClose.addEventListener('click', closeWorkModal);
+  workOverlay.addEventListener('click', (e) => {
+    if (e.target === workOverlay) closeWorkModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && workOverlay.classList.contains('open')) closeWorkModal();
   });
 
   // ── Web3Forms contact form ─────────────────────────────────────────────────

@@ -317,6 +317,54 @@
   }
   .service-card .learn:hover{ color: var(--oxblood-deep); }
 
+  /* ---------- instant quote calculator ---------- */
+  .calc-panel{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .calc-inputs{ padding: 40px 44px; border-right: 1px solid var(--line); }
+  .calc-field{ margin-bottom: 26px; }
+  .calc-field label{
+    display:block; font-size: 12px; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--ink-faint); margin-bottom: 10px;
+  }
+  .calc-field select, .calc-field input[type="number"]{
+    width:100%; font-family: var(--body); font-size: 16px; color: var(--ink);
+    background: var(--paper-deep); border: 1px solid var(--line); border-radius: 2px;
+    padding: 13px 14px;
+  }
+  .calc-field select{ appearance: none; cursor:pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%238C8270' stroke-width='2'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+  .calc-field select:focus, .calc-field input:focus{ outline:none; border-color: var(--oxblood); }
+  .calc-word-row{ display:flex; align-items:center; gap: 14px; }
+  .calc-word-row input[type="range"]{ flex:1; accent-color: var(--oxblood); }
+  .calc-word-row input[type="number"]{ width: 110px; flex: 0 0 auto; }
+  .calc-note{ font-size: 13px; color: var(--ink-faint); font-style: italic; margin-top: -6px; }
+
+  .calc-result{ padding: 40px 44px; background: var(--paper-deep); display:flex; flex-direction:column; justify-content:center; }
+  .calc-result-label{ font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass); margin-bottom: 10px; }
+  .calc-price-usd{ font-family: var(--display); font-weight: 700; font-size: 44px; color: var(--ink); line-height: 1.1; }
+  .calc-price-ngn{ font-size: 16px; color: var(--ink-soft); margin-top: 6px; }
+  .calc-min-note{ font-size: 13px; color: var(--ink-faint); margin-top: 14px; line-height: 1.5; }
+  .calc-result .btn{ margin-top: 26px; align-self: flex-start; }
+  .calc-disclaimer{ font-size: 12.5px; color: var(--ink-faint); margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); line-height: 1.6; }
+
+  .calc-ghost-msg{ display:none; }
+  .calc-ghost-msg.show{ display:block; }
+  .calc-numeric-result.hide{ display:none; }
+
+  @media (max-width: 760px){
+    .calc-panel{ grid-template-columns: 1fr; }
+    .calc-inputs{ border-right:none; border-bottom: 1px solid var(--line); padding: 30px 26px; }
+    .calc-result{ padding: 30px 26px; }
+    .calc-price-usd{ font-size: 36px; }
+  }
+
   /* ---------- process / journey ---------- */
   .journey-row{
     display:grid;
@@ -1053,6 +1101,61 @@
     </div>
   </section>
 
+  <!-- INSTANT QUOTE CALCULATOR -->
+  <section id="quote-calculator">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow"><span class="stroke"></span>Estimate Your Project</p>
+        <h2>Get an instant starting estimate.</h2>
+        <p>Select a service and enter your manuscript's word count for a transparent price range. This is a starting estimate, not a final quote, we'll confirm exact pricing after reviewing your manuscript.</p>
+      </div>
+
+      <div class="calc-panel reveal">
+        <div class="calc-inputs">
+          <div class="calc-field">
+            <label for="calcService">Service</label>
+            <select id="calcService">
+              <option value="developmental">Developmental Editing</option>
+              <option value="line">Line Editing</option>
+              <option value="copy" selected>Copyediting</option>
+              <option value="proof">Proofreading</option>
+              <option value="academic">Academic Editing</option>
+              <option value="kdp">KDP Publishing Support</option>
+              <option value="ghost">Ghostwriting</option>
+            </select>
+          </div>
+
+          <div class="calc-field" id="calcWordFieldWrap">
+            <label for="calcWords">Manuscript Word Count</label>
+            <div class="calc-word-row">
+              <input type="range" id="calcWordsRange" min="1000" max="150000" step="500" value="30000" />
+              <input type="number" id="calcWords" min="0" step="500" value="30000" />
+            </div>
+            <p class="calc-note" id="calcWordNote">Not sure of your exact count? A rough estimate is fine, roughly 250 words per double-spaced page.</p>
+          </div>
+        </div>
+
+        <div class="calc-result">
+          <div class="calc-numeric-result" id="calcNumericResult">
+            <p class="calc-result-label">Estimated Price</p>
+            <div class="calc-price-usd" id="calcPriceUsd">$0</div>
+            <div class="calc-price-ngn" id="calcPriceNgn">&#8358;0</div>
+            <p class="calc-min-note" id="calcMinNote"></p>
+            <a href="submit.html" class="btn btn-solid" id="calcCta">Submit Manuscript for This Quote</a>
+          </div>
+
+          <div class="calc-ghost-msg" id="calcGhostMsg">
+            <p class="calc-result-label">Ghostwriting Pricing</p>
+            <p style="font-size:15px; color: var(--ink-soft); line-height:1.7; margin: 6px 0 0;">Ghostwriting is priced against the finished book, not an existing manuscript, so it can't be estimated by word count alone. As a rough guide, professional ghostwriting typically runs <strong>$0.35&ndash;$0.60 per finished word</strong>, depending on research depth and interview time required.</p>
+            <a href="book.html" class="btn btn-solid" style="margin-top:22px;">Book a Discovery Call</a>
+          </div>
+
+          <p class="calc-disclaimer">Estimates are based on standard manuscript condition. Final pricing may adjust after we review your manuscript for its actual complexity and current state.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- PROCESS / JOURNEY -->
   <section class="alt-bg" id="process">
     <div class="wrap">
@@ -1621,6 +1724,125 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && contactOverlay.classList.contains('open')) closeContactModal();
   });
+
+  // ── Instant quote calculator ────────────────────────────────────────────
+  // Rates are USD-per-word, banded so longer manuscripts get a lower marginal
+  // rate. NGN is derived at a fixed conversion to match consultation pricing
+  // elsewhere on the site. Base "copy" rate is anchored to a real completed
+  // project ($500 for ~27,790 words); other services scaled proportionally
+  // from there. Adjust freely, these are starting figures.
+  const USD_TO_NGN = 1500;
+
+  const CALC_RATES = {
+    developmental: { slug: 'developmental-editing', min: 200, bands: [
+      { upto: 40000, rate: 0.0286 }, { upto: 90000, rate: 0.0252 }, { upto: Infinity, rate: 0.0223 }
+    ]},
+    line: { slug: 'line-editing', min: 160, bands: [
+      { upto: 40000, rate: 0.0245 }, { upto: 90000, rate: 0.0216 }, { upto: Infinity, rate: 0.0191 }
+    ]},
+    copy: { slug: 'copyediting', min: 120, bands: [
+      { upto: 40000, rate: 0.0180 }, { upto: 90000, rate: 0.0158 }, { upto: Infinity, rate: 0.0140 }
+    ]},
+    proof: { slug: 'proofreading', min: 80, bands: [
+      { upto: 40000, rate: 0.0114 }, { upto: 90000, rate: 0.0100 }, { upto: Infinity, rate: 0.0089 }
+    ]},
+    academic: { slug: 'academic-editing', min: 145, bands: [
+      { upto: 40000, rate: 0.0228 }, { upto: 90000, rate: 0.0200 }, { upto: Infinity, rate: 0.0178 }
+    ]}
+  };
+
+  // KDP support is formatting labor, not per-word editing — flat brackets by length instead.
+  const KDP_BRACKETS = [
+    { upto: 30000,  fee: 120 },
+    { upto: 70000,  fee: 180 },
+    { upto: 120000, fee: 250 },
+    { upto: Infinity, fee: 320 }
+  ];
+
+  function calcBandedTotal(words, bands){
+    let total = 0, prevCap = 0;
+    for (const band of bands){
+      if (words <= prevCap) break;
+      const bandWords = Math.min(words, band.upto) - prevCap;
+      if (bandWords > 0) total += bandWords * band.rate;
+      prevCap = band.upto;
+      if (words <= band.upto) break;
+    }
+    return total;
+  }
+
+  function calcKdpFee(words){
+    for (const bracket of KDP_BRACKETS){
+      if (words <= bracket.upto) return bracket.fee;
+    }
+    return KDP_BRACKETS[KDP_BRACKETS.length - 1].fee;
+  }
+
+  const calcServiceSelect = document.getElementById('calcService');
+  const calcWordsRange    = document.getElementById('calcWordsRange');
+  const calcWordsInput    = document.getElementById('calcWords');
+  const calcWordFieldWrap = document.getElementById('calcWordFieldWrap');
+  const calcNumericResult = document.getElementById('calcNumericResult');
+  const calcGhostMsg      = document.getElementById('calcGhostMsg');
+  const calcPriceUsd      = document.getElementById('calcPriceUsd');
+  const calcPriceNgn      = document.getElementById('calcPriceNgn');
+  const calcMinNote       = document.getElementById('calcMinNote');
+  const calcCta           = document.getElementById('calcCta');
+
+  function formatUsd(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+  function formatNgn(n){ return '\u20a6' + Math.round(n).toLocaleString('en-US'); }
+
+  function runCalculator(){
+    const key = calcServiceSelect.value;
+    const words = Math.max(0, parseInt(calcWordsInput.value, 10) || 0);
+
+    if (key === 'ghost') {
+      calcNumericResult.classList.add('hide');
+      calcGhostMsg.classList.add('show');
+      calcWordFieldWrap.style.opacity = '0.4';
+      calcWordFieldWrap.style.pointerEvents = 'none';
+      return;
+    }
+
+    calcWordFieldWrap.style.opacity = '1';
+    calcWordFieldWrap.style.pointerEvents = 'auto';
+    calcNumericResult.classList.remove('hide');
+    calcGhostMsg.classList.remove('show');
+
+    let usd, slug, hitFloor = false;
+
+    if (key === 'kdp') {
+      usd = calcKdpFee(words);
+      slug = 'kdp-support';
+    } else {
+      const data = CALC_RATES[key];
+      const raw = calcBandedTotal(words, data.bands);
+      usd = Math.max(raw, data.min);
+      hitFloor = raw < data.min;
+      slug = data.slug;
+    }
+
+    calcPriceUsd.textContent = formatUsd(usd);
+    calcPriceNgn.textContent = formatNgn(usd * USD_TO_NGN) + ' (approx.)';
+    calcMinNote.textContent = hitFloor
+      ? 'This project falls under our minimum project fee for this service.'
+      : (key === 'kdp' ? 'Flat rate based on manuscript length bracket.' : '');
+    calcCta.setAttribute('href', 'submit.html?service=' + slug + '&words=' + words);
+  }
+
+  if (calcServiceSelect) {
+    calcServiceSelect.addEventListener('change', runCalculator);
+    calcWordsRange.addEventListener('input', () => {
+      calcWordsInput.value = calcWordsRange.value;
+      runCalculator();
+    });
+    calcWordsInput.addEventListener('input', () => {
+      const v = Math.min(500000, Math.max(0, parseInt(calcWordsInput.value, 10) || 0));
+      if (v <= parseInt(calcWordsRange.max, 10)) calcWordsRange.value = v;
+      runCalculator();
+    });
+    runCalculator();
+  }
 
   // service detail modal
   const serviceData = {

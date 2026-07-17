@@ -571,6 +571,14 @@ const form = document.getElementById('submitForm');
     if (note) note.style.display = 'inline';
     if (field) field.classList.add('is-prefilled');
 
+    // Also carry over an estimated word count, e.g. from the homepage
+    // instant quote calculator (?words=42000).
+    const wordsParam = parseInt(params.get('words'), 10);
+    if (wordsParam > 0){
+      const wordField = document.getElementById('wordCount');
+      if (wordField) wordField.value = wordsParam;
+    }
+
     // Let the page render first, then bring the name field into view so the
     // person lands focused on what's left to fill, not the field we already set.
     requestAnimationFrame(function(){

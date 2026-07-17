@@ -140,6 +140,8 @@
     display:flex;
     align-items:baseline;
     gap: 8px;
+    white-space: nowrap;
+    flex: 0 0 auto;
   }
   .brandmark em{ font-style: italic; color: var(--oxblood); font-weight: 600; }
   .brandmark .tag{
@@ -324,8 +326,9 @@
     gap: 0;
     border: 1px solid var(--line);
     background: var(--paper);
+    max-width: 100%;
   }
-  .calc-inputs{ padding: 40px 44px; border-right: 1px solid var(--line); }
+  .calc-inputs{ padding: 40px 44px; border-right: 1px solid var(--line); min-width: 0; }
   .calc-field{ margin-bottom: 26px; }
   .calc-field label{
     display:block; font-size: 12px; letter-spacing: 0.07em; text-transform: uppercase;
@@ -342,16 +345,16 @@
   }
   .calc-field select:focus, .calc-field input:focus{ outline:none; border-color: var(--oxblood); }
   .calc-word-row{ display:flex; align-items:center; gap: 14px; }
-  .calc-word-row input[type="range"]{ flex:1; accent-color: var(--oxblood); }
+  .calc-word-row input[type="range"]{ flex:1; min-width: 0; accent-color: var(--oxblood); }
   .calc-word-row input[type="number"]{ width: 110px; flex: 0 0 auto; }
   .calc-note{ font-size: 13px; color: var(--ink-faint); font-style: italic; margin-top: -6px; }
 
-  .calc-result{ padding: 40px 44px; background: var(--paper-deep); display:flex; flex-direction:column; justify-content:center; }
+  .calc-result{ padding: 40px 44px; background: var(--paper-deep); display:flex; flex-direction:column; justify-content:center; min-width: 0; }
   .calc-result-label{ font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brass); margin-bottom: 10px; }
   .calc-price-usd{ font-family: var(--display); font-weight: 700; font-size: 44px; color: var(--ink); line-height: 1.1; }
   .calc-price-ngn{ font-size: 16px; color: var(--ink-soft); margin-top: 6px; }
   .calc-min-note{ font-size: 13px; color: var(--ink-faint); margin-top: 14px; line-height: 1.5; }
-  .calc-result .btn{ margin-top: 26px; align-self: flex-start; }
+  .calc-result .btn{ margin-top: 26px; align-self: flex-start; max-width: 100%; white-space: normal; text-align: center; }
   .calc-disclaimer{ font-size: 12.5px; color: var(--ink-faint); margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); line-height: 1.6; }
 
   .calc-ghost-msg{ display:none; }
@@ -900,10 +903,11 @@
     .footer-grid{ grid-template-columns: 1fr 1fr; }
   }
 
-  @media (max-width: 760px){
-    .wrap, .nav-row{ padding-left: 22px; padding-right: 22px; }
-    .nav-row{ flex-wrap: nowrap; gap: 12px; }
-    .brandmark{ font-size: 18px; gap: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* Nav now has 10 links plus two CTA buttons — that stops fitting on one
+     row well before the general "mobile" breakpoint below, so the nav
+     collapses into the hamburger menu at a wider width of its own. */
+  @media (max-width: 1220px){
+    .nav-row{ padding-left: 22px; padding-right: 22px; gap: 12px; }
     .brandmark .tag{ display: none; }
     nav.main-links{
       display:none;
@@ -924,6 +928,11 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+  }
+
+  @media (max-width: 760px){
+    .wrap{ padding-left: 22px; padding-right: 22px; }
+    .brandmark{ font-size: 18px; gap: 5px; overflow: hidden; text-overflow: ellipsis; }
     .hero-grid{ grid-template-columns: 1fr; gap: 40px; }
     .hero-art{ order:-1; max-width: 320px; margin: 0 auto; }
     .cred-row{ grid-template-columns: repeat(2,1fr); row-gap: 26px; }
@@ -1142,7 +1151,7 @@
             <div class="calc-price-usd" id="calcPriceUsd">$0</div>
             <div class="calc-price-ngn" id="calcPriceNgn">&#8358;0</div>
             <p class="calc-min-note" id="calcMinNote"></p>
-            <a href="submit.html" class="btn btn-solid" id="calcCta">Submit Manuscript for This Quote</a>
+            <a href="submit.html" class="btn btn-solid" id="calcCta">Request This Quote</a>
           </div>
 
           <div class="calc-ghost-msg" id="calcGhostMsg">

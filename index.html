@@ -152,13 +152,14 @@
     letter-spacing: 0.04em;
     margin-left: 4px;
   }
-  nav.main-links{ display:flex; gap: 34px; align-items:center; }
+  nav.main-links{ display:flex; gap: 24px; align-items:center; }
   nav.main-links a{
     font-size: 14.5px;
     letter-spacing: 0.03em;
     color: var(--ink-soft);
     position: relative;
     padding-bottom: 4px;
+    white-space: nowrap;
   }
   nav.main-links a::after{
     content:"";
@@ -187,7 +188,7 @@
   .btn-outline:hover{ background: var(--ink); color: var(--paper); transform: translateY(-1px); }
   .btn:focus-visible{ outline: 2px solid var(--brass); outline-offset: 3px; }
 
-  .nav-cta{ display:flex; gap:14px; align-items:center; }
+  .nav-cta{ display:flex; gap:14px; align-items:center; flex: 0 0 auto; }
   .menu-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; }
   .menu-toggle span{ display:block; width:24px; height:1.5px; background: var(--ink); margin: 5px 0; }
 
@@ -903,10 +904,12 @@
     .footer-grid{ grid-template-columns: 1fr 1fr; }
   }
 
-  /* Nav now has 10 links plus two CTA buttons — that stops fitting on one
-     row well before the general "mobile" breakpoint below, so the nav
-     collapses into the hamburger menu at a wider width of its own. */
-  @media (max-width: 1220px){
+  /* Nav has 10 links plus two CTA buttons — that needs roughly 1800-1900px
+     to sit on one row without wrapping, which is wider than most laptop
+     screens. So the nav collapses into the hamburger menu at a much wider
+     breakpoint than the general "mobile" breakpoint below, to guarantee
+     nothing wraps or gets clipped on ordinary desktop widths. */
+  @media (max-width: 1650px){
     .nav-row{ padding-left: 22px; padding-right: 22px; gap: 12px; }
     .brandmark .tag{ display: none; }
     nav.main-links{
@@ -916,7 +919,7 @@
       flex-direction:column; gap:0; padding: 10px 22px 18px;
     }
     nav.main-links.open{ display:flex; }
-    nav.main-links a{ padding: 12px 0; border-bottom: 1px solid var(--line); width:100%; }
+    nav.main-links a{ padding: 12px 0; border-bottom: 1px solid var(--line); width:100%; white-space: normal; }
     .menu-toggle{ display:block; flex: 0 0 auto; }
     .nav-cta{ flex: 0 1 auto; min-width: 0; }
     .nav-cta .btn-outline{ display:none; }

@@ -167,6 +167,7 @@
 <main>
   <div class="wrap">
     <div class="hero-block">
+      <img src="images/badge-verified.png" alt="Greywright Verified seal — Certificate of Completion" width="150" height="150" style="margin: 0 auto 24px;" />
       <p class="eyebrow"><span class="stroke"></span>Certificate Verification</p>
       <h1>Verify a Greywright Certificate</h1>
       <p class="lede">Every Certificate of Completion issued by Greywright Publishing House carries a unique Certificate ID. Enter it below exactly as printed to confirm it's authentic.</p>
@@ -304,10 +305,8 @@
   const resultEl = document.getElementById('verifyResult');
   const submitBtn = form.querySelector('button[type="submit"]');
 
-  form.addEventListener('submit', async function(e){
-    e.preventDefault();
-    const raw = document.getElementById('certInput').value;
-    if(!raw.trim()){ return; }
+  async function runVerification(raw){
+    if(!raw || !raw.trim()){ return; }
 
     const query = normalize(raw);
 
@@ -331,9 +330,17 @@
 
     const match = certificates.find(c => normalize(c.certificateId) === query);
 
-    if(match){
+    if(match && normalize(match.status) === 'REVOKED'){
+      resultEl.innerHTML = `
+        <div class="result-invalid">
+          <div class="result-status"><svg><use href="#x-circle"/></svg> Certificate Revoked</div>
+          <p>This Certificate ID was previously issued but has since been revoked. Please <a href="mailto:greywrightpublishing@gmail.com">contact us</a> if you believe this is an error.</p>
+        </div>
+      `;
+    } else if(match){
       resultEl.innerHTML = `
         <div class="result-valid">
+          <img src="images/badge-verified.png" alt="Greywright Verified seal" width="64" height="64" style="margin-bottom:14px;" />
           <div class="result-status"><svg><use href="#check-circle"/></svg> Certificate Verified</div>
           <div class="result-row"><span class="k">Certificate ID</span><span class="v">${match.certificateId}</span></div>
           <div class="result-row"><span class="k">Issued To</span><span class="v">${match.clientName}</span></div>
@@ -351,7 +358,23 @@
       `;
     }
     if(submitBtn) submitBtn.disabled = false;
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    runVerification(document.getElementById('certInput').value);
   });
+
+  // Deep link: a "Greywright Verified" badge on a book/site can link straight
+  // here as verify.html?cert=SE-MP-271125 and the lookup runs automatically,
+  // instead of making the reader copy/type the code by hand.
+  (function autoVerifyFromQuery(){
+    const params = new URLSearchParams(window.location.search);
+    const cert = (params.get('cert') || '').trim();
+    if(!cert) return;
+    document.getElementById('certInput').value = cert;
+    runVerification(cert);
+  })();
 </script>
 
 </body>

@@ -65,24 +65,70 @@
   header.site-header {
     position: sticky; top: 0; z-index: 100;
     background: rgba(244,238,223,0.92);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(6px);
     border-bottom: 1px solid var(--line);
   }
-  .nav-inner {
-    display: flex; align-items: center; justify-content: space-between;
-    height: 64px;
+  .nav-row{
+    display:flex; align-items:center; justify-content: space-between;
+    padding: 18px 32px; max-width: var(--maxw); margin: 0 auto; gap: 12px;
   }
   .brandmark {
-    font-family: var(--display); font-size: 22px; font-weight: 700;
+    font-family: var(--display); font-size: 24px; font-weight: 700;
     letter-spacing: 0.01em; display: flex; align-items: baseline;
-    gap: 6px; white-space: nowrap;
+    gap: 8px; white-space: nowrap; flex: 0 0 auto;
   }
   .brandmark em { font-style: italic; color: var(--oxblood); font-weight: 600; }
-  nav a {
-    font-size: 13.5px; letter-spacing: 0.04em; color: var(--ink-soft);
-    margin-left: 28px; transition: color .2s;
+  nav.main-links{ display:flex; gap: 24px; align-items:center; }
+  nav.main-links a{
+    font-size: 14.5px; letter-spacing: 0.03em; color: var(--ink-soft);
+    position: relative; padding-bottom: 4px; white-space: nowrap;
   }
-  nav a:hover { color: var(--oxblood); }
+  nav.main-links a::after{
+    content:""; position:absolute; left:0; right:0; bottom:0;
+    height: 1px; background: var(--oxblood);
+    transform: scaleX(0); transform-origin: left; transition: transform .25s ease;
+  }
+  nav.main-links a:hover::after, nav.main-links a:focus-visible::after{ transform: scaleX(1); }
+  nav.main-links a.active{ color: var(--oxblood); }
+  nav.main-links a.active::after{ transform: scaleX(1); }
+
+  .btn{
+    font-family: var(--body); font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 13px 26px; border: 1px solid var(--oxblood); border-radius: 2px;
+    display: inline-block; cursor: pointer; transition: background .2s ease, color .2s ease, transform .2s ease;
+    white-space: nowrap;
+  }
+  .btn-solid{ background: var(--oxblood); color: var(--paper); border-color: var(--oxblood); }
+  .btn-solid:hover{ background: var(--oxblood-deep); transform: translateY(-1px); }
+  .btn-outline{ background: transparent; color: var(--ink); border-color: var(--ink); }
+  .btn-outline:hover{ background: var(--ink); color: var(--paper); transform: translateY(-1px); }
+  .btn:focus-visible{ outline: 2px solid var(--brass); outline-offset: 3px; }
+
+  .nav-cta{ display:flex; gap:14px; align-items:center; flex: 0 0 auto; }
+  .menu-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; }
+  .menu-toggle span{ display:block; width:24px; height:1.5px; background: var(--ink); margin: 5px 0; }
+
+  @media (max-width: 1650px){
+    .nav-row{ padding-left: 22px; padding-right: 22px; gap: 12px; }
+    nav.main-links{
+      display:none; position:absolute; top: 100%; left:0; right:0;
+      background: var(--paper); border-bottom: 1px solid var(--line);
+      flex-direction:column; gap:0; padding: 10px 22px 18px;
+    }
+    nav.main-links.open{ display:flex; }
+    nav.main-links a{ padding: 12px 0; border-bottom: 1px solid var(--line); width:100%; white-space: normal; }
+    .menu-toggle{ display:block; flex: 0 0 auto; }
+    .nav-cta{ flex: 0 1 auto; min-width: 0; }
+    .nav-cta .btn-outline{ display:none; }
+    .nav-cta .btn-solid{
+      font-size: 12px; padding: 10px 14px; max-width: 100%;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+  }
+  @media (max-width: 400px){
+    .brandmark{ font-size: 16px; }
+    .nav-cta .btn-solid{ font-size: 11px; padding: 9px 12px; }
+  }
 
   /* ── STATE PANELS ────────────────────────────────────────────── */
   /* Only one of these three is visible at a time */
@@ -260,14 +306,26 @@
 
 <!-- ── HEADER ──────────────────────────────────────────────────────────── -->
 <header class="site-header">
-  <div class="wrap">
-    <div class="nav-inner">
-      <a href="index.html" class="brandmark">Greywright <em>Publishing House</em></a>
-      <nav>
-        <a href="index.html">Home</a>
-        <a href="submit.html">Submit</a>
-        <a href="book.html">Book a Call</a>
-      </nav>
+  <div class="nav-row">
+    <a href="index.html#top" class="brandmark">Greywright <em>Publishing House</em></a>
+    <nav class="main-links" id="mainNav">
+      <a href="index.html#services">Services</a>
+      <a href="index.html#quote-calculator">Get an Estimate</a>
+      <a href="index.html#process">Process</a>
+      <a href="index.html#why">Why Greywright</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#works">Selected Works</a>
+      <a href="verify.html">Verify a Certificate</a>
+      <a href="index.html#contact">Contact</a>
+      <a href="submit.html">Submit Manuscript</a>
+      <a href="retrieve-booking.html">Retrieve Booking</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <a href="submit.html" class="btn btn-outline">Submit a Manuscript</a>
+      <a href="book.html" class="btn btn-solid" aria-current="page">Request a Consultation</a>
     </div>
   </div>
 </header>
@@ -521,6 +579,19 @@ function showSuccess(customer, service, reference) {
     );
   }
 })();
+</script>
+
+<script>
+  // mobile nav toggle
+  const menuToggle = document.getElementById('menuToggle');
+  const mainNav = document.getElementById('mainNav');
+  menuToggle.addEventListener('click', () => {
+    const open = mainNav.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mainNav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => { mainNav.classList.remove('open'); menuToggle.setAttribute('aria-expanded','false'); });
+  });
 </script>
 
 </body>

@@ -212,11 +212,9 @@
   .footer-col a:hover{ color: var(--brass); }
   .footer-bottom{ display: flex; justify-content: space-between; padding: 22px 0; font-size: 13px; color: rgba(244,238,223,0.4); flex-wrap: wrap; gap: 8px; }
 
-  /* MOBILE */
-  @media (max-width: 760px){
-    .wrap, .nav-row{ padding-left: 22px; padding-right: 22px; }
-    .nav-row{ flex-wrap: nowrap; gap: 12px; }
-    .brandmark{ font-size: 18px; }
+  /* NAV COLLAPSE — matches index.html; the full 10-link nav needs this wider breakpoint to avoid wrapping */
+  @media (max-width: 1650px){
+    .nav-row{ padding-left: 22px; padding-right: 22px; gap: 12px; }
     nav.main-links{
       display: none; position: absolute; top: 100%; left: 0; right: 0;
       background: var(--paper); border-bottom: 1px solid var(--line);
@@ -227,6 +225,12 @@
     .menu-toggle{ display: block; flex: 0 0 auto; }
     .nav-cta .btn-outline{ display: none; }
     .nav-cta .btn-solid{ font-size: 12px; padding: 10px 14px; }
+  }
+
+  /* MOBILE */
+  @media (max-width: 760px){
+    .wrap{ padding-left: 22px; padding-right: 22px; }
+    .brandmark{ font-size: 18px; }
     .submit-hero{ padding: 52px 0 48px; }
     .trust-badges{ gap: 16px; }
     .process-strip-inner{ grid-template-columns: 1fr 1fr; }
@@ -257,19 +261,22 @@
     <a href="index.html" class="brandmark">Greywright <em>Publishing House</em></a>
     <nav class="main-links" id="mainNav">
       <a href="index.html#services">Services</a>
+      <a href="index.html#quote-calculator">Get an Estimate</a>
       <a href="index.html#process">Process</a>
       <a href="index.html#why">Why Greywright</a>
       <a href="index.html#about">About</a>
       <a href="index.html#works">Selected Works</a>
       <a href="verify.html">Verify a Certificate</a>
+      <a href="index.html#contact">Contact</a>
       <a href="submit.html" class="active">Submit Manuscript</a>
+      <a href="retrieve-booking.html">Retrieve Booking</a>
     </nav>
     <div class="nav-cta">
       <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
-      <a href="index.html#consultation" class="btn btn-outline">Book Consultation</a>
-      <a href="submit.html" class="btn btn-solid">Submit Manuscript</a>
+      <a href="submit.html" class="btn btn-outline">Submit a Manuscript</a>
+      <a href="book.html" class="btn btn-solid">Request a Consultation</a>
     </div>
   </div>
 </header>

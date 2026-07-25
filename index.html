@@ -999,7 +999,7 @@
       <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
-      <a href="submit.html" class="btn btn-outline" style="display:none" id="navOutlineBtn">Submit a Manuscript</a>
+      <a href="submit.html" class="btn btn-outline">Submit a Manuscript</a>
       <a href="book.html" class="btn btn-solid">Request a Consultation</a>
     </div>
   </div>
@@ -1732,6 +1732,14 @@
 
   openTriggers.forEach(el => el.addEventListener('click', openContactModal));
   contactClose.addEventListener('click', closeContactModal);
+
+  // Allow other pages to deep-link straight to the contact modal via "index.html#contact"
+  if (window.location.hash === '#contact') {
+    openContactModal();
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.pathname + '#top');
+    }
+  }
   contactOverlay.addEventListener('click', (e) => {
     if (e.target === contactOverlay) closeContactModal();
   });

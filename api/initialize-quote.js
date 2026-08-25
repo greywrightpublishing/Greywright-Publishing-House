@@ -1,115 +1,312 @@
 // api/initialize-quote.js
 // ─────────────────────────────────────────────────────────────────────────────
 // Called by quote-checkout.html when the client clicks Pay.
-// Decodes and verifies the signed token, then creates a Paystack transaction
-// with the amount encoded in the token — the client cannot change the amount.
+//
+// The quote token contains:
+//   - The amount shown to the client (e.g. $500)
+//   - The locked NGN payment amount calculated when the quote was generated
+//   - The exchange rate used
+//
+// This endpoint verifies the signed token and sends ONLY the locked NGN
+// payment amount to Paystack.
+//
+// Example:
+//   Client sees:        $500
+//   Locked rate:        ₦1,590.25 / USD
+//   Locked NGN amount:  ₦795,125
+//   Paystack receives:  ₦795,125
+//
+// The client cannot change the amount because the entire payload is signed
+// with QUOTE_SECRET.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import crypto from 'crypto';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({
+      error: 'Method not allowed',
+    });
   }
 
   const { token } = req.body || {};
 
   if (!token || typeof token !== 'string') {
-    return res.status(400).json({ error: 'A valid quote token is required.' });
+    return res.status(400).json({
+      error: 'A valid quote token is required.',
+    });
   }
 
   const secret = process.env.QUOTE_SECRET;
+
   if (!secret) {
     console.error('[initialize-quote] QUOTE_SECRET is not set.');
-    return res.status(500).json({ error: 'Server configuration error.' });
+
+    return res.status(500).json({
+      error: 'Server configuration error.',
+    });
   }
 
-  // ── Decode and verify token ────────────────────────────────────────────────
+  // ── Split token ────────────────────────────────────────────────────────────
   const lastDot = token.lastIndexOf('.');
+
   if (lastDot === -1) {
-    return res.status(400).json({ error: 'Invalid token format.' });
+    return res.status(400).json({
+      error: 'Invalid token format.',
+    });
   }
 
   const encodedPayload = token.slice(0, lastDot);
-  const receivedSig    = token.slice(lastDot + 1);
+  const receivedSig = token.slice(lastDot + 1);
 
+  // ── Decode payload ─────────────────────────────────────────────────────────
   let payload;
+
   try {
-    payload = JSON.parse(Buffer.from(encodedPayload, 'base64url').toString('utf8'));
-  } catch {
-    return res.status(400).json({ error: 'Token could not be decoded.' });
+    payload = JSON.parse(
+      Buffer.from(encodedPayload, 'base64url').toString('utf8')
+    );
+  } catch (err) {
+    return res.status(400).json({
+      error: 'Token could not be decoded.',
+    });
   }
 
-  // Verify signature
+  // ── Verify signature ───────────────────────────────────────────────────────
   const expectedSig = crypto
     .createHmac('sha256', secret)
     .update(JSON.stringify(payload))
     .digest('hex');
 
   if (receivedSig !== expectedSig) {
-    console.warn('[initialize-quote] Signature mismatch — possible tamper attempt.');
-    return res.status(401).json({ error: 'This payment link is invalid or has been tampered with.' });
+    console.warn(
+      '[initialize-quote] Signature mismatch — possible tamper attempt.'
+    );
+
+    return res.status(401).json({
+      error:
+        'This payment link is invalid or has been tampered with.',
+    });
   }
 
   // ── Check expiry ───────────────────────────────────────────────────────────
-  if (payload.expiresAt && payload.expiresAt > 0 && Date.now() > payload.expiresAt) {
+  if (
+    payload.expiresAt &&
+    payload.expiresAt > 0 &&
+    Date.now() > payload.expiresAt
+  ) {
     return res.status(400).json({
-      error: 'This payment link has expired. Please contact Greywright Publishing House for a new quote.',
+      error:
+        'This payment link has expired. Please contact Greywright Publishing House for a new quote.',
     });
   }
 
-  // ── Convert amount to kobo / cents ────────────────────────────────────────
-  // Paystack always wants the smallest currency unit
-  const amountInSmallestUnit = Math.round(payload.amount * 100);
-
-  // Sanity check — min ₦1,000 (100000 kobo) or $1 (100 cents)
-  const minAmount = payload.currency === 'NGN' ? 100000 : 100;
-  if (amountInSmallestUnit < minAmount) {
-    return res.status(400).json({ error: 'Quote amount is below the minimum allowed.' });
+  // ── Validate required payment information ──────────────────────────────────
+  if (!payload.clientEmail) {
+    return res.status(400).json({
+      error: 'Quote is missing the client email address.',
+    });
   }
 
-  // ── Initialize Paystack transaction ───────────────────────────────────────
+  if (!payload.currency) {
+    return res.status(400).json({
+      error: 'Quote is missing its currency.',
+    });
+  }
+
+  // For USD quotes generated by the new system, paymentAmountNGN must exist.
+  if (
+    payload.currency === 'USD' &&
+    (!Number.isFinite(payload.paymentAmountNGN) ||
+      payload.paymentAmountNGN <= 0)
+  ) {
+    console.error(
+      '[initialize-quote] USD quote is missing a valid paymentAmountNGN.',
+      payload
+    );
+
+    return res.status(400).json({
+      error:
+        'This quote does not contain a valid NGN payment amount. Please generate a new quote.',
+    });
+  }
+
+  // ── Determine Paystack amount ──────────────────────────────────────────────
+  let paymentCurrency;
+  let amountInSmallestUnit;
+
+  if (payload.currency === 'USD') {
+    // The client was quoted in USD, but Paystack processes the locked
+    // NGN equivalent.
+
+    paymentCurrency = 'NGN';
+
+    amountInSmallestUnit = Math.round(
+      payload.paymentAmountNGN * 100
+    );
+
+  } else if (payload.currency === 'NGN') {
+    // Existing NGN quotes continue to work normally.
+
+    paymentCurrency = 'NGN';
+
+    if (
+      !Number.isFinite(payload.amount) ||
+      payload.amount <= 0
+    ) {
+      return res.status(400).json({
+        error: 'Invalid NGN quote amount.',
+      });
+    }
+
+    amountInSmallestUnit = Math.round(
+      payload.amount * 100
+    );
+
+  } else {
+    return res.status(400).json({
+      error: 'Unsupported quote currency.',
+    });
+  }
+
+  // ── Minimum NGN payment ────────────────────────────────────────────────────
+  const minAmountNGN = 1000 * 100; // ₦1,000 in kobo
+
+  if (amountInSmallestUnit < minAmountNGN) {
+    return res.status(400).json({
+      error:
+        'Quote amount is below the minimum allowed payment.',
+    });
+  }
+
+  // ── Paystack secret ────────────────────────────────────────────────────────
+  const paystackSecret = process.env.PAYSTACK_SECRET_KEY;
+
+  if (!paystackSecret) {
+    console.error(
+      '[initialize-quote] PAYSTACK_SECRET_KEY is not set.'
+    );
+
+    return res.status(500).json({
+      error: 'Payment configuration error.',
+    });
+  }
+
+  // ── Initialize Paystack transaction ────────────────────────────────────────
   try {
-    const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
-      method: 'POST',
-      headers: {
-        Authorization:  `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email:        payload.clientEmail,
-        amount:       amountInSmallestUnit,
-        currency:     payload.currency,
-        callback_url: 'https://www.greywrightpublishing.com/book-confirmed.html',
-        metadata: {
-          name:             payload.clientName,
-          service:          payload.service,
-          manuscript_title: payload.manuscriptTitle,
-          notes:            payload.notes,
-          quote_type:       'custom',
-          custom_fields: [
-            { display_name: 'Customer Name',     variable_name: 'name',             value: payload.clientName },
-            { display_name: 'Service',           variable_name: 'service',          value: payload.service },
-            { display_name: 'Manuscript Title',  variable_name: 'manuscript_title', value: payload.manuscriptTitle },
-          ],
+    const paystackRes = await fetch(
+      'https://api.paystack.co/transaction/initialize',
+      {
+        method: 'POST',
+
+        headers: {
+          Authorization: `Bearer ${paystackSecret}`,
+          'Content-Type': 'application/json',
         },
-      }),
-    });
+
+        body: JSON.stringify({
+          email: payload.clientEmail,
+
+          // Paystack receives NGN regardless of whether the quote was
+          // originally displayed in USD.
+          amount: amountInSmallestUnit,
+          currency: paymentCurrency,
+
+          callback_url:
+            'https://www.greywrightpublishing.com/book-confirmed.html',
+
+          metadata: {
+            name: payload.clientName,
+            service: payload.service,
+            manuscript_title: payload.manuscriptTitle,
+
+            // Original client-facing quote.
+            quoted_amount: payload.amount,
+            quoted_currency: payload.currency,
+
+            // Actual amount Paystack processes.
+            payment_amount_ngn: payload.currency === 'USD'
+              ? payload.paymentAmountNGN
+              : payload.amount,
+
+            // Exchange-rate audit information.
+            exchange_rate: payload.exchangeRate || null,
+            exchange_rate_date:
+              payload.exchangeRateDate || null,
+            exchange_rate_provider:
+              payload.exchangeRateProvider || null,
+
+            notes: payload.notes,
+
+            quote_type: 'custom',
+
+            custom_fields: [
+              {
+                display_name: 'Customer Name',
+                variable_name: 'name',
+                value: payload.clientName,
+              },
+              {
+                display_name: 'Service',
+                variable_name: 'service',
+                value: payload.service,
+              },
+              {
+                display_name: 'Manuscript Title',
+                variable_name: 'manuscript_title',
+                value: payload.manuscriptTitle,
+              },
+              {
+                display_name: 'Quoted Amount',
+                variable_name: 'quoted_amount',
+                value: `${payload.currency} ${payload.amount}`,
+              },
+              {
+                display_name: 'Payment Amount',
+                variable_name: 'payment_amount_ngn',
+                value: `NGN ${payload.currency === 'USD'
+                  ? payload.paymentAmountNGN
+                  : payload.amount}`,
+              },
+            ],
+          },
+        }),
+      }
+    );
 
     const data = await paystackRes.json();
 
     if (!paystackRes.ok || !data.status) {
-      console.error('[initialize-quote] Paystack error:', data);
-      return res.status(502).json({ error: data.message || 'Payment initialization failed.' });
+      console.error(
+        '[initialize-quote] Paystack error:',
+        data
+      );
+
+      return res.status(502).json({
+        error:
+          data.message ||
+          'Payment initialization failed.',
+      });
     }
 
+    // ── Success ──────────────────────────────────────────────────────────────
     return res.status(200).json({
-      authorization_url: data.data.authorization_url,
-      reference:         data.data.reference,
+      authorization_url:
+        data.data.authorization_url,
+
+      reference:
+        data.data.reference,
     });
 
   } catch (err) {
-    console.error('[initialize-quote] Crash:', err);
-    return res.status(500).json({ error: 'Server error while initializing payment.' });
+    console.error(
+      '[initialize-quote] Crash:',
+      err
+    );
+
+    return res.status(500).json({
+      error:
+        'Server error while initializing payment.',
+    });
   }
 }

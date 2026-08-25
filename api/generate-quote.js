@@ -1,16 +1,19 @@
 // api/generate-quote.js
 // ─────────────────────────────────────────────────────────────────────────────
-// Called by admin/index.html to generate a signed, tamper-proof token
-// that encodes the quote details. The token is appended to quote-checkout.html
-// as a URL parameter. quote-checkout.html sends the token to initialize-quote.js
-// which verifies the signature before creating the Paystack transaction.
+// Generates a signed quote token.
 //
-// Security model:
-//   - Token is signed with QUOTE_SECRET using HMAC-SHA256
-//   - Amount, currency, service, expiry are all encoded IN the token
-//   - Client cannot change the amount — any tamper breaks the signature
-//   - Admin password is verified server-side before any token is issued
-//   - Tokens expire after the configured number of days
+// IMPORTANT:
+// The client's quoted price may be entered in USD, but Paystack will receive
+// the payment in NGN. This allows international card payments while the
+// transaction is processed/settled as Naira.
+//
+// Example:
+//   Quote amount:       $500 USD
+//   USD/NGN rate:       ₦1,550
+//   Paystack amount:    ₦775,000
+//
+// The original USD amount and converted NGN payment amount are both stored
+// inside the signed token, so the client cannot alter either amount.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import crypto from 'crypto';
@@ -34,101 +37,228 @@ export default async function handler(req, res) {
   } = req.body || {};
 
   // ── Verify admin password ──────────────────────────────────────────────────
+
   if (adminPassword !== process.env.ADMIN_PASSWORD) {
     return res.status(401).json({ error: 'Unauthorised.' });
   }
 
-  // ── Validate inputs ────────────────────────────────────────────────────────
+  // ── Validate required fields ──────────────────────────────────────────────
+
   if (!clientName || !clientEmail || !service || !amount || !currency) {
-    return res.status(400).json({ error: 'clientName, clientEmail, service, amount, and currency are required.' });
-  }
-
-  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRx.test(clientEmail)) {
-    return res.status(400).json({ error: 'Invalid client email address.' });
-  }
-
-  // Currency must be validated BEFORE the amount check below, since the
-  // minimum amount depends on which currency was selected.
-  if (!['NGN', 'USD'].includes(currency)) {
-    return res.status(400).json({ error: 'Currency must be NGN or USD.' });
-  }
-
-  // FIX: the minimum used to be a flat `numAmount < 1000` regardless of
-  // currency — that rejected every USD quote under $1,000 (e.g. a
-  // perfectly valid $500 quote), even though the real USD minimum should
-  // be $1. Now the minimum matches the selected currency, same as
-  // initialize-quote.js already does elsewhere (100000 kobo / 100 cents).
-  const numAmount = parseFloat(amount);
-  const minAmount = currency === 'NGN' ? 1000 : 1;
-  if (isNaN(numAmount) || numAmount < minAmount) {
     return res.status(400).json({
-      error: currency === 'NGN'
-        ? 'Amount must be at least ₦1,000.'
-        : 'Amount must be at least $1.'
+      error:
+        'clientName, clientEmail, service, amount, and currency are required.',
     });
   }
 
-  const secret = process.env.QUOTE_SECRET;
-  if (!secret) {
-    console.error('[generate-quote] QUOTE_SECRET env var is not set.');
-    return res.status(500).json({ error: 'Server configuration error.' });
+  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRx.test(clientEmail)) {
+    return res.status(400).json({
+      error: 'Invalid client email address.',
+    });
   }
 
-  // ── Build payload ──────────────────────────────────────────────────────────
-  const issuedAt  = Date.now();
-  const expiresAt = expiryDays && parseInt(expiryDays, 10) > 0
-    ? issuedAt + (parseInt(expiryDays, 10) * 24 * 60 * 60 * 1000)
-    : 0; // 0 = never expires
+  // ── Validate currency ─────────────────────────────────────────────────────
+
+  if (!['NGN', 'USD'].includes(currency)) {
+    return res.status(400).json({
+      error: 'Currency must be NGN or USD.',
+    });
+  }
+
+  // ── Validate amount ───────────────────────────────────────────────────────
+
+  const numAmount = parseFloat(amount);
+
+  if (!Number.isFinite(numAmount)) {
+    return res.status(400).json({
+      error: 'Amount must be a valid number.',
+    });
+  }
+
+  const minAmount = currency === 'NGN' ? 1000 : 1;
+
+  if (numAmount < minAmount) {
+    return res.status(400).json({
+      error:
+        currency === 'NGN'
+          ? 'Amount must be at least ₦1,000.'
+          : 'Amount must be at least $1.',
+    });
+  }
+
+  // ── USD → NGN conversion rate ─────────────────────────────────────────────
+  //
+  // Set this in Vercel Environment Variables:
+  //
+  // USD_NGN_RATE=1550
+  //
+  // Example:
+  // $500 × 1550 = ₦775,000
+  //
+  // You can change the rate from Vercel without changing the code.
+
+  let paymentCurrency = currency;
+  let paymentAmount = numAmount;
+  let exchangeRate = null;
+
+  if (currency === 'USD') {
+    const configuredRate = parseFloat(process.env.USD_NGN_RATE);
+
+    if (!Number.isFinite(configuredRate) || configuredRate <= 0) {
+      console.error(
+        '[generate-quote] USD_NGN_RATE is missing or invalid.'
+      );
+
+      return res.status(500).json({
+        error:
+          'USD to NGN conversion rate is not configured. Please contact Greywright Publishing House.',
+      });
+    }
+
+    exchangeRate = configuredRate;
+    paymentCurrency = 'NGN';
+
+    // Convert dollars to Naira.
+    paymentAmount = Math.round(numAmount * exchangeRate);
+
+    if (paymentAmount < 1000) {
+      return res.status(400).json({
+        error: 'Converted payment amount is below ₦1,000.',
+      });
+    }
+  }
+
+  // ── Quote secret ───────────────────────────────────────────────────────────
+
+  const secret = process.env.QUOTE_SECRET;
+
+  if (!secret) {
+    console.error('[generate-quote] QUOTE_SECRET env var is not set.');
+
+    return res.status(500).json({
+      error: 'Server configuration error.',
+    });
+  }
+
+  // ── Build expiry ───────────────────────────────────────────────────────────
+
+  const issuedAt = Date.now();
+
+  const parsedExpiryDays = parseInt(expiryDays, 10);
+
+  const expiresAt =
+    Number.isFinite(parsedExpiryDays) && parsedExpiryDays > 0
+      ? issuedAt +
+        parsedExpiryDays * 24 * 60 * 60 * 1000
+      : 0;
+
+  // ── Build signed payload ───────────────────────────────────────────────────
 
   const payload = {
-    clientName:     clientName.trim(),
-    clientEmail:    clientEmail.toLowerCase().trim(),
-    manuscriptTitle:(manuscriptTitle || '').trim(),
-    service:        service.trim(),
-    amount:         numAmount,
+    clientName: clientName.trim(),
+    clientEmail: clientEmail.toLowerCase().trim(),
+
+    manuscriptTitle: (manuscriptTitle || '').trim(),
+
+    service: service.trim(),
+
+    // Original quoted amount.
+    amount: numAmount,
+
+    // Original quote currency.
     currency,
-    notes:          (notes || '').trim(),
-    generatedBy:    (generatedBy || 'Greywright').trim(),
+
+    // Actual currency Paystack will charge.
+    paymentCurrency,
+
+    // Actual amount Paystack will charge.
+    paymentAmount,
+
+    // Only populated when converting USD → NGN.
+    exchangeRate,
+
+    notes: (notes || '').trim(),
+
+    generatedBy: (generatedBy || 'Greywright').trim(),
+
     issuedAt,
     expiresAt,
   };
 
-  // ── Sign the payload ───────────────────────────────────────────────────────
+  // ── Sign payload ──────────────────────────────────────────────────────────
+
   const payloadStr = JSON.stringify(payload);
-  const signature  = crypto
+
+  const signature = crypto
     .createHmac('sha256', secret)
     .update(payloadStr)
     .digest('hex');
 
-  // Encode as base64url: payload + . + signature
-  const token = Buffer.from(payloadStr).toString('base64url') + '.' + signature;
+  const token =
+    Buffer.from(payloadStr).toString('base64url') +
+    '.' +
+    signature;
 
-  // ── Log to Supabase (quote audit trail) ───────────────────────────────────
+  // ── Log quote to Supabase ─────────────────────────────────────────────────
+
   try {
     const { createClient } = await import('@supabase/supabase-js');
+
     const supabase = createClient(
       process.env.SUPABASE_URL,
       process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
     await supabase.from('quotes').insert({
-      client_name:      payload.clientName,
-      client_email:     payload.clientEmail,
+      client_name: payload.clientName,
+      client_email: payload.clientEmail,
       manuscript_title: payload.manuscriptTitle,
-      service:          payload.service,
-      amount:           payload.amount,
-      currency:         payload.currency,
-      notes:            payload.notes,
-      generated_by:     payload.generatedBy,
-      issued_at:        new Date(issuedAt).toISOString(),
-      expires_at:       expiresAt ? new Date(expiresAt).toISOString() : null,
-      token_preview:    token.slice(0, 16) + '…', // never store full token
+      service: payload.service,
+
+      // Original quote.
+      amount: payload.amount,
+      currency: payload.currency,
+
+      // Actual Paystack payment.
+      payment_amount: payload.paymentAmount,
+      payment_currency: payload.paymentCurrency,
+      exchange_rate: payload.exchangeRate,
+
+      notes: payload.notes,
+      generated_by: payload.generatedBy,
+
+      issued_at: new Date(issuedAt).toISOString(),
+
+      expires_at: expiresAt
+        ? new Date(expiresAt).toISOString()
+        : null,
+
+      token_preview: token.slice(0, 16) + '…',
     });
   } catch (dbErr) {
-    // Log failure but don't block — token is still valid
-    console.error('[generate-quote] Supabase log failed:', dbErr);
+    // Database logging should not prevent the quote from being generated.
+    console.error(
+      '[generate-quote] Supabase log failed:',
+      dbErr
+    );
   }
 
-  return res.status(200).json({ token });
+  // ── Return token + payment information ────────────────────────────────────
+
+  return res.status(200).json({
+    token,
+
+    quote: {
+      amount: payload.amount,
+      currency: payload.currency,
+    },
+
+    payment: {
+      amount: payload.paymentAmount,
+      currency: payload.paymentCurrency,
+      exchangeRate: payload.exchangeRate,
+    },
+  });
 }

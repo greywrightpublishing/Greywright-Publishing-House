@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Client Sign In | Greywright</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" type="image/png" sizes="32x32" href="../images/img-01.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --paper: #F4EEDF; --ink: #1B1814; --ink-soft: #564E42; --ink-faint: #8C8270;
+    --oxblood: #6E1B26; --brass: #9C7B2E; --line: rgba(27,24,20,0.16);
+    --success: #3C5E45; --error: #8C3B2E;
+    --display: 'Cormorant Garamond', serif; --body: 'Spectral', Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .card { max-width:420px; width:100%; background:#fff; border:1px solid var(--line);
+    border-radius:4px; padding:40px 36px; }
+  h1 { font-family:var(--display); font-size:28px; margin:0 0 4px; }
+  .eyebrow { font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--brass); margin-bottom:8px; }
+  p.sub { color:var(--ink-soft); margin:0 0 28px; font-size:14px; }
+  .tabs { display:flex; gap:0; margin-bottom:24px; border-bottom:1px solid var(--line); }
+  .tab { flex:1; text-align:center; padding:10px 0; cursor:pointer; color:var(--ink-faint);
+    font-size:14px; border-bottom:2px solid transparent; }
+  .tab.active { color:var(--oxblood); border-bottom-color:var(--oxblood); }
+  label { display:block; font-size:13px; color:var(--ink-soft); margin-bottom:6px; }
+  input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:3px;
+    font-family:var(--body); font-size:15px; margin-bottom:16px; }
+  button { width:100%; padding:13px; background:var(--oxblood); color:var(--paper);
+    border:none; border-radius:3px; font-family:var(--body); font-size:15px;
+    cursor:pointer; letter-spacing:0.02em; }
+  button:disabled { opacity:0.6; cursor:default; }
+  .status { font-size:13px; padding:10px 12px; border-radius:3px; margin-bottom:16px; display:none; }
+  .status.error { display:block; background:rgba(140,59,46,0.1); color:var(--error); }
+  .status.success { display:block; background:rgba(60,94,69,0.1); color:var(--success); }
+  .form { display:none; }
+  .form.active { display:block; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="eyebrow">Greywright Publishing House</div>
+  <h1>Client Portal</h1>
+  <p class="sub">Sign in to view your project and manage payments.</p>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="signin">Sign In</div>
+    <div class="tab" data-tab="signup">Create Account</div>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <form id="form-signin" class="form active">
+    <label for="si-email">Email</label>
+    <input type="email" id="si-email" required autocomplete="email" />
+    <label for="si-pass">Password</label>
+    <input type="password" id="si-pass" required autocomplete="current-password" />
+    <button type="submit" id="signinBtn">Sign In</button>
+  </form>
+
+  <form id="form-signup" class="form">
+    <label for="su-name">Full Name</label>
+    <input type="text" id="su-name" required autocomplete="name" />
+    <label for="su-email">Email</label>
+    <input type="email" id="su-email" required autocomplete="email" />
+    <label for="su-pass">Password</label>
+    <input type="password" id="su-pass" required minlength="8" autocomplete="new-password" />
+    <button type="submit" id="signupBtn">Create Account</button>
+  </form>
+</div>
+
+<script>
+  // ── Fill these in from Supabase → Settings → API ──────────────────────────
+  const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_PUBLIC_KEY';
+  // ────────────────────────────────────────────────────────────────────────
+
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const statusEl = document.getElementById('status');
+  function showStatus(msg, type) {
+    statusEl.textContent = msg;
+    statusEl.className = 'status ' + type;
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('form-' + tab.dataset.tab).classList.add('active');
+      statusEl.className = 'status';
+    });
+  });
+
+  document.getElementById('form-signin').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('signinBtn');
+    btn.disabled = true;
+    const email = document.getElementById('si-email').value.trim();
+    const password = document.getElementById('si-pass').value;
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      showStatus(error.message, 'error');
+      btn.disabled = false;
+      return;
+    }
+    window.location.href = 'dashboard.html';
+  });
+
+  document.getElementById('form-signup').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('signupBtn');
+    btn.disabled = true;
+    const name = document.getElementById('su-name').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const password = document.getElementById('su-pass').value;
+
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      showStatus(error.message, 'error');
+      btn.disabled = false;
+      return;
+    }
+
+    // Link this new auth user to an existing (or new) client record server-side.
+    try {
+      const linkRes = await fetch('/api/link-client', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_id: data.user.id, email, name }),
+      });
+      if (!linkRes.ok) throw new Error('Account created, but linking your project failed. Contact us.');
+    } catch (err) {
+      showStatus(err.message, 'error');
+      btn.disabled = false;
+      return;
+    }
+
+    showStatus('Account created. Check your email to confirm, then sign in.', 'success');
+    btn.disabled = false;
+  });
+</script>
+</body>
+</html>

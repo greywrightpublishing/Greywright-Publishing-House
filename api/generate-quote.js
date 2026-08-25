@@ -48,13 +48,25 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid client email address.' });
   }
 
-  const numAmount = parseFloat(amount);
-  if (isNaN(numAmount) || numAmount < 1000) {
-    return res.status(400).json({ error: 'Amount must be at least ₦1,000 or $1.' });
-  }
-
+  // Currency must be validated BEFORE the amount check below, since the
+  // minimum amount depends on which currency was selected.
   if (!['NGN', 'USD'].includes(currency)) {
     return res.status(400).json({ error: 'Currency must be NGN or USD.' });
+  }
+
+  // FIX: the minimum used to be a flat `numAmount < 1000` regardless of
+  // currency — that rejected every USD quote under $1,000 (e.g. a
+  // perfectly valid $500 quote), even though the real USD minimum should
+  // be $1. Now the minimum matches the selected currency, same as
+  // initialize-quote.js already does elsewhere (100000 kobo / 100 cents).
+  const numAmount = parseFloat(amount);
+  const minAmount = currency === 'NGN' ? 1000 : 1;
+  if (isNaN(numAmount) || numAmount < minAmount) {
+    return res.status(400).json({
+      error: currency === 'NGN'
+        ? 'Amount must be at least ₦1,000.'
+        : 'Amount must be at least $1.'
+    });
   }
 
   const secret = process.env.QUOTE_SECRET;

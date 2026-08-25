@@ -290,9 +290,16 @@ export default async function handler(req, res) {
     }
 
     // ── Success ──────────────────────────────────────────────────────────────
+    // access_code is what lets the frontend open Paystack Inline (a popup
+    // over the site) instead of redirecting to Paystack's hosted page via
+    // authorization_url. Keeping authorization_url too, as a fallback the
+    // frontend can use if the Inline script fails to load for any reason.
     return res.status(200).json({
       authorization_url:
         data.data.authorization_url,
+
+      access_code:
+        data.data.access_code,
 
       reference:
         data.data.reference,

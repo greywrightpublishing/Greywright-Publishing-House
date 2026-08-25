@@ -285,6 +285,7 @@
     .error-card { padding: 32px 22px; }
   }
 </style>
+<script src="https://js.paystack.co/v2/inline.js"></script>
 </head>
 <body>
 
@@ -539,11 +540,43 @@ document.getElementById('payBtn').addEventListener('click', async () => {
 
     const data = await res.json();
 
-    if (!res.ok || !data.authorization_url) {
+    if (!res.ok || !data.access_code) {
       throw new Error(data.error || 'Could not start checkout. Please try again.');
     }
 
-    window.location.href = data.authorization_url;
+    // Paystack Inline opens as a popup over this page — the amount was
+    // already locked in server-side by initialize-quote.js, so this is
+    // just resuming that already-initialized transaction, not starting
+    // a new one with a client-supplied amount.
+    if (typeof PaystackPop === 'undefined') {
+      // Inline script failed to load (e.g. blocked, offline) — fall back
+      // to the redirect flow rather than leaving the person stuck.
+      if (data.authorization_url) {
+        window.location.href = data.authorization_url;
+        return;
+      }
+      throw new Error('Checkout could not load. Please refresh and try again.');
+    }
+
+    clearStatus();
+    btn.disabled = false;
+
+    const paystackPop = new PaystackPop();
+    paystackPop.resumeTransaction(data.access_code, {
+      onSuccess: (transaction) => {
+        // Stay on-site: send them to your own confirmation page, which
+        // already verifies the reference server-side via verify-payment.js —
+        // never trust the popup's own "success" callback alone.
+        window.location.href = `/book-confirmed.html?reference=${encodeURIComponent(transaction.reference)}`;
+      },
+      onCancel: () => {
+        showStatus('info', 'Checkout closed. You can try again whenever you\u2019re ready.');
+      },
+      onError: (error) => {
+        console.error('[quote-checkout] Paystack Inline error:', error);
+        showStatus('error', 'Something went wrong during checkout. Please try again or email us.');
+      }
+    });
 
   } catch (err) {
     btn.disabled = false;

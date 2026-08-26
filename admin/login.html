@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Admin | Greywright Publishing House</title>
+<title>Admin Sign In | Greywright</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" type="image/png" sizes="32x32" href="../images/img-01.png" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,195 +12,41 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
-    --paper: #F4EEDF; --paper-deep: #EAE0C5; --ink: #1B1814; --ink-soft: #564E42;
-    --ink-faint: #8C8270; --oxblood: #6E1B26; --oxblood-deep: #4F1219;
-    --brass: #9C7B2E; --line: rgba(27,24,20,0.16); --success: #3C5E45;
+    --paper: #F4EEDF; --ink: #1B1814; --ink-soft: #564E42; --ink-faint: #8C8270;
+    --oxblood: #6E1B26; --brass: #9C7B2E; --line: rgba(27,24,20,0.16); --error: #8C3B2E;
     --display: 'Cormorant Garamond', serif; --body: 'Spectral', Georgia, serif;
-    --maxw: 1180px;
   }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:15.5px; line-height:1.6; }
-  a { color:inherit; text-decoration:none; }
-  h1,h2,h3,h4 { font-family:var(--display); font-weight:600; margin:0; }
-
-  header.site-header{ background:var(--ink); border-bottom:1px solid rgba(244,238,223,0.1); }
-  .nav-row{ display:flex; align-items:center; justify-content:space-between; padding:16px 32px; max-width:var(--maxw); margin:0 auto; }
-  .brandmark{ font-family:var(--display); font-size:19px; font-weight:700; color:var(--paper); }
-  .brandmark em{ font-style:italic; color:var(--brass); }
-  .signout-btn{ background:none; border:1px solid rgba(244,238,223,0.3); color:var(--paper); padding:8px 16px; border-radius:3px; font-family:var(--body); font-size:13px; cursor:pointer; }
-  .signout-btn:hover{ background:rgba(244,238,223,0.1); }
-
-  .wrap{ max-width:var(--maxw); margin:0 auto; padding:32px 24px 80px; }
-
-  .tabs{ display:flex; gap:0; border-bottom:1px solid var(--line); margin-bottom:32px; }
-  .tab{ padding:12px 22px; cursor:pointer; color:var(--ink-faint); font-size:14.5px; border-bottom:2px solid transparent; }
-  .tab.active{ color:var(--oxblood); border-bottom-color:var(--oxblood); }
-  .panel{ display:none; }
-  .panel.active{ display:block; }
-
-  .card{ background:#fff; border:1px solid var(--line); border-radius:4px; padding:28px; margin-bottom:24px; }
-  .card h3{ font-size:19px; margin-bottom:20px; }
-
-  label{ display:block; font-size:12.5px; letter-spacing:0.05em; text-transform:uppercase; color:var(--brass); margin-bottom:6px; }
-  input, select, textarea{
-    width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:3px;
-    font-family:var(--body); font-size:15px; margin-bottom:16px; background:var(--paper-deep);
-  }
-  textarea{ resize:vertical; min-height:80px; }
-  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-  .field-row-3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
-
-  button.primary{
-    background:var(--oxblood); color:var(--paper); border:none; padding:11px 22px;
-    border-radius:3px; font-family:var(--body); font-size:14px; cursor:pointer;
-  }
-  button.primary:hover{ background:var(--oxblood-deep); }
-  button.primary:disabled{ opacity:0.6; cursor:default; }
-  button.ghost{
-    background:none; border:1px solid var(--line); color:var(--ink-soft); padding:8px 16px;
-    border-radius:3px; font-family:var(--body); font-size:13px; cursor:pointer;
-  }
-  button.ghost:hover{ border-color:var(--ink-soft); }
-  button.small-add{ background:var(--paper-deep); border:1px dashed var(--brass); color:var(--brass);
-    padding:8px 14px; border-radius:3px; font-size:13px; cursor:pointer; }
-
-  .status{ font-size:13.5px; padding:10px 14px; border-radius:3px; margin-bottom:18px; display:none; }
-  .status.visible{ display:block; }
-  .status.error{ background:rgba(140,59,46,0.1); color:#8C3B2E; }
-  .status.success{ background:rgba(60,94,69,0.1); color:#3C5E45; }
-
-  .ms-row{ display:grid; grid-template-columns:2fr 1fr auto; gap:12px; align-items:center; margin-bottom:12px; }
-  .ms-remove{ background:none; border:none; color:var(--ink-faint); cursor:pointer; font-size:18px; padding:0 8px; }
-
-  .project-row{
-    border:1px solid var(--line); border-radius:4px; padding:20px 22px; margin-bottom:16px; background:#fff;
-  }
-  .project-row-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
-  .project-row-title{ font-size:18px; font-family:var(--display); }
-  .project-row-meta{ font-size:13px; color:var(--ink-faint); margin-top:2px; }
-  .project-row-stats{ display:flex; gap:20px; font-size:13px; color:var(--ink-soft); }
-  .project-row-stats b{ color:var(--ink); }
-  .status-select{ margin-bottom:0; width:auto; padding:6px 10px; font-size:13px; }
-
-  .ms-admin-row{ display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-top:1px solid var(--line); font-size:14px; }
-  .ms-admin-row:first-of-type{ border-top:none; }
-  .badge{ font-size:11px; letter-spacing:0.05em; text-transform:uppercase; padding:3px 10px; border-radius:10px; }
-  .badge.paid{ background:rgba(60,94,69,0.12); color:var(--success); }
-  .badge.pending{ background:rgba(156,123,46,0.12); color:var(--brass); }
-
-  details{ margin-top:14px; }
-  summary{ cursor:pointer; font-size:13.5px; color:var(--oxblood); }
-  .update-form{ display:flex; gap:10px; margin-top:14px; }
-  .update-form textarea{ margin-bottom:0; flex:1; min-height:44px; }
-
-  #loading{ text-align:center; padding:60px 0; color:var(--ink-soft); }
+  body { margin:0; background:var(--ink); color:var(--paper); font-family:var(--body);
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .card { max-width:400px; width:100%; background:#25201a; border:1px solid rgba(244,238,223,0.12);
+    border-radius:4px; padding:40px 36px; }
+  h1 { font-family:var(--display); font-size:26px; margin:0 0 4px; color:var(--paper); }
+  .eyebrow { font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--brass); margin-bottom:20px; }
+  label { display:block; font-size:13px; color:rgba(244,238,223,0.6); margin-bottom:6px; }
+  input { width:100%; padding:11px 12px; border:1px solid rgba(244,238,223,0.2); border-radius:3px;
+    font-family:var(--body); font-size:15px; margin-bottom:16px; background:rgba(244,238,223,0.05); color:var(--paper); }
+  button { width:100%; padding:13px; background:var(--oxblood); color:var(--paper);
+    border:none; border-radius:3px; font-family:var(--body); font-size:15px; cursor:pointer; }
+  button:disabled { opacity:0.6; }
+  .status { font-size:13px; padding:10px 12px; border-radius:3px; margin-bottom:16px; display:none; background:rgba(140,59,46,0.2); color:#e0a89f; }
+  .status.visible { display:block; }
+  .back { display:block; text-align:center; margin-top:20px; font-size:13px; color:rgba(244,238,223,0.4); text-decoration:none; }
 </style>
 </head>
 <body>
-
-<header class="site-header">
-  <div class="nav-row">
-    <a href="../index.html#top" class="brandmark">Greywright <em>Admin</em></a>
-    <button class="signout-btn" id="signOutBtn">Sign Out</button>
-  </div>
-</header>
-
-<div id="loading">Checking access…</div>
-
-<div class="wrap" id="adminWrap" style="display:none;">
-
-  <div class="tabs">
-    <div class="tab active" data-panel="clients">Clients</div>
-    <div class="tab" data-panel="new-project">New Project</div>
-    <div class="tab" data-panel="projects">Projects &amp; Payments</div>
-  </div>
-
-  <!-- ── CLIENTS ─────────────────────────────────────────────────── -->
-  <div class="panel active" id="panel-clients">
-    <div class="card">
-      <h3>Add a Client</h3>
-      <div id="clientStatus" class="status"></div>
-      <form id="clientForm">
-        <div class="field-row">
-          <div>
-            <label for="c-name">Full Name</label>
-            <input type="text" id="c-name" required />
-          </div>
-          <div>
-            <label for="c-email">Email</label>
-            <input type="email" id="c-email" required />
-          </div>
-        </div>
-        <label for="c-phone">Phone <span style="text-transform:none;color:var(--ink-faint);">(optional)</span></label>
-        <input type="text" id="c-phone" />
-        <button type="submit" class="primary" id="clientBtn">Add Client</button>
-      </form>
-    </div>
-
-    <div class="card">
-      <h3>All Clients</h3>
-      <div id="clientsList"></div>
-    </div>
-  </div>
-
-  <!-- ── NEW PROJECT ─────────────────────────────────────────────── -->
-  <div class="panel" id="panel-new-project">
-    <div class="card">
-      <h3>Create a Project</h3>
-      <div id="projectStatus" class="status"></div>
-      <form id="projectForm">
-        <label for="p-client">Client</label>
-        <select id="p-client" required></select>
-
-        <label for="p-title">Project Title</label>
-        <input type="text" id="p-title" required />
-
-        <div class="field-row-3">
-          <div>
-            <label for="p-service">Service Type</label>
-            <select id="p-service">
-              <option>Developmental Editing</option>
-              <option>Line Editing</option>
-              <option>Copyediting</option>
-              <option>Proofreading</option>
-              <option>Academic Editing</option>
-              <option>Ghostwriting</option>
-              <option>Publishing Consultation</option>
-              <option>KDP Publishing Support</option>
-              <option>Other</option>
-            </select>
-          </div>
-          <div>
-            <label for="p-words">Word Count</label>
-            <input type="number" id="p-words" min="0" />
-          </div>
-          <div>
-            <label for="p-currency">Currency</label>
-            <select id="p-currency">
-              <option value="USD">USD</option>
-              <option value="NGN">NGN</option>
-            </select>
-          </div>
-        </div>
-
-        <label>Milestones</label>
-        <div id="milestonesBuilder"></div>
-        <button type="button" class="small-add" id="addMilestoneBtn">+ Add Milestone</button>
-
-        <p style="margin-top:20px; font-size:14px; color:var(--ink-soft);">
-          Total: <strong id="milestonesTotal">$0.00</strong>
-        </p>
-
-        <button type="submit" class="primary" id="projectBtn" style="margin-top:8px;">Create Project</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ── PROJECTS & PAYMENTS ─────────────────────────────────────── -->
-  <div class="panel" id="panel-projects">
-    <div id="projectsListWrap"></div>
-  </div>
-
+<div class="card">
+  <div class="eyebrow">Greywright Publishing House</div>
+  <h1>Admin Sign In</h1>
+  <div id="status" class="status"></div>
+  <form id="loginForm">
+    <label for="email">Email</label>
+    <input type="email" id="email" required autocomplete="email" />
+    <label for="pass">Password</label>
+    <input type="password" id="pass" required autocomplete="current-password" />
+    <button type="submit" id="loginBtn">Sign In</button>
+  </form>
+  <a href="../index.html" class="back">← Back to main site</a>
 </div>
 
 <script>
@@ -208,338 +54,41 @@
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  const CURRENCY_SYMBOLS = { USD: '$', NGN: '₦' };
-  function formatMoney(cents, currency) {
-    const symbol = CURRENCY_SYMBOLS[currency] || currency + ' ';
-    return symbol + (cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  }
-  function toCents(dollarsOrNaira) {
-    return Math.round(parseFloat(dollarsOrNaira || 0) * 100);
-  }
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str || '';
-    return div.innerHTML;
-  }
-  function showStatus(elId, msg, type) {
-    const el = document.getElementById(elId);
-    el.textContent = msg;
-    el.className = `status visible ${type}`;
+  const statusEl = document.getElementById('status');
+  function showStatus(msg) {
+    statusEl.textContent = msg;
+    statusEl.className = 'status visible';
   }
 
-  // ── Access check ──────────────────────────────────────────────────
-  (async function checkAccess() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { window.location.href = 'login.html'; return; }
-
-    const { data: profile } = await supabase
-      .from('profiles').select('role').eq('id', session.user.id).maybeSingle();
-
-    if (!profile || profile.role !== 'admin') {
-      window.location.href = 'login.html';
-      return;
-    }
-
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('adminWrap').style.display = 'block';
-    loadClients();
-    loadProjects();
-  })();
-
-  document.getElementById('signOutBtn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    window.location.href = 'login.html';
-  });
-
-  // ── Tabs ──────────────────────────────────────────────────────────
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
-    });
-  });
-
-  // ── Add Client ────────────────────────────────────────────────────
-  document.getElementById('clientForm').addEventListener('submit', async (e) => {
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = document.getElementById('clientBtn');
+    const btn = document.getElementById('loginBtn');
     btn.disabled = true;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('pass').value;
 
-    const name = document.getElementById('c-name').value.trim();
-    const email = document.getElementById('c-email').value.trim().toLowerCase();
-    const phone = document.getElementById('c-phone').value.trim();
-
-    const { error } = await supabase.from('clients').insert({ name, email, phone: phone || null });
-
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      showStatus('clientStatus', error.message, 'error');
-    } else {
-      showStatus('clientStatus', `${name} added.`, 'success');
-      document.getElementById('clientForm').reset();
-      loadClients();
-    }
-    btn.disabled = false;
-  });
-
-  async function loadClients() {
-    const { data: clients } = await supabase
-      .from('clients')
-      .select('id, name, email, phone, profile_id, created_at')
-      .order('created_at', { ascending: false });
-
-    const listEl = document.getElementById('clientsList');
-    const selectEl = document.getElementById('p-client');
-
-    if (!clients || clients.length === 0) {
-      listEl.innerHTML = '<p style="color:var(--ink-faint);">No clients yet.</p>';
-      selectEl.innerHTML = '<option value="">No clients yet — add one first</option>';
-      return;
-    }
-
-    listEl.innerHTML = clients.map(c => `
-      <div style="display:flex; justify-content:space-between; padding:10px 0; border-top:1px solid var(--line);">
-        <div>
-          <strong>${escapeHtml(c.name)}</strong>
-          <div style="font-size:13px; color:var(--ink-faint);">${escapeHtml(c.email)}${c.phone ? ' · ' + escapeHtml(c.phone) : ''}</div>
-        </div>
-        <div style="font-size:12px; color:var(--ink-faint);">${c.profile_id ? 'Account linked' : 'No account yet'}</div>
-      </div>
-    `).join('');
-
-    selectEl.innerHTML = clients.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.email)})</option>`).join('');
-  }
-
-  // ── Milestones builder ───────────────────────────────────────────
-  let milestoneRowCount = 0;
-  function addMilestoneRow(name = '', amount = '') {
-    milestoneRowCount++;
-    const id = 'ms-' + milestoneRowCount;
-    const row = document.createElement('div');
-    row.className = 'ms-row';
-    row.dataset.id = id;
-    row.innerHTML = `
-      <input type="text" placeholder="Milestone name (e.g. Project Commencement)" class="ms-name" value="${escapeHtml(name)}" />
-      <input type="number" placeholder="Amount" min="0" step="0.01" class="ms-amount" value="${amount}" />
-      <button type="button" class="ms-remove" title="Remove">×</button>
-    `;
-    row.querySelector('.ms-remove').addEventListener('click', () => { row.remove(); updateMilestonesTotal(); });
-    row.querySelector('.ms-amount').addEventListener('input', updateMilestonesTotal);
-    document.getElementById('milestonesBuilder').appendChild(row);
-    updateMilestonesTotal();
-  }
-
-  function updateMilestonesTotal() {
-    const currency = document.getElementById('p-currency').value;
-    let total = 0;
-    document.querySelectorAll('.ms-amount').forEach(input => { total += parseFloat(input.value || 0); });
-    document.getElementById('milestonesTotal').textContent = formatMoney(Math.round(total * 100), currency);
-  }
-  document.getElementById('p-currency').addEventListener('change', updateMilestonesTotal);
-  document.getElementById('addMilestoneBtn').addEventListener('click', () => addMilestoneRow());
-  addMilestoneRow('Project Commencement', '');
-  addMilestoneRow('Final Delivery', '');
-
-  // ── Create Project ────────────────────────────────────────────────
-  document.getElementById('projectForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('projectBtn');
-    btn.disabled = true;
-
-    const clientId = document.getElementById('p-client').value;
-    const title = document.getElementById('p-title').value.trim();
-    const service = document.getElementById('p-service').value;
-    const words = parseInt(document.getElementById('p-words').value, 10) || null;
-    const currency = document.getElementById('p-currency').value;
-
-    const msRows = Array.from(document.querySelectorAll('.ms-row')).map((row, i) => ({
-      name: row.querySelector('.ms-name').value.trim(),
-      amount: toCents(row.querySelector('.ms-amount').value),
-      order_index: i + 1,
-    })).filter(m => m.name && m.amount > 0);
-
-    if (!clientId) { showStatus('projectStatus', 'Please select a client.', 'error'); btn.disabled = false; return; }
-    if (!title) { showStatus('projectStatus', 'Please enter a project title.', 'error'); btn.disabled = false; return; }
-    if (msRows.length === 0) { showStatus('projectStatus', 'Add at least one milestone with a name and amount.', 'error'); btn.disabled = false; return; }
-
-    const totalPrice = msRows.reduce((sum, m) => sum + m.amount, 0);
-
-    const { data: project, error: projErr } = await supabase
-      .from('projects')
-      .insert({
-        client_id: clientId, title, service_type: service, word_count: words,
-        total_price: totalPrice, quote_currency: currency, status: 'in_progress',
-      })
-      .select('id')
-      .single();
-
-    if (projErr) {
-      showStatus('projectStatus', projErr.message, 'error');
+      showStatus(error.message);
       btn.disabled = false;
       return;
     }
 
-    const { error: msErr } = await supabase.from('milestones').insert(
-      msRows.map(m => ({ ...m, project_id: project.id }))
-    );
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .maybeSingle();
 
-    if (msErr) {
-      showStatus('projectStatus', 'Project created, but milestones failed: ' + msErr.message, 'error');
-    } else {
-      showStatus('projectStatus', `"${title}" created with ${msRows.length} milestone(s).`, 'success');
-      document.getElementById('projectForm').reset();
-      document.getElementById('milestonesBuilder').innerHTML = '';
-      addMilestoneRow('Project Commencement', '');
-      addMilestoneRow('Final Delivery', '');
-      loadProjects();
+    if (!profile || profile.role !== 'admin') {
+      showStatus('This account does not have admin access.');
+      await supabase.auth.signOut();
+      btn.disabled = false;
+      return;
     }
-    btn.disabled = false;
+
+    window.location.href = 'dashboard.html';
   });
-
-  // ── Projects & Payments list ──────────────────────────────────────
-  async function loadProjects() {
-    const wrap = document.getElementById('projectsListWrap');
-    wrap.innerHTML = '<p style="color:var(--ink-faint);">Loading…</p>';
-
-    const { data: projects, error } = await supabase
-      .from('projects')
-      .select('id, title, service_type, word_count, total_price, amount_paid, quote_currency, status, clients(name, email), milestones(id, name, amount, order_index, status)')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      wrap.innerHTML = `<p style="color:#8C3B2E;">${escapeHtml(error.message)}</p>`;
-      return;
-    }
-    if (!projects || projects.length === 0) {
-      wrap.innerHTML = '<p style="color:var(--ink-faint);">No projects yet — create one in the "New Project" tab.</p>';
-      return;
-    }
-
-    wrap.innerHTML = projects.map(p => {
-      const balance = p.total_price - p.amount_paid;
-      const milestones = (p.milestones || []).sort((a, b) => a.order_index - b.order_index);
-
-      return `
-        <div class="project-row" data-project-id="${p.id}">
-          <div class="project-row-head">
-            <div>
-              <div class="project-row-title">${escapeHtml(p.title)}</div>
-              <div class="project-row-meta">${escapeHtml(p.clients?.name || 'Unknown client')} · ${escapeHtml(p.service_type || '')}${p.word_count ? ' · ' + p.word_count.toLocaleString() + ' words' : ''}</div>
-            </div>
-            <div class="project-row-stats">
-              <div>Total <b>${formatMoney(p.total_price, p.quote_currency)}</b></div>
-              <div>Paid <b>${formatMoney(p.amount_paid, p.quote_currency)}</b></div>
-              <div>Balance <b>${formatMoney(balance, p.quote_currency)}</b></div>
-              <select class="status-select" data-project-id="${p.id}">
-                <option value="in_progress" ${p.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
-                <option value="review" ${p.status === 'review' ? 'selected' : ''}>Review</option>
-                <option value="completed" ${p.status === 'completed' ? 'selected' : ''}>Completed</option>
-                <option value="cancelled" ${p.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="ms-list" style="margin-top:16px;">
-            ${milestones.map(ms => `
-              <div class="ms-admin-row">
-                <span>${escapeHtml(ms.name)} — ${formatMoney(ms.amount, p.quote_currency)}</span>
-                ${ms.status === 'paid'
-                  ? `<span class="badge paid">Paid</span>`
-                  : `<button class="ghost mark-paid-btn" data-milestone-id="${ms.id}" data-project-id="${p.id}" data-amount="${ms.amount}">Mark Paid Manually</button>`
-                }
-              </div>
-            `).join('')}
-          </div>
-
-          <details>
-            <summary>Post a project update</summary>
-            <div class="update-form">
-              <textarea placeholder="e.g. First round of edits complete, sending for your review." class="update-message"></textarea>
-              <button class="primary post-update-btn" data-project-id="${p.id}">Post</button>
-            </div>
-          </details>
-        </div>
-      `;
-    }).join('');
-
-    // Wire up status selects
-    wrap.querySelectorAll('.status-select').forEach(sel => {
-      sel.addEventListener('change', async () => {
-        const projectId = sel.dataset.projectId;
-        const { error } = await supabase.from('projects').update({ status: sel.value }).eq('id', projectId);
-        if (error) alert('Could not update status: ' + error.message);
-      });
-    });
-
-    // Wire up manual "Mark Paid" buttons
-    wrap.querySelectorAll('.mark-paid-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        if (!confirm('Mark this milestone as paid? This should only be used for payments received outside Paystack (e.g. bank transfer). This cannot be easily undone.')) return;
-
-        btn.disabled = true;
-        const milestoneId = btn.dataset.milestoneId;
-        const projectId = btn.dataset.projectId;
-        const amount = parseInt(btn.dataset.amount, 10);
-
-        const { data: project } = await supabase
-          .from('projects').select('amount_paid, total_price, quote_currency').eq('id', projectId).single();
-
-        const { error: msErr } = await supabase
-          .from('milestones')
-          .update({ status: 'paid', paid_at: new Date().toISOString() })
-          .eq('id', milestoneId);
-
-        const { error: payErr } = await supabase.from('payments').insert({
-          milestone_id: milestoneId, project_id: projectId,
-          reference: 'MANUAL-' + Date.now(),
-          amount, status: 'successful',
-          quoted_currency: project?.quote_currency || 'NGN',
-          quoted_amount: amount,
-          ngn_amount: project?.quote_currency === 'NGN' ? amount : null,
-          exchange_rate_provider: 'manual',
-        });
-
-        const newAmountPaid = (project?.amount_paid || 0) + amount;
-        const { error: projErr } = await supabase
-          .from('projects')
-          .update({
-            amount_paid: newAmountPaid,
-            status: newAmountPaid >= (project?.total_price || 0) ? 'review' : 'in_progress',
-          })
-          .eq('id', projectId);
-
-        if (msErr || payErr || projErr) {
-          alert('Something went wrong recording this payment: ' + (msErr || payErr || projErr).message);
-          btn.disabled = false;
-        } else {
-          loadProjects();
-        }
-      });
-    });
-
-    // Wire up "Post update" buttons
-    wrap.querySelectorAll('.post-update-btn').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        const projectId = btn.dataset.projectId;
-        const textarea = btn.closest('.update-form').querySelector('.update-message');
-        const message = textarea.value.trim();
-        if (!message) return;
-
-        btn.disabled = true;
-        const { error } = await supabase.from('project_updates').insert({ project_id: projectId, message });
-        btn.disabled = false;
-
-        if (error) {
-          alert('Could not post update: ' + error.message);
-        } else {
-          textarea.value = '';
-          alert('Update posted — the client will see it on their dashboard.');
-        }
-      });
-    });
-  }
 </script>
-
 </body>
 </html>

@@ -17,7 +17,7 @@
     --ink-faint: #8C8270; --oxblood: #6E1B26; --oxblood-deep: #4F1219;
     --brass: #9C7B2E; --line: rgba(27,24,20,0.16); --success: #3C5E45;
     --display: 'Cormorant Garamond', serif; --body: 'Spectral', Georgia, serif;
-    --maxw: 860px;
+    --maxw: 1180px; --contentw: 860px;
   }
   * { box-sizing: border-box; }
   body {
@@ -27,20 +27,34 @@
   a { color: inherit; text-decoration: none; }
   h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; margin: 0; }
 
-  header {
-    background: var(--ink); padding: 18px 32px; display: flex;
-    align-items: center; justify-content: space-between;
-  }
-  .brandmark { font-family: var(--display); font-size: 20px; color: var(--paper); font-weight: 700; }
-  .brandmark em { font-style: italic; color: var(--brass); }
+  /* ── NAV (matches site-wide header, dark variant) ───────────────── */
+  header.site-header{ position: sticky; top: 0; z-index: 100; background: var(--ink); border-bottom: 1px solid rgba(244,238,223,0.1); }
+  .nav-row{ display:flex; align-items:center; justify-content: space-between; padding: 16px 32px; max-width: var(--maxw); margin: 0 auto; gap: 12px; }
+  .brandmark{ font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--paper); display:flex; align-items:baseline; gap: 8px; white-space: nowrap; flex: 0 0 auto; }
+  .brandmark em{ font-style: italic; color: var(--brass); font-weight: 600; }
+  nav.main-links{ display:flex; gap: 20px; align-items:center; }
+  nav.main-links a{ font-size: 13.5px; letter-spacing: 0.03em; color: rgba(244,238,223,0.75); position: relative; padding-bottom: 4px; white-space: nowrap; }
+  nav.main-links a::after{ content:""; position:absolute; left:0; right:0; bottom:0; height: 1px; background: var(--brass); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+  nav.main-links a:hover::after{ transform: scaleX(1); }
+  .nav-cta{ display:flex; gap:14px; align-items:center; flex: 0 0 auto; }
+  .menu-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; filter:invert(1); }
+  .menu-toggle span{ display:block; width:24px; height:1.5px; background: var(--ink); margin: 5px 0; }
   .signout-btn {
     background: none; border: 1px solid rgba(244,238,223,0.3); color: var(--paper);
     padding: 8px 16px; border-radius: 3px; font-family: var(--body); font-size: 13px;
     cursor: pointer;
   }
   .signout-btn:hover { background: rgba(244,238,223,0.1); }
+  @media (max-width: 1650px){
+    .nav-row{ padding-left: 22px; padding-right: 22px; gap: 12px; }
+    nav.main-links{ display:none; position:absolute; top: 100%; left:0; right:0; background: var(--paper); border-bottom: 1px solid var(--line); flex-direction:column; gap:0; padding: 10px 22px 18px; }
+    nav.main-links.open{ display:flex; }
+    nav.main-links a{ padding: 12px 0; border-bottom: 1px solid var(--line); width:100%; white-space: normal; color: var(--ink-soft); }
+    .menu-toggle{ display:block; flex: 0 0 auto; }
+  }
+  @media (max-width: 400px){ .brandmark{ font-size: 17px; } }
 
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 40px 24px 80px; }
+  .wrap { max-width: var(--contentw); margin: 0 auto; padding: 40px 24px 80px; }
 
   #loading, #no-projects { text-align: center; padding: 80px 0; color: var(--ink-soft); }
   #no-projects { display: none; }
@@ -119,13 +133,36 @@
   }
   .toast.error { background: var(--oxblood); }
   .toast.visible { display: block; }
+
+  /* ── FOOTER ──────────────────────────────────────────────────────── */
+  footer{ background: var(--ink); color: rgba(244,238,223,0.78); padding: 40px 0; border-top: 1px solid rgba(244,238,223,0.12); }
+  .footer-bottom{ display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(244,238,223,0.5); flex-wrap: wrap; gap: 10px; max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 </style>
 </head>
 <body>
 
-<header>
-  <a href="../index.html" class="brandmark">Greywright <em>Client Portal</em></a>
-  <button class="signout-btn" id="signOutBtn">Sign Out</button>
+<header class="site-header">
+  <div class="nav-row">
+    <a href="../index.html#top" class="brandmark">Greywright <em>Client Portal</em></a>
+    <nav class="main-links" id="mainNav">
+      <a href="../index.html#services">Services</a>
+      <a href="../index.html#quote-calculator">Get an Estimate</a>
+      <a href="../index.html#process">Process</a>
+      <a href="../index.html#why">Why Greywright</a>
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#works">Selected Works</a>
+      <a href="../verify.html">Verify a Certificate</a>
+      <a href="../index.html#contact">Contact</a>
+      <a href="../submit.html">Submit Manuscript</a>
+      <a href="../retrieve-booking.html">Retrieve Booking</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <button class="signout-btn" id="signOutBtn">Sign Out</button>
+    </div>
+  </div>
 </header>
 
 <div class="wrap">
@@ -136,6 +173,13 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<footer>
+  <div class="footer-bottom">
+    <span>© 2026 Greywright Publishing House Limited. All rights reserved.</span>
+    <span>Crafted in Abuja, Nigeria.</span>
+  </div>
+</footer>
 
 <script>
   const SUPABASE_URL = 'https://dusfpsafuhopdiyjrhyh.supabase.co';
@@ -354,8 +398,6 @@
     }
   }
 
-  // Webhook confirmation usually lands within a couple seconds — poll briefly
-  // then refresh the page data rather than trusting the popup's own callback.
   async function waitForConfirmation() {
     for (let i = 0; i < 6; i++) {
       await new Promise(r => setTimeout(r, 1500));
@@ -370,6 +412,18 @@
   }
 
   loadDashboard();
+</script>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const mainNav = document.getElementById('mainNav');
+  menuToggle.addEventListener('click', () => {
+    const open = mainNav.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mainNav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => { mainNav.classList.remove('open'); menuToggle.setAttribute('aria-expanded','false'); });
+  });
 </script>
 
 </body>

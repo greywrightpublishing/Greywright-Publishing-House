@@ -16,10 +16,35 @@
     --oxblood: #6E1B26; --brass: #9C7B2E; --line: rgba(27,24,20,0.16);
     --success: #3C5E45; --error: #8C3B2E;
     --display: 'Cormorant Garamond', serif; --body: 'Spectral', Georgia, serif;
+    --maxw: 1180px;
   }
   * { box-sizing: border-box; }
-  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body);
-    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); min-height:100vh; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── NAV (matches site-wide header) ─────────────────────────────── */
+  header.site-header{ position: sticky; top: 0; z-index: 100; background: rgba(244,238,223,0.92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+  .nav-row{ display:flex; align-items:center; justify-content: space-between; padding: 18px 32px; max-width: var(--maxw); margin: 0 auto; gap: 12px; }
+  .brandmark{ font-family: var(--display); font-size: 22px; font-weight: 700; letter-spacing: 0.01em; display:flex; align-items:baseline; gap: 8px; white-space: nowrap; flex: 0 0 auto; }
+  .brandmark em{ font-style: italic; color: var(--oxblood); font-weight: 600; }
+  nav.main-links{ display:flex; gap: 22px; align-items:center; }
+  nav.main-links a{ font-size: 14px; letter-spacing: 0.03em; color: var(--ink-soft); position: relative; padding-bottom: 4px; white-space: nowrap; }
+  nav.main-links a::after{ content:""; position:absolute; left:0; right:0; bottom:0; height: 1px; background: var(--oxblood); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+  nav.main-links a:hover::after{ transform: scaleX(1); }
+  .nav-cta{ display:flex; gap:14px; align-items:center; flex: 0 0 auto; }
+  .menu-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; }
+  .menu-toggle span{ display:block; width:24px; height:1.5px; background: var(--ink); margin: 5px 0; }
+  @media (max-width: 1650px){
+    .nav-row{ padding-left: 22px; padding-right: 22px; gap: 12px; }
+    nav.main-links{ display:none; position:absolute; top: 100%; left:0; right:0; background: var(--paper); border-bottom: 1px solid var(--line); flex-direction:column; gap:0; padding: 10px 22px 18px; }
+    nav.main-links.open{ display:flex; }
+    nav.main-links a{ padding: 12px 0; border-bottom: 1px solid var(--line); width:100%; white-space: normal; }
+    .menu-toggle{ display:block; flex: 0 0 auto; }
+  }
+  @media (max-width: 400px){ .brandmark{ font-size: 18px; } }
+
+  /* ── SIGN-IN CARD ──────────────────────────────────────────────── */
+  .page-wrap{ display:flex; align-items:center; justify-content:center; padding: 48px 24px; min-height: calc(100vh - 76px); }
   .card { max-width:420px; width:100%; background:#fff; border:1px solid var(--line);
     border-radius:4px; padding:40px 36px; }
   h1 { font-family:var(--display); font-size:28px; margin:0 0 4px; }
@@ -33,18 +58,47 @@
   label { display:block; font-size:13px; color:var(--ink-soft); margin-bottom:6px; }
   input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:3px;
     font-family:var(--body); font-size:15px; margin-bottom:16px; }
-  button { width:100%; padding:13px; background:var(--oxblood); color:var(--paper);
+  button.submit-btn { width:100%; padding:13px; background:var(--oxblood); color:var(--paper);
     border:none; border-radius:3px; font-family:var(--body); font-size:15px;
     cursor:pointer; letter-spacing:0.02em; }
-  button:disabled { opacity:0.6; cursor:default; }
+  button.submit-btn:disabled { opacity:0.6; cursor:default; }
   .status { font-size:13px; padding:10px 12px; border-radius:3px; margin-bottom:16px; display:none; }
   .status.error { display:block; background:rgba(140,59,46,0.1); color:var(--error); }
   .status.success { display:block; background:rgba(60,94,69,0.1); color:var(--success); }
   .form { display:none; }
   .form.active { display:block; }
+
+  /* ── FOOTER ──────────────────────────────────────────────────────── */
+  footer{ background: var(--ink); color: rgba(244,238,223,0.78); padding: 40px 0; border-top: 1px solid rgba(244,238,223,0.12); }
+  .footer-bottom{ display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(244,238,223,0.5); flex-wrap: wrap; gap: 10px; max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 </style>
 </head>
 <body>
+
+<header class="site-header">
+  <div class="nav-row">
+    <a href="../index.html#top" class="brandmark">Greywright <em>Publishing House</em></a>
+    <nav class="main-links" id="mainNav">
+      <a href="../index.html#services">Services</a>
+      <a href="../index.html#quote-calculator">Get an Estimate</a>
+      <a href="../index.html#process">Process</a>
+      <a href="../index.html#why">Why Greywright</a>
+      <a href="../index.html#about">About</a>
+      <a href="../index.html#works">Selected Works</a>
+      <a href="../verify.html">Verify a Certificate</a>
+      <a href="../index.html#contact">Contact</a>
+      <a href="../submit.html">Submit Manuscript</a>
+      <a href="../retrieve-booking.html">Retrieve Booking</a>
+    </nav>
+    <div class="nav-cta">
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
 <div class="card">
   <div class="eyebrow">Greywright Publishing House</div>
   <h1>Client Portal</h1>
@@ -62,7 +116,7 @@
     <input type="email" id="si-email" required autocomplete="email" />
     <label for="si-pass">Password</label>
     <input type="password" id="si-pass" required autocomplete="current-password" />
-    <button type="submit" id="signinBtn">Sign In</button>
+    <button type="submit" class="submit-btn" id="signinBtn">Sign In</button>
   </form>
 
   <form id="form-signup" class="form">
@@ -72,15 +126,21 @@
     <input type="email" id="su-email" required autocomplete="email" />
     <label for="su-pass">Password</label>
     <input type="password" id="su-pass" required minlength="8" autocomplete="new-password" />
-    <button type="submit" id="signupBtn">Create Account</button>
+    <button type="submit" class="submit-btn" id="signupBtn">Create Account</button>
   </form>
 </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <span>© 2026 Greywright Publishing House Limited. All rights reserved.</span>
+    <span>Crafted in Abuja, Nigeria.</span>
+  </div>
+</footer>
 
 <script>
-  // ── Fill these in from Supabase → Settings → API ──────────────────────────
-const SUPABASE_URL = 'https://dusfpsafuhopdiyjrhyh.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
-  // ────────────────────────────────────────────────────────────────────────
+  const SUPABASE_URL = 'https://dusfpsafuhopdiyjrhyh.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
   const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -131,7 +191,6 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
       return;
     }
 
-    // Link this new auth user to an existing (or new) client record server-side.
     try {
       const linkRes = await fetch('/api/link-client', {
         method: 'POST',
@@ -149,5 +208,18 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
     btn.disabled = false;
   });
 </script>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const mainNav = document.getElementById('mainNav');
+  menuToggle.addEventListener('click', () => {
+    const open = mainNav.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  mainNav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => { mainNav.classList.remove('open'); menuToggle.setAttribute('aria-expanded','false'); });
+  });
+</script>
+
 </body>
 </html>

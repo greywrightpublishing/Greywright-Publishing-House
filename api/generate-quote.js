@@ -1,6 +1,6 @@
 // api/generate-quote.js
 // ─────────────────────────────────────────────────────────────────────────────
-// Called by admin/index.html to generate a signed, tamper-proof token
+// Called by admin/dashboard.html to generate a signed, tamper-proof token
 // that encodes the quote details. The token is appended to quote-checkout.html
 // as a URL parameter. quote-checkout.html sends the token to initialize-quote.js
 // which verifies the signature before creating the Paystack transaction.
@@ -9,15 +9,49 @@
 //   - Token is signed with QUOTE_SECRET using HMAC-SHA256
 //   - Amount, currency, service, expiry are all encoded IN the token
 //   - Client cannot change the amount — any tamper breaks the signature
-//   - Admin password is verified server-side before any token is issued
+//   - Caller must be a signed-in Supabase user with profiles.role = 'admin'
+//     (previously this checked a plaintext ADMIN_PASSWORD sent from the
+//     browser — that password lived in client-side JS and was readable via
+//     view-source, so it verified nothing. Now the caller sends a Supabase
+//     access token in the Authorization header, and we verify that token
+//     server-side against the user's real role.)
 //   - Tokens expire after the configured number of days
 // ─────────────────────────────────────────────────────────────────────────────
 
 import crypto from 'crypto';
+import { createClient } from '@supabase/supabase-js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
+
+  // ── Verify the caller is a signed-in admin ─────────────────────────────────
+  const authHeader = req.headers.authorization || '';
+  const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+  if (!accessToken) {
+    return res.status(401).json({ error: 'Missing authorization token.' });
+  }
+
+  const { data: userData, error: userError } = await supabase.auth.getUser(accessToken);
+  if (userError || !userData?.user) {
+    return res.status(401).json({ error: 'Invalid or expired session.' });
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', userData.user.id)
+    .maybeSingle();
+
+  if (profileError || !profile || profile.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin access required.' });
   }
 
   const {
@@ -30,13 +64,7 @@ export default async function handler(req, res) {
     notes,
     expiryDays,
     generatedBy,
-    adminPassword,
   } = req.body || {};
-
-  // ── Verify admin password ──────────────────────────────────────────────────
-  if (adminPassword !== process.env.ADMIN_PASSWORD) {
-    return res.status(401).json({ error: 'Unauthorised.' });
-  }
 
   // ── Validate inputs ────────────────────────────────────────────────────────
   if (!clientName || !clientEmail || !service || !amount || !currency) {
@@ -54,11 +82,6 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Currency must be NGN or USD.' });
   }
 
-  // FIX: the minimum used to be a flat `numAmount < 1000` regardless of
-  // currency — that rejected every USD quote under $1,000 (e.g. a
-  // perfectly valid $500 quote), even though the real USD minimum should
-  // be $1. Now the minimum matches the selected currency, same as
-  // initialize-quote.js already does elsewhere (100000 kobo / 100 cents).
   const numAmount = parseFloat(amount);
   const minAmount = currency === 'NGN' ? 1000 : 1;
   if (isNaN(numAmount) || numAmount < minAmount) {
@@ -106,12 +129,6 @@ export default async function handler(req, res) {
 
   // ── Log to Supabase (quote audit trail) ───────────────────────────────────
   try {
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
-
     await supabase.from('quotes').insert({
       client_name:      payload.clientName,
       client_email:     payload.clientEmail,
@@ -124,6 +141,7 @@ export default async function handler(req, res) {
       issued_at:        new Date(issuedAt).toISOString(),
       expires_at:       expiresAt ? new Date(expiresAt).toISOString() : null,
       token_preview:    token.slice(0, 16) + '…', // never store full token
+      created_by:       userData.user.id,
     });
   } catch (dbErr) {
     // Log failure but don't block — token is still valid

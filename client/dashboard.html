@@ -27,7 +27,6 @@
   a { color: inherit; text-decoration: none; }
   h1, h2, h3, h4 { font-family: var(--display); font-weight: 600; margin: 0; }
 
-  /* ── NAV (matches site-wide header, dark variant) ───────────────── */
   header.site-header{ position: sticky; top: 0; z-index: 100; background: var(--ink); border-bottom: 1px solid rgba(244,238,223,0.1); }
   .nav-row{ display:flex; align-items:center; justify-content: space-between; padding: 16px 32px; max-width: var(--maxw); margin: 0 auto; gap: 12px; }
   .brandmark{ font-family: var(--display); font-size: 20px; font-weight: 700; color: var(--paper); display:flex; align-items:baseline; gap: 8px; white-space: nowrap; flex: 0 0 auto; }
@@ -87,9 +86,9 @@
   }
   .progress-fill { height: 100%; background: var(--oxblood); transition: width 0.4s ease; }
 
-  .milestones-label {
+  .section-label {
     font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--ink-faint); margin-bottom: 14px;
+    color: var(--ink-faint); margin-bottom: 14px; margin-top: 28px;
   }
   .milestone {
     display: flex; align-items: center; justify-content: space-between;
@@ -120,11 +119,40 @@
   .pay-btn:hover:not(:disabled) { background: var(--oxblood-deep); }
   .pay-btn:disabled { opacity: 0.6; cursor: default; }
 
-  .updates-section { margin-top: 28px; }
+  .updates-section { margin-top: 8px; }
   .update-item {
     font-size: 14px; color: var(--ink-soft); padding: 10px 0; border-top: 1px solid var(--line);
   }
   .update-date { font-size: 12px; color: var(--ink-faint); margin-bottom: 2px; }
+
+  .file-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px;
+  }
+  .file-row:first-of-type { border-top: none; }
+  .file-name { font-weight: 600; }
+  .file-meta { font-size: 12px; color: var(--ink-faint); }
+  .file-badge {
+    font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 2px 9px; border-radius: 10px; margin-left: 8px;
+  }
+  .file-badge.deliverable { background: rgba(60,94,69,0.12); color: var(--success); }
+  .file-badge.manuscript { background: rgba(156,123,46,0.12); color: var(--brass); }
+  .download-btn {
+    background: none; border: 1px solid var(--line); color: var(--ink-soft);
+    padding: 6px 14px; border-radius: 3px; font-size: 12.5px; cursor: pointer;
+  }
+  .download-btn:hover { border-color: var(--oxblood); color: var(--oxblood); }
+  .upload-row {
+    display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap;
+  }
+  .upload-row input[type="file"] { font-size: 13px; flex: 1; min-width: 180px; }
+  .upload-btn {
+    background: var(--ink); color: var(--paper); border: none; padding: 8px 16px;
+    border-radius: 3px; font-size: 13px; cursor: pointer;
+  }
+  .upload-btn:disabled { opacity: 0.6; }
+  .no-files { font-size: 13.5px; color: var(--ink-faint); padding: 8px 0; }
 
   .toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
@@ -134,7 +162,6 @@
   .toast.error { background: var(--oxblood); }
   .toast.visible { display: block; }
 
-  /* ── FOOTER ──────────────────────────────────────────────────────── */
   footer{ background: var(--ink); color: rgba(244,238,223,0.78); padding: 40px 0; border-top: 1px solid rgba(244,238,223,0.12); }
   .footer-bottom{ display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(244,238,223,0.5); flex-wrap: wrap; gap: 10px; max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
 </style>
@@ -232,7 +259,7 @@
 
     const { data: projects } = await supabase
       .from('projects')
-      .select('id, title, service_type, word_count, total_price, amount_paid, quote_currency, status, milestones(id, name, amount, order_index, status), project_updates(id, message, created_at)')
+      .select('id, title, service_type, word_count, total_price, amount_paid, quote_currency, status, milestones(id, name, amount, order_index, status), project_updates(id, message, created_at), project_files(id, file_name, storage_path, file_type, uploaded_by, created_at)')
       .eq('client_id', clientRow.id)
       .order('created_at', { ascending: false });
 
@@ -260,6 +287,7 @@
 
       const milestones = (project.milestones || []).sort((a, b) => a.order_index - b.order_index);
       const firstUnpaidIndex = milestones.findIndex(m => m.status !== 'paid');
+      const files = (project.project_files || []).sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
       const card = document.createElement('div');
       card.className = 'project-card';
@@ -290,12 +318,19 @@
 
         <div class="progress-track"><div class="progress-fill" style="width:${pct}%;"></div></div>
 
-        <div class="milestones-label">Milestones</div>
+        <div class="section-label">Milestones</div>
         <div class="milestones-list" data-project-id="${project.id}"></div>
 
+        <div class="section-label">Files</div>
+        <div class="files-list" data-project-id="${project.id}"></div>
+        <div class="upload-row">
+          <input type="file" class="manuscript-file-input" data-project-id="${project.id}" />
+          <button class="upload-btn upload-manuscript-btn" data-project-id="${project.id}">Upload Manuscript</button>
+        </div>
+
         ${project.project_updates && project.project_updates.length > 0 ? `
+          <div class="section-label">Project Updates</div>
           <div class="updates-section">
-            <div class="milestones-label">Project Updates</div>
             ${project.project_updates
               .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
               .map(u => `
@@ -310,6 +345,7 @@
 
       container.appendChild(card);
 
+      // ── Milestones ──────────────────────────────────────────────
       const listEl = card.querySelector('.milestones-list');
       milestones.forEach((ms, i) => {
         const isPaid = ms.status === 'paid';
@@ -344,7 +380,96 @@
 
         listEl.appendChild(row);
       });
+
+      // ── Files ───────────────────────────────────────────────────
+      const filesEl = card.querySelector('.files-list');
+      if (files.length === 0) {
+        filesEl.innerHTML = '<p class="no-files">No files yet.</p>';
+      } else {
+        files.forEach(f => {
+          const row = document.createElement('div');
+          row.className = 'file-row';
+          row.innerHTML = `
+            <div>
+              <span class="file-name">${escapeHtml(f.file_name)}</span>
+              <span class="file-badge ${f.file_type}">${escapeHtml(f.file_type)}</span>
+              <div class="file-meta">${new Date(f.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+            </div>
+          `;
+          const btn = document.createElement('button');
+          btn.className = 'download-btn';
+          btn.textContent = 'Download';
+          btn.addEventListener('click', () => downloadFile(f.storage_path));
+          row.appendChild(btn);
+          filesEl.appendChild(row);
+        });
+      }
     });
+
+    // ── Upload manuscript buttons ─────────────────────────────────
+    container.querySelectorAll('.upload-manuscript-btn').forEach(btn => {
+      btn.addEventListener('click', () => uploadManuscript(btn.dataset.projectId, btn));
+    });
+  }
+
+  async function downloadFile(path) {
+    const { data, error } = await supabase.storage
+      .from('project-files')
+      .createSignedUrl(path, 60 * 5);
+
+    if (error || !data?.signedUrl) {
+      showToast('Could not generate download link.', true);
+      return;
+    }
+    window.open(data.signedUrl, '_blank');
+  }
+
+  async function uploadManuscript(projectId, btn) {
+    const input = document.querySelector(`.manuscript-file-input[data-project-id="${projectId}"]`);
+    const file = input.files[0];
+    if (!file) {
+      showToast('Choose a file first.', true);
+      return;
+    }
+
+    btn.disabled = true;
+    const originalText = btn.textContent;
+    btn.textContent = 'Uploading…';
+
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const storagePath = `${projectId}/manuscript/${Date.now()}_${safeName}`;
+
+    const { error: uploadErr } = await supabase.storage
+      .from('project-files')
+      .upload(storagePath, file);
+
+    if (uploadErr) {
+      showToast(uploadErr.message, true);
+      btn.disabled = false;
+      btn.textContent = originalText;
+      return;
+    }
+
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const { error: dbErr } = await supabase.from('project_files').insert({
+      project_id: projectId,
+      file_name: file.name,
+      storage_path: storagePath,
+      file_type: 'manuscript',
+      uploaded_by: 'client',
+    });
+
+    btn.disabled = false;
+    btn.textContent = originalText;
+    input.value = '';
+
+    if (dbErr) {
+      showToast('Uploaded, but could not record it: ' + dbErr.message, true);
+    } else {
+      showToast('Manuscript uploaded.');
+      loadDashboard();
+    }
   }
 
   async function payMilestone(milestoneId, btn) {

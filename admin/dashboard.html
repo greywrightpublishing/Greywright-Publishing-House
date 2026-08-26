@@ -6,110 +6,473 @@
 <title>Admin Dashboard | Greywright</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" type="image/png" sizes="32x32" href="../images/img-01.png" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
   :root {
-    --paper: #F4EEDF; --paper-deep: #EAE0C5; --ink: #1B1814; --ink-soft: #564E42; --ink-faint: #8C8270;
-    --oxblood: #6E1B26; --oxblood-deep: #4F1219; --brass: #9C7B2E; --line: rgba(27,24,20,0.16);
-    --success: #3C5E45; --error: #8C3B2E;
-    --display: 'Cormorant Garamond', serif; --body: 'Spectral', Georgia, serif;
+    --paper: #F4EEDF;
+    --paper-deep: #EAE0C5;
+    --ink: #1B1814;
+    --ink-soft: #564E42;
+    --ink-faint: #8C8270;
+    --oxblood: #6E1B26;
+    --oxblood-deep: #4F1219;
+    --brass: #9C7B2E;
+    --line: rgba(27,24,20,0.16);
+    --success: #3C5E45;
+    --error: #8C3B2E;
+
+    --display: 'Cormorant Garamond', serif;
+    --body: 'Spectral', Georgia, serif;
   }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.5; }
-  a { color:inherit; }
-  h1,h2,h3 { font-family:var(--display); font-weight:600; margin:0; }
-  em { font-style:italic; color:var(--oxblood); }
 
-  header { background:var(--ink); position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(244,238,223,0.1); }
-  .header-inner { display:flex; align-items:center; justify-content:space-between; height:56px; max-width:1100px; margin:0 auto; padding:0 24px; }
-  .brand { font-family:var(--display); font-size:18px; font-weight:700; color:var(--paper); }
-  .brand em { color:var(--brass); }
-  .logout-btn { font-size:12px; letter-spacing:0.06em; text-transform:uppercase; color:rgba(244,238,223,0.6);
-    background:none; border:1px solid rgba(244,238,223,0.2); padding:6px 14px; cursor:pointer; border-radius:2px; }
-  .logout-btn:hover { color:var(--paper); border-color:rgba(244,238,223,0.5); }
-
-  .wrap { max-width:1100px; margin:0 auto; padding:32px 24px 80px; }
-
-  .tabs { display:flex; gap:0; border-bottom:1px solid var(--line); margin-bottom:32px; overflow-x:auto; }
-  .tab { padding:12px 20px; cursor:pointer; font-size:14px; color:var(--ink-faint); white-space:nowrap;
-    border-bottom:2px solid transparent; }
-  .tab.active { color:var(--oxblood); border-bottom-color:var(--oxblood); }
-
-  .panel { display:none; }
-  .panel.active { display:block; }
-
-  .card { background:var(--paper-deep); border:1px solid var(--line); padding:28px; margin-bottom:24px; }
-  .card h3 { font-size:16px; margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--line); }
-
-  .field { margin-bottom:16px; }
-  .field label { display:block; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--brass);
-    margin-bottom:6px; font-family:var(--display); font-style:italic; font-weight:600; }
-  .field input, .field select, .field textarea {
-    width:100%; font-family:var(--body); font-size:14px; color:var(--ink); background:#fff;
-    border:1px solid var(--line); border-radius:3px; padding:9px 11px; outline:none;
+  * {
+    box-sizing: border-box;
   }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color:var(--oxblood); }
-  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
 
-  .btn { display:inline-flex; align-items:center; gap:8px; font-family:var(--body); font-size:13px;
-    letter-spacing:0.04em; text-transform:uppercase; padding:11px 20px; cursor:pointer; border-radius:2px;
-    background:var(--oxblood); color:var(--paper); border:1px solid var(--oxblood); }
-  .btn:hover:not(:disabled) { background:var(--oxblood-deep); }
-  .btn:disabled { opacity:0.5; cursor:not-allowed; }
-  .btn.secondary { background:transparent; color:var(--oxblood); }
-  .btn.small { padding:6px 12px; font-size:11.5px; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.5;
+  }
 
-  table { width:100%; border-collapse:collapse; font-size:13.5px; }
-  th { text-align:left; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--brass);
-    font-family:var(--display); font-style:italic; padding:0 10px 10px 0; border-bottom:1px solid var(--line); }
-  td { padding:11px 10px 11px 0; border-bottom:1px solid var(--line); color:var(--ink-soft); vertical-align:top; }
-  td:first-child { color:var(--ink); font-weight:500; }
-  .empty { color:var(--ink-faint); font-style:italic; font-size:14px; padding:12px 0; }
+  a {
+    color: inherit;
+  }
 
-  .badge { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; letter-spacing:0.03em; }
-  .badge.pending { background:rgba(156,123,46,0.15); color:var(--brass); }
-  .badge.paid { background:rgba(60,94,69,0.15); color:var(--success); }
-  .badge.in_progress { background:rgba(41,128,185,0.12); color:#1a5276; }
-  .badge.review { background:rgba(156,123,46,0.15); color:var(--brass); }
-  .badge.completed { background:rgba(60,94,69,0.15); color:var(--success); }
-  .badge.cancelled { background:rgba(140,59,46,0.12); color:var(--error); }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--display);
+    font-weight: 600;
+    margin: 0;
+  }
 
-  .status-bar { display:none; padding:11px 16px; border-radius:2px; font-size:13.5px; margin-bottom:16px; }
-  .status-bar.visible { display:block; }
-  .status-bar.error { background:#f9ebea; border:1px solid #c0392b; color:#922b21; }
-  .status-bar.success { background:#eafaf0; border:1px solid #2e7d4f; color:#1e5e39; }
-  .status-bar.info { background:#eaf4fd; border:1px solid #2980b9; color:#1a5276; }
+  em {
+    font-style: italic;
+    color: var(--oxblood);
+  }
 
-  .milestone-row { display:grid; grid-template-columns:1fr 140px 32px; gap:10px; margin-bottom:10px; align-items:center; }
-  .remove-btn { background:none; border:none; color:var(--error); cursor:pointer; font-size:18px; line-height:1; }
+  header {
+    background: var(--ink);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid rgba(244,238,223,0.1);
+  }
 
-  .currency-toggle { display:flex; border:1px solid var(--line); border-radius:2px; overflow:hidden; }
-  .currency-toggle button { flex:1; font-size:13px; padding:8px 0; background:#fff; border:none; cursor:pointer; color:var(--ink-soft); }
-  .currency-toggle button.active { background:var(--ink); color:var(--paper); }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
 
-  #result-card { display:none; background:var(--ink); border:1px solid rgba(244,238,223,0.12); padding:26px 28px; margin-top:20px; }
-  #result-card.visible { display:block; }
-  .result-label { font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--brass); margin-bottom:8px; font-style:italic; }
-  .result-summary { font-family:var(--display); font-size:19px; color:var(--paper); margin-bottom:16px; }
-  .link-box { display:flex; border:1px solid rgba(244,238,223,0.2); border-radius:2px; overflow:hidden; margin-bottom:14px; }
-  .link-box input { flex:1; font-family:monospace; font-size:12.5px; color:rgba(244,238,223,0.85); background:rgba(244,238,223,0.06); border:none; padding:11px 14px; }
-  .copy-btn { font-size:12px; text-transform:uppercase; padding:11px 18px; cursor:pointer; background:var(--brass); color:var(--ink); border:none; }
-  .copy-btn.copied { background:var(--success); color:var(--paper); }
+  .brand {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--paper);
+  }
 
-  #screen-loading { min-height:100vh; display:flex; align-items:center; justify-content:center; color:var(--ink-faint); font-style:italic; }
+  .brand em {
+    color: var(--brass);
+  }
 
-  @media (max-width:640px) { .row2, .row3 { grid-template-columns:1fr; } }
+  .logout-btn {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(244,238,223,0.6);
+    background: none;
+    border: 1px solid rgba(244,238,223,0.2);
+    padding: 6px 14px;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+
+  .logout-btn:hover {
+    color: var(--paper);
+    border-color: rgba(244,238,223,0.5);
+  }
+
+  .wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 32px;
+    overflow-x: auto;
+  }
+
+  .tab {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+  }
+
+  .tab.active {
+    color: var(--oxblood);
+    border-bottom-color: var(--oxblood);
+  }
+
+  .panel {
+    display: none;
+  }
+
+  .panel.active {
+    display: block;
+  }
+
+  .card {
+    background: var(--paper-deep);
+    border: 1px solid var(--line);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .card h3 {
+    font-size: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 6px;
+    font-family: var(--display);
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 9px 11px;
+    outline: none;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--oxblood);
+  }
+
+  .row2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .row3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--body);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 11px 20px;
+    cursor: pointer;
+    border-radius: 2px;
+    background: var(--oxblood);
+    color: var(--paper);
+    border: 1px solid var(--oxblood);
+  }
+
+  .btn:hover:not(:disabled) {
+    background: var(--oxblood-deep);
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn.secondary {
+    background: transparent;
+    color: var(--oxblood);
+  }
+
+  .btn.small {
+    padding: 6px 12px;
+    font-size: 11.5px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--brass);
+    font-family: var(--display);
+    font-style: italic;
+    padding: 0 10px 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  td {
+    padding: 11px 10px 11px 0;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-soft);
+    vertical-align: top;
+  }
+
+  td:first-child {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .empty {
+    color: var(--ink-faint);
+    font-style: italic;
+    font-size: 14px;
+    padding: 12px 0;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 0.03em;
+  }
+
+  .badge.pending {
+    background: rgba(156,123,46,0.15);
+    color: var(--brass);
+  }
+
+  .badge.paid {
+    background: rgba(60,94,69,0.15);
+    color: var(--success);
+  }
+
+  .badge.in_progress {
+    background: rgba(41,128,185,0.12);
+    color: #1a5276;
+  }
+
+  .badge.review {
+    background: rgba(156,123,46,0.15);
+    color: var(--brass);
+  }
+
+  .badge.completed {
+    background: rgba(60,94,69,0.15);
+    color: var(--success);
+  }
+
+  .badge.cancelled {
+    background: rgba(140,59,46,0.12);
+    color: var(--error);
+  }
+
+  .status-bar {
+    display: none;
+    padding: 11px 16px;
+    border-radius: 2px;
+    font-size: 13.5px;
+    margin-bottom: 16px;
+  }
+
+  .status-bar.visible {
+    display: block;
+  }
+
+  .status-bar.error {
+    background: #f9ebea;
+    border: 1px solid #c0392b;
+    color: #922b21;
+  }
+
+  .status-bar.success {
+    background: #eafaf0;
+    border: 1px solid #2e7d4f;
+    color: #1e5e39;
+  }
+
+  .status-bar.info {
+    background: #eaf4fd;
+    border: 1px solid #2980b9;
+    color: #1a5276;
+  }
+
+  .milestone-row {
+    display: grid;
+    grid-template-columns: 1fr 140px 32px;
+    gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    color: var(--error);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .currency-toggle {
+    display: flex;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .currency-toggle button {
+    flex: 1;
+    font-size: 13px;
+    padding: 8px 0;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+
+  .currency-toggle button.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  #result-card {
+    display: none;
+    background: var(--ink);
+    border: 1px solid rgba(244,238,223,0.12);
+    padding: 26px 28px;
+    margin-top: 20px;
+  }
+
+  #result-card.visible {
+    display: block;
+  }
+
+  .result-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  .result-summary {
+    font-family: var(--display);
+    font-size: 19px;
+    color: var(--paper);
+    margin-bottom: 16px;
+  }
+
+  .link-box {
+    display: flex;
+    border: 1px solid rgba(244,238,223,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+
+  .link-box input {
+    flex: 1;
+    font-family: monospace;
+    font-size: 12.5px;
+    color: rgba(244,238,223,0.85);
+    background: rgba(244,238,223,0.06);
+    border: none;
+    padding: 11px 14px;
+  }
+
+  .copy-btn {
+    font-size: 12px;
+    text-transform: uppercase;
+    padding: 11px 18px;
+    cursor: pointer;
+    background: var(--brass);
+    color: var(--ink);
+    border: none;
+  }
+
+  .copy-btn.copied {
+    background: var(--success);
+    color: var(--paper);
+  }
+
+  #screen-loading {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-faint);
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .row2,
+    .row3 {
+      grid-template-columns: 1fr;
+    }
+
+    .milestone-row {
+      grid-template-columns: 1fr 100px 32px;
+    }
+  }
 </style>
 </head>
+
 <body>
 
 <div id="screen-loading">Checking access…</div>
 
 <div id="screen-app" style="display:none;">
+
   <header>
     <div class="header-inner">
       <div class="brand">Greywright <em>Admin</em></div>
@@ -118,6 +481,7 @@
   </header>
 
   <div class="wrap">
+
     <div class="tabs">
       <div class="tab active" data-panel="panel-clients">Clients</div>
       <div class="tab" data-panel="panel-projects">Projects</div>
@@ -125,84 +489,171 @@
       <div class="tab" data-panel="panel-quotes">Quote Generator</div>
     </div>
 
-    <!-- ══════════════ CLIENTS ══════════════ -->
+    <!-- CLIENTS -->
     <div class="panel active" id="panel-clients">
+
       <div class="card">
         <h3>New Client</h3>
+
         <div id="client-status" class="status-bar"></div>
+
         <div class="row3">
-          <div class="field"><label>Full Name</label><input id="c-name" type="text" placeholder="Jane Doe" /></div>
-          <div class="field"><label>Email</label><input id="c-email" type="email" placeholder="jane@email.com" /></div>
-          <div class="field"><label>Phone (optional)</label><input id="c-phone" type="text" placeholder="080..." /></div>
+          <div class="field">
+            <label>Full Name</label>
+            <input id="c-name" type="text" placeholder="Jane Doe" />
+          </div>
+
+          <div class="field">
+            <label>Email</label>
+            <input id="c-email" type="email" placeholder="jane@email.com" />
+          </div>
+
+          <div class="field">
+            <label>Phone (optional)</label>
+            <input id="c-phone" type="text" placeholder="080..." />
+          </div>
         </div>
+
         <button class="btn" id="addClientBtn">Add Client</button>
       </div>
+
       <div class="card">
         <h3>All Clients</h3>
-        <div id="clients-table"><p class="empty">Loading…</p></div>
+        <div id="clients-table">
+          <p class="empty">Loading…</p>
+        </div>
       </div>
+
     </div>
 
-    <!-- ══════════════ PROJECTS ══════════════ -->
+    <!-- PROJECTS -->
     <div class="panel" id="panel-projects">
+
       <div class="card">
         <h3>New Project</h3>
+
         <div id="project-status" class="status-bar"></div>
+
         <div class="row2">
-          <div class="field"><label>Client</label><select id="p-client"><option value="">Select client…</option></select></div>
-          <div class="field"><label>Project Title</label><input id="p-title" type="text" placeholder="e.g. The Weight of Morning" /></div>
+          <div class="field">
+            <label>Client</label>
+            <select id="p-client">
+              <option value="">Select client…</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Project Title</label>
+            <input id="p-title" type="text" placeholder="e.g. The Weight of Morning" />
+          </div>
         </div>
+
         <div class="row3">
-          <div class="field"><label>Service Type</label><input id="p-service" type="text" placeholder="e.g. Developmental Editing" /></div>
-          <div class="field"><label>Word Count (optional)</label><input id="p-words" type="number" placeholder="65000" /></div>
-          <div class="field"><label>Total Price (₦, whole naira)</label><input id="p-price" type="number" placeholder="450000" /></div>
+          <div class="field">
+            <label>Service Type</label>
+            <input id="p-service" type="text" placeholder="e.g. Developmental Editing" />
+          </div>
+
+          <div class="field">
+            <label>Word Count (optional)</label>
+            <input id="p-words" type="number" placeholder="65000" />
+          </div>
+
+          <div class="field">
+            <label>Total Price (₦, whole naira)</label>
+            <input id="p-price" type="number" placeholder="450000" />
+          </div>
         </div>
 
         <div class="field">
           <label>Milestones</label>
+
           <div id="milestone-rows"></div>
-          <button class="btn secondary small" id="addMilestoneRowBtn" type="button">+ Add Milestone</button>
-          <div id="milestone-total" style="margin-top:8px; font-size:13px; color:var(--ink-faint);"></div>
+
+          <button class="btn secondary small" id="addMilestoneRowBtn" type="button">
+            + Add Milestone
+          </button>
+
+          <div id="milestone-total"
+               style="margin-top:8px;font-size:13px;color:var(--ink-faint);">
+          </div>
         </div>
 
-        <button class="btn" id="addProjectBtn" style="margin-top:8px;">Create Project</button>
+        <button class="btn" id="addProjectBtn" style="margin-top:8px;">
+          Create Project
+        </button>
       </div>
+
       <div class="card">
         <h3>All Projects</h3>
-        <div id="projects-table"><p class="empty">Loading…</p></div>
+
+        <div id="projects-table">
+          <p class="empty">Loading…</p>
+        </div>
       </div>
+
     </div>
 
-    <!-- ══════════════ PAYMENTS ══════════════ -->
+    <!-- PAYMENTS -->
     <div class="panel" id="panel-payments">
+
       <div class="card">
         <h3>Pending Milestones</h3>
-        <p style="font-size:13.5px; color:var(--ink-soft); margin:0 0 16px;">
+
+        <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 16px;">
           Milestones normally get marked paid automatically by the Paystack webhook.
-          Use "Mark Paid" here only as a manual fallback (e.g. bank transfer, cash).
+          Use "Mark Paid" here only as a manual fallback.
         </p>
+
         <div id="payments-status" class="status-bar"></div>
-        <div id="payments-table"><p class="empty">Loading…</p></div>
+
+        <div id="payments-table">
+          <p class="empty">Loading…</p>
+        </div>
       </div>
+
     </div>
 
-    <!-- ══════════════ QUOTE GENERATOR ══════════════ -->
+    <!-- QUOTE GENERATOR -->
     <div class="panel" id="panel-quotes">
+
       <div class="card">
+
         <h3>Client Details</h3>
+
         <div id="quote-status" class="status-bar"></div>
+
         <div class="row2">
-          <div class="field"><label>Client Full Name</label><input id="q-name" type="text" placeholder="Jane Doe" /></div>
-          <div class="field"><label>Client Email</label><input id="q-email" type="email" placeholder="jane@email.com" /></div>
+
+          <div class="field">
+            <label>Client Full Name</label>
+            <input id="q-name" type="text" placeholder="Jane Doe" />
+          </div>
+
+          <div class="field">
+            <label>Client Email</label>
+            <input id="q-email" type="email" placeholder="jane@email.com" />
+          </div>
+
         </div>
-        <div class="field"><label>Manuscript Title</label><input id="q-title" type="text" placeholder="e.g. The Weight of Morning" /></div>
+
+        <div class="field">
+          <label>Manuscript Title</label>
+          <input id="q-title" type="text" placeholder="e.g. The Weight of Morning" />
+        </div>
+
       </div>
 
       <div class="card">
+
         <h3>Service &amp; Quote</h3>
+
         <div class="field">
+
           <label>Service</label>
+
           <select id="q-service">
+
             <option value="">Select a service</option>
             <option>Developmental Editing</option>
             <option>Line Editing</option>
@@ -214,436 +665,1760 @@
             <option>KDP Publishing Support</option>
             <option>Full Manuscript Package</option>
             <option>Custom Service</option>
+
           </select>
+
         </div>
+
         <div class="row2">
+
           <div class="field">
+
             <label>Quote Amount</label>
-            <input id="q-amount" type="number" placeholder="e.g. 85000" min="1000" step="1" />
+
+            <input
+              id="q-amount"
+              type="number"
+              placeholder="e.g. 85000"
+              min="1000"
+              step="1"
+            />
+
           </div>
+
           <div class="field">
+
             <label>Currency</label>
+
             <div class="currency-toggle">
-              <button id="q-btn-ngn" class="active" type="button">₦ NGN</button>
-              <button id="q-btn-usd" type="button">$ USD</button>
+
+              <button id="q-btn-ngn"
+                      class="active"
+                      type="button">
+                ₦ NGN
+              </button>
+
+              <button id="q-btn-usd"
+                      type="button">
+                $ USD
+              </button>
+
             </div>
+
           </div>
+
         </div>
+
         <div class="field">
+
           <label>Notes for Client (optional)</label>
-          <textarea id="q-notes" rows="3" placeholder="e.g. Includes two revision rounds."></textarea>
+
+          <textarea
+            id="q-notes"
+            rows="3"
+            placeholder="e.g. Includes two revision rounds."
+          ></textarea>
+
         </div>
+
       </div>
 
       <div class="card">
+
         <h3>Link Expiry</h3>
+
         <div class="row2">
+
           <div class="field">
+
             <label>Expires In</label>
+
             <select id="q-expiry">
+
               <option value="3">3 days</option>
               <option value="7" selected>7 days</option>
               <option value="14">14 days</option>
               <option value="30">30 days</option>
               <option value="0">Never</option>
+
             </select>
+
           </div>
-          <div class="field"><label>Generated by</label><input id="q-by" type="text" placeholder="Gabriel" /></div>
+
+          <div class="field">
+
+            <label>Generated by</label>
+
+            <input
+              id="q-by"
+              type="text"
+              placeholder="Gabriel"
+            />
+
+          </div>
+
         </div>
+
       </div>
 
-      <button class="btn" id="generateQuoteBtn" type="button">Generate Payment Link</button>
+      <button class="btn" id="generateQuoteBtn" type="button">
+        Generate Payment Link
+      </button>
 
       <div id="result-card">
-        <div class="result-label">Payment link ready</div>
-        <div class="result-summary" id="result-summary"></div>
-        <div class="link-box">
-          <input type="text" id="result-link" readonly />
-          <button class="copy-btn" id="copyResultBtn" type="button">Copy link</button>
+
+        <div class="result-label">
+          Payment link ready
         </div>
+
+        <div class="result-summary"
+             id="result-summary">
+        </div>
+
+        <div class="link-box">
+
+          <input
+            type="text"
+            id="result-link"
+            readonly
+          />
+
+          <button
+            class="copy-btn"
+            id="copyResultBtn"
+            type="button"
+          >
+            Copy link
+          </button>
+
+        </div>
+
       </div>
+
     </div>
 
   </div>
 </div>
 
 <script>
-  // ── Fill these in from Supabase → Settings → API (same as login.html) ──
-  const SUPABASE_URL = 'https://dusfpsafuhopdiyjrhyh.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
-  const SITE_URL = 'https://www.greywrightpublishing.com';
+  /*
+   * ============================================================
+   * SUPABASE CONFIGURATION
+   * ============================================================
+   */
 
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const SUPABASE_URL =
+    'https://dusfpsafuhopdiyjrhyh.supabase.co';
+
+  const SUPABASE_ANON_KEY =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
+
+  const SITE_URL =
+    'https://www.greywrightpublishing.com';
+
+
+  /*
+   * IMPORTANT:
+   *
+   * We intentionally call this variable "supabaseClient"
+   * instead of "supabase".
+   *
+   * The Supabase CDN already creates window.supabase.
+   * Using "const supabase" can cause:
+   *
+   * Identifier 'supabase' has already been declared
+   *
+   * ============================================================
+   */
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+
   let currentUser = null;
 
-  // ── Auth guard ──────────────────────────────────────────────────────────
+
+  /*
+   * ============================================================
+   * AUTH GUARD
+   * ============================================================
+   */
+
   (async function init() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return redirectToLogin();
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .maybeSingle();
+    try {
 
-    if (!profile || profile.role !== 'admin') return redirectToLogin();
+      const {
+        data: { session },
+        error: sessionError
+      } = await supabaseClient.auth.getSession();
 
-    currentUser = session.user;
-    document.getElementById('screen-loading').style.display = 'none';
-    document.getElementById('screen-app').style.display = 'block';
+      if (sessionError) {
+        console.error('Session error:', sessionError);
+        return redirectToLogin();
+      }
 
-    loadClients();
-    loadProjects();
-    loadPayments();
-    addMilestoneRow();
+      if (!session) {
+        return redirectToLogin();
+      }
+
+
+      const {
+        data: profile,
+        error: profileError
+      } = await supabaseClient
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+
+      if (profileError) {
+        console.error('Profile error:', profileError);
+        return redirectToLogin();
+      }
+
+
+      if (!profile || profile.role !== 'admin') {
+        return redirectToLogin();
+      }
+
+
+      currentUser = session.user;
+
+
+      document.getElementById('screen-loading').style.display =
+        'none';
+
+      document.getElementById('screen-app').style.display =
+        'block';
+
+
+      /*
+       * Load dashboard data
+       */
+
+      await loadClients();
+      await loadProjects();
+      await loadPayments();
+
+      addMilestoneRow();
+
+
+    } catch (error) {
+
+      console.error('Dashboard initialization error:', error);
+
+      redirectToLogin();
+
+    }
+
   })();
 
+
   function redirectToLogin() {
+
     window.location.href = 'login.html';
+
   }
 
-  document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await supabase.auth.signOut();
-    redirectToLogin();
-  });
 
-  // ── Tabs ────────────────────────────────────────────────────────────────
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById(tab.dataset.panel).classList.add('active');
+  /*
+   * ============================================================
+   * LOGOUT
+   * ============================================================
+   */
+
+  document
+    .getElementById('logoutBtn')
+    .addEventListener('click', async () => {
+
+      await supabaseClient.auth.signOut();
+
+      redirectToLogin();
+
     });
-  });
+
+
+  /*
+   * ============================================================
+   * TABS
+   * ============================================================
+   */
+
+  document
+    .querySelectorAll('.tab')
+    .forEach(tab => {
+
+      tab.addEventListener('click', () => {
+
+        document
+          .querySelectorAll('.tab')
+          .forEach(t =>
+            t.classList.remove('active')
+          );
+
+        document
+          .querySelectorAll('.panel')
+          .forEach(p =>
+            p.classList.remove('active')
+          );
+
+        tab.classList.add('active');
+
+        document
+          .getElementById(tab.dataset.panel)
+          .classList.add('active');
+
+      });
+
+    });
+
+
+  /*
+   * ============================================================
+   * UTILITIES
+   * ============================================================
+   */
 
   function showStatus(id, type, msg) {
-    const el = document.getElementById(id);
-    el.className = `status-bar visible ${type}`;
-    el.textContent = msg;
-  }
-  function clearStatus(id) {
-    document.getElementById(id).className = 'status-bar';
-  }
-  function nairaFromKobo(k) { return '₦' + (k / 100).toLocaleString('en-NG'); }
 
-  // ── CLIENTS ─────────────────────────────────────────────────────────────
+    const el = document.getElementById(id);
+
+    el.className =
+      `status-bar visible ${type}`;
+
+    el.textContent = msg;
+
+  }
+
+
+  function clearStatus(id) {
+
+    document.getElementById(id).className =
+      'status-bar';
+
+  }
+
+
+  function nairaFromKobo(k) {
+
+    return '₦' +
+      (Number(k || 0) / 100)
+        .toLocaleString('en-NG');
+
+  }
+
+
+  function escapeHtml(str) {
+
+    return String(str ?? '')
+      .replace(
+        /[&<>"']/g,
+        c => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[c])
+      );
+
+  }
+
+
+  /*
+   * ============================================================
+   * CLIENTS
+   * ============================================================
+   */
+
   let clientsCache = [];
 
-  async function loadClients() {
-    const { data, error } = await supabase
-      .from('clients')
-      .select('id, name, email, phone, created_at, projects(count)')
-      .order('created_at', { ascending: false });
 
-    const container = document.getElementById('clients-table');
-    if (error) { container.innerHTML = `<p class="empty">Could not load clients.</p>`; return; }
+  async function loadClients() {
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from('clients')
+      .select(
+        'id, name, email, phone, created_at, projects(count)'
+      )
+      .order(
+        'created_at',
+        { ascending: false }
+      );
+
+
+    const container =
+      document.getElementById('clients-table');
+
+
+    if (error) {
+
+      console.error('Clients error:', error);
+
+      container.innerHTML =
+        `<p class="empty">
+          Could not load clients.
+        </p>`;
+
+      return;
+
+    }
+
 
     clientsCache = data || [];
+
     populateClientDropdown();
 
+
     if (!data || data.length === 0) {
-      container.innerHTML = `<p class="empty">No clients yet.</p>`;
+
+      container.innerHTML =
+        `<p class="empty">
+          No clients yet.
+        </p>`;
+
       return;
+
     }
 
+
     container.innerHTML = `
+
       <table>
-        <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Projects</th></tr></thead>
+
+        <thead>
+
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Projects</th>
+          </tr>
+
+        </thead>
+
         <tbody>
+
           ${data.map(c => `
+
             <tr>
-              <td>${escapeHtml(c.name)}</td>
-              <td>${escapeHtml(c.email)}</td>
-              <td>${escapeHtml(c.phone || '—')}</td>
-              <td>${c.projects?.[0]?.count ?? 0}</td>
+
+              <td>
+                ${escapeHtml(c.name)}
+              </td>
+
+              <td>
+                ${escapeHtml(c.email)}
+              </td>
+
+              <td>
+                ${escapeHtml(c.phone || '—')}
+              </td>
+
+              <td>
+                ${c.projects?.[0]?.count ?? 0}
+              </td>
+
             </tr>
+
           `).join('')}
+
         </tbody>
-      </table>`;
+
+      </table>
+
+    `;
+
   }
+
 
   function populateClientDropdown() {
-    const sel = document.getElementById('p-client');
-    sel.innerHTML = '<option value="">Select client…</option>' +
-      clientsCache.map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.email)})</option>`).join('');
+
+    const sel =
+      document.getElementById('p-client');
+
+
+    sel.innerHTML =
+      '<option value="">Select client…</option>' +
+
+      clientsCache
+        .map(c =>
+          `<option value="${c.id}">
+            ${escapeHtml(c.name)}
+            (${escapeHtml(c.email)})
+          </option>`
+        )
+        .join('');
+
   }
 
-  document.getElementById('addClientBtn').addEventListener('click', async () => {
-    clearStatus('client-status');
-    const name = document.getElementById('c-name').value.trim();
-    const email = document.getElementById('c-email').value.trim().toLowerCase();
-    const phone = document.getElementById('c-phone').value.trim();
 
-    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return showStatus('client-status', 'error', 'Please enter a name and valid email.');
-    }
+  document
+    .getElementById('addClientBtn')
+    .addEventListener('click', async () => {
 
-    const { error } = await supabase.from('clients').insert({ name, email, phone: phone || null });
-    if (error) return showStatus('client-status', 'error', error.message);
+      clearStatus('client-status');
 
-    showStatus('client-status', 'success', 'Client added.');
-    document.getElementById('c-name').value = '';
-    document.getElementById('c-email').value = '';
-    document.getElementById('c-phone').value = '';
-    loadClients();
-  });
 
-  // ── PROJECTS ────────────────────────────────────────────────────────────
+      const name =
+        document
+          .getElementById('c-name')
+          .value
+          .trim();
+
+
+      const email =
+        document
+          .getElementById('c-email')
+          .value
+          .trim()
+          .toLowerCase();
+
+
+      const phone =
+        document
+          .getElementById('c-phone')
+          .value
+          .trim();
+
+
+      if (
+        !name ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+      ) {
+
+        return showStatus(
+          'client-status',
+          'error',
+          'Please enter a name and valid email.'
+        );
+
+      }
+
+
+      const {
+        error
+      } = await supabaseClient
+        .from('clients')
+        .insert({
+          name,
+          email,
+          phone: phone || null
+        });
+
+
+      if (error) {
+
+        return showStatus(
+          'client-status',
+          'error',
+          error.message
+        );
+
+      }
+
+
+      showStatus(
+        'client-status',
+        'success',
+        'Client added.'
+      );
+
+
+      document.getElementById('c-name').value = '';
+      document.getElementById('c-email').value = '';
+      document.getElementById('c-phone').value = '';
+
+
+      await loadClients();
+
+    });
+
+
+  /*
+   * ============================================================
+   * PROJECTS / MILESTONES
+   * ============================================================
+   */
+
   function addMilestoneRow() {
-    const row = document.createElement('div');
-    row.className = 'milestone-row';
+
+    const row =
+      document.createElement('div');
+
+    row.className =
+      'milestone-row';
+
+
     row.innerHTML = `
-      <input type="text" placeholder="Milestone name (e.g. Deposit)" class="ms-name" />
-      <input type="number" placeholder="Amount ₦" class="ms-amount" min="0" />
-      <button type="button" class="remove-btn">&times;</button>
+
+      <input
+        type="text"
+        placeholder="Milestone name (e.g. Deposit)"
+        class="ms-name"
+      />
+
+      <input
+        type="number"
+        placeholder="Amount ₦"
+        class="ms-amount"
+        min="0"
+      />
+
+      <button
+        type="button"
+        class="remove-btn"
+      >
+        &times;
+      </button>
+
     `;
-    row.querySelector('.remove-btn').addEventListener('click', () => { row.remove(); updateMilestoneTotal(); });
-    row.querySelectorAll('input').forEach(i => i.addEventListener('input', updateMilestoneTotal));
-    document.getElementById('milestone-rows').appendChild(row);
+
+
+    row
+      .querySelector('.remove-btn')
+      .addEventListener(
+        'click',
+        () => {
+
+          row.remove();
+
+          updateMilestoneTotal();
+
+        }
+      );
+
+
+    row
+      .querySelectorAll('input')
+      .forEach(i =>
+        i.addEventListener(
+          'input',
+          updateMilestoneTotal
+        )
+      );
+
+
+    document
+      .getElementById('milestone-rows')
+      .appendChild(row);
+
   }
-  document.getElementById('addMilestoneRowBtn').addEventListener('click', addMilestoneRow);
+
+
+  document
+    .getElementById('addMilestoneRowBtn')
+    .addEventListener(
+      'click',
+      addMilestoneRow
+    );
+
 
   function getMilestoneRows() {
-    return Array.from(document.querySelectorAll('.milestone-row')).map(row => ({
-      name: row.querySelector('.ms-name').value.trim(),
-      amount: parseFloat(row.querySelector('.ms-amount').value),
-    })).filter(m => m.name && Number.isFinite(m.amount) && m.amount > 0);
+
+    return Array
+      .from(
+        document.querySelectorAll(
+          '.milestone-row'
+        )
+      )
+      .map(row => ({
+
+        name:
+          row
+            .querySelector('.ms-name')
+            .value
+            .trim(),
+
+        amount:
+          parseFloat(
+            row
+              .querySelector('.ms-amount')
+              .value
+          )
+
+      }))
+      .filter(m =>
+        m.name &&
+        Number.isFinite(m.amount) &&
+        m.amount > 0
+      );
+
   }
+
 
   function updateMilestoneTotal() {
-    const total = getMilestoneRows().reduce((s, m) => s + m.amount, 0);
-    document.getElementById('milestone-total').textContent =
-      total > 0 ? `Milestone total: ₦${total.toLocaleString('en-NG')}` : '';
+
+    const total =
+      getMilestoneRows()
+        .reduce(
+          (s, m) => s + m.amount,
+          0
+        );
+
+
+    document
+      .getElementById('milestone-total')
+      .textContent =
+        total > 0
+          ? `Milestone total: ₦${total.toLocaleString('en-NG')}`
+          : '';
+
   }
+
 
   async function loadProjects() {
-    const { data, error } = await supabase
+
+    const {
+      data,
+      error
+    } = await supabaseClient
       .from('projects')
-      .select('id, title, status, total_price, amount_paid, clients(name)')
-      .order('created_at', { ascending: false });
+      .select(
+        'id, title, status, total_price, amount_paid, clients(name)'
+      )
+      .order(
+        'created_at',
+        { ascending: false }
+      );
 
-    const container = document.getElementById('projects-table');
-    if (error) { container.innerHTML = `<p class="empty">Could not load projects.</p>`; return; }
-    if (!data || data.length === 0) { container.innerHTML = `<p class="empty">No projects yet.</p>`; return; }
 
-    container.innerHTML = `
-      <table>
-        <thead><tr><th>Project</th><th>Client</th><th>Status</th><th>Price</th><th>Paid</th></tr></thead>
-        <tbody>
-          ${data.map(p => `
-            <tr>
-              <td>${escapeHtml(p.title)}</td>
-              <td>${escapeHtml(p.clients?.name || '—')}</td>
-              <td><span class="badge ${p.status}">${p.status.replace('_',' ')}</span></td>
-              <td>${nairaFromKobo(p.total_price)}</td>
-              <td>${nairaFromKobo(p.amount_paid)}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>`;
-  }
+    const container =
+      document.getElementById('projects-table');
 
-  document.getElementById('addProjectBtn').addEventListener('click', async () => {
-    clearStatus('project-status');
-    const clientId = document.getElementById('p-client').value;
-    const title = document.getElementById('p-title').value.trim();
-    const service = document.getElementById('p-service').value.trim();
-    const words = parseInt(document.getElementById('p-words').value, 10) || null;
-    const priceNaira = parseFloat(document.getElementById('p-price').value);
-    const milestones = getMilestoneRows();
 
-    if (!clientId) return showStatus('project-status', 'error', 'Select a client.');
-    if (!title) return showStatus('project-status', 'error', 'Enter a project title.');
-    if (!Number.isFinite(priceNaira) || priceNaira <= 0) return showStatus('project-status', 'error', 'Enter a valid total price.');
-    if (milestones.length === 0) return showStatus('project-status', 'error', 'Add at least one milestone.');
+    if (error) {
 
-    const totalPriceKobo = Math.round(priceNaira * 100);
-    const milestoneTotalKobo = Math.round(milestones.reduce((s, m) => s + m.amount, 0) * 100);
+      console.error('Projects error:', error);
 
-    if (milestoneTotalKobo !== totalPriceKobo) {
-      return showStatus('project-status', 'error',
-        `Milestones (₦${(milestoneTotalKobo/100).toLocaleString('en-NG')}) must add up to the total price (₦${priceNaira.toLocaleString('en-NG')}).`);
+      container.innerHTML =
+        `<p class="empty">
+          Could not load projects.
+        </p>`;
+
+      return;
+
     }
 
-    const { data: project, error: projErr } = await supabase
-      .from('projects')
-      .insert({ client_id: clientId, title, service_type: service || null, word_count: words, total_price: totalPriceKobo })
-      .select()
-      .single();
 
-    if (projErr) return showStatus('project-status', 'error', projErr.message);
+    if (!data || data.length === 0) {
 
-    const milestoneRows = milestones.map((m, i) => ({
-      project_id: project.id, name: m.name, amount: Math.round(m.amount * 100), order_index: i,
-    }));
+      container.innerHTML =
+        `<p class="empty">
+          No projects yet.
+        </p>`;
 
-    const { error: msErr } = await supabase.from('milestones').insert(milestoneRows);
-    if (msErr) return showStatus('project-status', 'error', `Project created, but milestones failed: ${msErr.message}`);
+      return;
 
-    showStatus('project-status', 'success', 'Project and milestones created.');
-    document.getElementById('p-title').value = '';
-    document.getElementById('p-service').value = '';
-    document.getElementById('p-words').value = '';
-    document.getElementById('p-price').value = '';
-    document.getElementById('milestone-rows').innerHTML = '';
-    addMilestoneRow();
-    updateMilestoneTotal();
-    loadProjects();
-    loadPayments();
-  });
+    }
 
-  // ── PAYMENTS ────────────────────────────────────────────────────────────
+
+    container.innerHTML = `
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Project</th>
+            <th>Client</th>
+            <th>Status</th>
+            <th>Price</th>
+            <th>Paid</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${data.map(p => `
+
+            <tr>
+
+              <td>
+                ${escapeHtml(p.title)}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  p.clients?.name || '—'
+                )}
+              </td>
+
+              <td>
+
+                <span class="badge ${escapeHtml(p.status)}">
+                  ${escapeHtml(
+                    String(p.status || '')
+                      .replace('_', ' ')
+                  )}
+                </span>
+
+              </td>
+
+              <td>
+                ${nairaFromKobo(p.total_price)}
+              </td>
+
+              <td>
+                ${nairaFromKobo(p.amount_paid)}
+              </td>
+
+            </tr>
+
+          `).join('')}
+
+        </tbody>
+
+      </table>
+
+    `;
+
+  }
+
+
+  document
+    .getElementById('addProjectBtn')
+    .addEventListener(
+      'click',
+      async () => {
+
+        clearStatus('project-status');
+
+
+        const clientId =
+          document
+            .getElementById('p-client')
+            .value;
+
+
+        const title =
+          document
+            .getElementById('p-title')
+            .value
+            .trim();
+
+
+        const service =
+          document
+            .getElementById('p-service')
+            .value
+            .trim();
+
+
+        const words =
+          parseInt(
+            document
+              .getElementById('p-words')
+              .value,
+            10
+          ) || null;
+
+
+        const priceNaira =
+          parseFloat(
+            document
+              .getElementById('p-price')
+              .value
+          );
+
+
+        const milestones =
+          getMilestoneRows();
+
+
+        if (!clientId) {
+
+          return showStatus(
+            'project-status',
+            'error',
+            'Select a client.'
+          );
+
+        }
+
+
+        if (!title) {
+
+          return showStatus(
+            'project-status',
+            'error',
+            'Enter a project title.'
+          );
+
+        }
+
+
+        if (
+          !Number.isFinite(priceNaira) ||
+          priceNaira <= 0
+        ) {
+
+          return showStatus(
+            'project-status',
+            'error',
+            'Enter a valid total price.'
+          );
+
+        }
+
+
+        if (milestones.length === 0) {
+
+          return showStatus(
+            'project-status',
+            'error',
+            'Add at least one milestone.'
+          );
+
+        }
+
+
+        const totalPriceKobo =
+          Math.round(
+            priceNaira * 100
+          );
+
+
+        const milestoneTotalKobo =
+          Math.round(
+            milestones.reduce(
+              (s, m) => s + m.amount,
+              0
+            ) * 100
+          );
+
+
+        if (
+          milestoneTotalKobo !==
+          totalPriceKobo
+        ) {
+
+          return showStatus(
+            'project-status',
+            'error',
+
+            `Milestones (₦${(
+              milestoneTotalKobo / 100
+            ).toLocaleString('en-NG')})
+            must add up to the total price
+            (₦${priceNaira.toLocaleString('en-NG')}).`
+          );
+
+        }
+
+
+        const {
+          data: project,
+          error: projErr
+        } = await supabaseClient
+          .from('projects')
+          .insert({
+
+            client_id: clientId,
+            title,
+            service_type:
+              service || null,
+            word_count: words,
+            total_price:
+              totalPriceKobo
+
+          })
+          .select()
+          .single();
+
+
+        if (projErr) {
+
+          return showStatus(
+            'project-status',
+            'error',
+            projErr.message
+          );
+
+        }
+
+
+        const milestoneRows =
+          milestones.map(
+            (m, i) => ({
+
+              project_id:
+                project.id,
+
+              name:
+                m.name,
+
+              amount:
+                Math.round(
+                  m.amount * 100
+                ),
+
+              order_index:
+                i
+
+            })
+          );
+
+
+        const {
+          error: msErr
+        } = await supabaseClient
+          .from('milestones')
+          .insert(milestoneRows);
+
+
+        if (msErr) {
+
+          return showStatus(
+            'project-status',
+            'error',
+            `Project created, but milestones failed: ${msErr.message}`
+          );
+
+        }
+
+
+        showStatus(
+          'project-status',
+          'success',
+          'Project and milestones created.'
+        );
+
+
+        document.getElementById('p-title').value = '';
+        document.getElementById('p-service').value = '';
+        document.getElementById('p-words').value = '';
+        document.getElementById('p-price').value = '';
+
+        document.getElementById(
+          'milestone-rows'
+        ).innerHTML = '';
+
+        addMilestoneRow();
+
+        updateMilestoneTotal();
+
+
+        await loadProjects();
+        await loadPayments();
+
+      }
+    );
+
+
+  /*
+   * ============================================================
+   * PAYMENTS
+   * ============================================================
+   */
+
   async function loadPayments() {
-    const { data, error } = await supabase
+
+    const {
+      data,
+      error
+    } = await supabaseClient
       .from('milestones')
-      .select('id, name, amount, status, projects(title, clients(name))')
+      .select(
+        'id, name, amount, status, projects(title, clients(name))'
+      )
       .eq('status', 'pending')
       .order('id');
 
-    const container = document.getElementById('payments-table');
-    if (error) { container.innerHTML = `<p class="empty">Could not load milestones.</p>`; return; }
-    if (!data || data.length === 0) { container.innerHTML = `<p class="empty">No pending milestones.</p>`; return; }
+
+    const container =
+      document.getElementById(
+        'payments-table'
+      );
+
+
+    if (error) {
+
+      console.error(
+        'Payments error:',
+        error
+      );
+
+      container.innerHTML =
+        `<p class="empty">
+          Could not load milestones.
+        </p>`;
+
+      return;
+
+    }
+
+
+    if (!data || data.length === 0) {
+
+      container.innerHTML =
+        `<p class="empty">
+          No pending milestones.
+        </p>`;
+
+      return;
+
+    }
+
 
     container.innerHTML = `
+
       <table>
-        <thead><tr><th>Milestone</th><th>Project</th><th>Client</th><th>Amount</th><th></th></tr></thead>
+
+        <thead>
+
+          <tr>
+            <th>Milestone</th>
+            <th>Project</th>
+            <th>Client</th>
+            <th>Amount</th>
+            <th></th>
+          </tr>
+
+        </thead>
+
         <tbody>
+
           ${data.map(m => `
+
             <tr>
-              <td>${escapeHtml(m.name)}</td>
-              <td>${escapeHtml(m.projects?.title || '—')}</td>
-              <td>${escapeHtml(m.projects?.clients?.name || '—')}</td>
-              <td>${nairaFromKobo(m.amount)}</td>
-              <td><button class="btn small mark-paid-btn" data-id="${m.id}" data-amount="${m.amount}" data-project="${m.projects ? '' : ''}">Mark Paid</button></td>
+
+              <td>
+                ${escapeHtml(m.name)}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  m.projects?.title || '—'
+                )}
+              </td>
+
+              <td>
+                ${escapeHtml(
+                  m.projects?.clients?.name || '—'
+                )}
+              </td>
+
+              <td>
+                ${nairaFromKobo(m.amount)}
+              </td>
+
+              <td>
+
+                <button
+                  class="btn small mark-paid-btn"
+                  data-id="${m.id}"
+                  data-amount="${m.amount}"
+                  type="button"
+                >
+                  Mark Paid
+                </button>
+
+              </td>
+
             </tr>
+
           `).join('')}
+
         </tbody>
-      </table>`;
 
-    container.querySelectorAll('.mark-paid-btn').forEach(btn => {
-      btn.addEventListener('click', () => markMilestonePaid(btn.dataset.id, parseInt(btn.dataset.amount, 10)));
-    });
-  }
+      </table>
 
-  async function markMilestonePaid(milestoneId, amount) {
-    clearStatus('payments-status');
+    `;
 
-    const { data: milestone, error: fetchErr } = await supabase
-      .from('milestones').select('project_id').eq('id', milestoneId).single();
-    if (fetchErr) return showStatus('payments-status', 'error', fetchErr.message);
 
-    const { error: msErr } = await supabase
-      .from('milestones')
-      .update({ status: 'paid', paid_at: new Date().toISOString() })
-      .eq('id', milestoneId);
-    if (msErr) return showStatus('payments-status', 'error', msErr.message);
+    container
+      .querySelectorAll(
+        '.mark-paid-btn'
+      )
+      .forEach(btn => {
 
-    const { data: project, error: projFetchErr } = await supabase
-      .from('projects').select('amount_paid').eq('id', milestone.project_id).single();
-    if (!projFetchErr && project) {
-      await supabase.from('projects')
-        .update({ amount_paid: project.amount_paid + amount })
-        .eq('id', milestone.project_id);
-    }
+        btn.addEventListener(
+          'click',
+          () =>
+            markMilestonePaid(
+              btn.dataset.id,
+              parseInt(
+                btn.dataset.amount,
+                10
+              )
+            )
+        );
 
-    showStatus('payments-status', 'success', 'Milestone marked paid.');
-    loadPayments();
-    loadProjects();
-  }
-
-  // ── QUOTE GENERATOR ─────────────────────────────────────────────────────
-  let quoteCurrency = 'NGN';
-  document.getElementById('q-btn-ngn').addEventListener('click', () => setQuoteCurrency('NGN'));
-  document.getElementById('q-btn-usd').addEventListener('click', () => setQuoteCurrency('USD'));
-
-  function setQuoteCurrency(c) {
-    quoteCurrency = c;
-    document.getElementById('q-btn-ngn').classList.toggle('active', c === 'NGN');
-    document.getElementById('q-btn-usd').classList.toggle('active', c === 'USD');
-    const amt = document.getElementById('q-amount');
-    amt.min = c === 'NGN' ? '1000' : '1';
-    amt.step = c === 'NGN' ? '1' : '0.01';
-  }
-
-  document.getElementById('generateQuoteBtn').addEventListener('click', async () => {
-    clearStatus('quote-status');
-
-    const clientName = document.getElementById('q-name').value.trim();
-    const clientEmail = document.getElementById('q-email').value.trim();
-    const manuscriptTitle = document.getElementById('q-title').value.trim();
-    const service = document.getElementById('q-service').value;
-    const amount = parseFloat(document.getElementById('q-amount').value);
-    const notes = document.getElementById('q-notes').value.trim();
-    const expiryDays = parseInt(document.getElementById('q-expiry').value, 10);
-    const generatedBy = document.getElementById('q-by').value.trim() || 'Greywright';
-
-    const errors = [];
-    if (!clientName) errors.push('Client name');
-    if (!clientEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clientEmail)) errors.push('Valid client email');
-    if (!service) errors.push('Service type');
-    const minAmount = quoteCurrency === 'NGN' ? 1000 : 1;
-    if (!Number.isFinite(amount) || amount < minAmount) errors.push(`Amount (min ${quoteCurrency === 'NGN' ? '₦1,000' : '$1'})`);
-
-    if (errors.length) return showStatus('quote-status', 'error', `Please fill in: ${errors.join(', ')}.`);
-
-    const btn = document.getElementById('generateQuoteBtn');
-    btn.disabled = true;
-    showStatus('quote-status', 'info', 'Generating secure payment link…');
-
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error('Your session expired. Please sign in again.');
-
-      const res = await fetch('/api/generate-quote', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          clientName, clientEmail, manuscriptTitle, service, amount,
-          currency: quoteCurrency, notes, expiryDays, generatedBy,
-        }),
       });
 
-      const data = await res.json();
-      if (!res.ok || !data.token) throw new Error(data.error || 'Could not generate link.');
-
-      const paymentUrl = `${SITE_URL}/quote-checkout.html?token=${data.token}`;
-      const amountFormatted = quoteCurrency === 'NGN'
-        ? `₦${amount.toLocaleString('en-NG')}`
-        : `$${amount.toLocaleString('en-US', { maximumFractionDigits: 2 })}`;
-
-      clearStatus('quote-status');
-      const resultCard = document.getElementById('result-card');
-      resultCard.classList.add('visible');
-      document.getElementById('result-summary').innerHTML = `${amountFormatted} · ${escapeHtml(service)} · <em>${escapeHtml(clientName)}</em>`;
-      document.getElementById('result-link').value = paymentUrl;
-      resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    } catch (err) {
-      showStatus('quote-status', 'error', err.message || 'Something went wrong.');
-    } finally {
-      btn.disabled = false;
-    }
-  });
-
-  document.getElementById('copyResultBtn').addEventListener('click', () => {
-    const link = document.getElementById('result-link').value;
-    navigator.clipboard.writeText(link).then(() => {
-      const btn = document.getElementById('copyResultBtn');
-      btn.textContent = 'Copied!';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = 'Copy link'; btn.classList.remove('copied'); }, 2500);
-    });
-  });
-
-  // ── util ────────────────────────────────────────────────────────────────
-  function escapeHtml(str) {
-    return String(str ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
   }
+
+
+  async function markMilestonePaid(
+    milestoneId,
+    amount
+  ) {
+
+    clearStatus(
+      'payments-status'
+    );
+
+
+    const {
+      data: milestone,
+      error: fetchErr
+    } = await supabaseClient
+      .from('milestones')
+      .select('project_id')
+      .eq('id', milestoneId)
+      .single();
+
+
+    if (fetchErr) {
+
+      return showStatus(
+        'payments-status',
+        'error',
+        fetchErr.message
+      );
+
+    }
+
+
+    const {
+      error: msErr
+    } = await supabaseClient
+      .from('milestones')
+      .update({
+
+        status: 'paid',
+        paid_at:
+          new Date().toISOString()
+
+      })
+      .eq(
+        'id',
+        milestoneId
+      );
+
+
+    if (msErr) {
+
+      return showStatus(
+        'payments-status',
+        'error',
+        msErr.message
+      );
+
+    }
+
+
+    const {
+      data: project,
+      error: projFetchErr
+    } = await supabaseClient
+      .from('projects')
+      .select('amount_paid')
+      .eq(
+        'id',
+        milestone.project_id
+      )
+      .single();
+
+
+    if (
+      !projFetchErr &&
+      project
+    ) {
+
+      await supabaseClient
+        .from('projects')
+        .update({
+
+          amount_paid:
+            Number(project.amount_paid || 0) +
+            Number(amount)
+
+        })
+        .eq(
+          'id',
+          milestone.project_id
+        );
+
+    }
+
+
+    showStatus(
+      'payments-status',
+      'success',
+      'Milestone marked paid.'
+    );
+
+
+    await loadPayments();
+    await loadProjects();
+
+  }
+
+
+  /*
+   * ============================================================
+   * QUOTE GENERATOR
+   * ============================================================
+   */
+
+  let quoteCurrency = 'NGN';
+
+
+  document
+    .getElementById('q-btn-ngn')
+    .addEventListener(
+      'click',
+      () =>
+        setQuoteCurrency('NGN')
+    );
+
+
+  document
+    .getElementById('q-btn-usd')
+    .addEventListener(
+      'click',
+      () =>
+        setQuoteCurrency('USD')
+    );
+
+
+  function setQuoteCurrency(c) {
+
+    quoteCurrency = c;
+
+
+    document
+      .getElementById('q-btn-ngn')
+      .classList.toggle(
+        'active',
+        c === 'NGN'
+      );
+
+
+    document
+      .getElementById('q-btn-usd')
+      .classList.toggle(
+        'active',
+        c === 'USD'
+      );
+
+
+    const amt =
+      document.getElementById(
+        'q-amount'
+      );
+
+
+    amt.min =
+      c === 'NGN'
+        ? '1000'
+        : '1';
+
+
+    amt.step =
+      c === 'NGN'
+        ? '1'
+        : '0.01';
+
+  }
+
+
+  document
+    .getElementById(
+      'generateQuoteBtn'
+    )
+    .addEventListener(
+      'click',
+      async () => {
+
+        clearStatus(
+          'quote-status'
+        );
+
+
+        const clientName =
+          document
+            .getElementById('q-name')
+            .value
+            .trim();
+
+
+        const clientEmail =
+          document
+            .getElementById('q-email')
+            .value
+            .trim();
+
+
+        const manuscriptTitle =
+          document
+            .getElementById('q-title')
+            .value
+            .trim();
+
+
+        const service =
+          document
+            .getElementById('q-service')
+            .value;
+
+
+        const amount =
+          parseFloat(
+            document
+              .getElementById('q-amount')
+              .value
+          );
+
+
+        const notes =
+          document
+            .getElementById('q-notes')
+            .value
+            .trim();
+
+
+        const expiryDays =
+          parseInt(
+            document
+              .getElementById('q-expiry')
+              .value,
+            10
+          );
+
+
+        const generatedBy =
+          document
+            .getElementById('q-by')
+            .value
+            .trim() ||
+          'Greywright';
+
+
+        const errors = [];
+
+
+        if (!clientName) {
+          errors.push(
+            'Client name'
+          );
+        }
+
+
+        if (
+          !clientEmail ||
+          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+            .test(clientEmail)
+        ) {
+
+          errors.push(
+            'Valid client email'
+          );
+
+        }
+
+
+        if (!service) {
+
+          errors.push(
+            'Service type'
+          );
+
+        }
+
+
+        const minAmount =
+          quoteCurrency === 'NGN'
+            ? 1000
+            : 1;
+
+
+        if (
+          !Number.isFinite(amount) ||
+          amount < minAmount
+        ) {
+
+          errors.push(
+            `Amount (min ${
+              quoteCurrency === 'NGN'
+                ? '₦1,000'
+                : '$1'
+            })`
+          );
+
+        }
+
+
+        if (errors.length) {
+
+          return showStatus(
+            'quote-status',
+            'error',
+            `Please fill in: ${errors.join(', ')}.`
+          );
+
+        }
+
+
+        const btn =
+          document.getElementById(
+            'generateQuoteBtn'
+          );
+
+
+        btn.disabled = true;
+
+
+        showStatus(
+          'quote-status',
+          'info',
+          'Generating secure payment link…'
+        );
+
+
+        try {
+
+          const {
+            data: {
+              session
+            }
+          } =
+            await supabaseClient
+              .auth
+              .getSession();
+
+
+          if (!session) {
+
+            throw new Error(
+              'Your session expired. Please sign in again.'
+            );
+
+          }
+
+
+          const res =
+            await fetch(
+              '/api/generate-quote',
+              {
+
+                method: 'POST',
+
+                headers: {
+
+                  'Content-Type':
+                    'application/json',
+
+                  'Authorization':
+                    `Bearer ${session.access_token}`
+
+                },
+
+                body:
+                  JSON.stringify({
+
+                    clientName,
+                    clientEmail,
+                    manuscriptTitle,
+                    service,
+                    amount,
+                    currency:
+                      quoteCurrency,
+                    notes,
+                    expiryDays,
+                    generatedBy
+
+                  })
+
+              }
+            );
+
+
+          const data =
+            await res.json();
+
+
+          if (
+            !res.ok ||
+            !data.token
+          ) {
+
+            throw new Error(
+              data.error ||
+              'Could not generate link.'
+            );
+
+          }
+
+
+          const paymentUrl =
+            `${SITE_URL}/quote-checkout.html?token=${data.token}`;
+
+
+          const amountFormatted =
+            quoteCurrency === 'NGN'
+
+              ? `₦${amount.toLocaleString('en-NG')}`
+
+              : `$${amount.toLocaleString(
+                  'en-US',
+                  {
+                    maximumFractionDigits: 2
+                  }
+                )}`;
+
+
+          clearStatus(
+            'quote-status'
+          );
+
+
+          const resultCard =
+            document.getElementById(
+              'result-card'
+            );
+
+
+          resultCard.classList.add(
+            'visible'
+          );
+
+
+          document
+            .getElementById(
+              'result-summary'
+            )
+            .innerHTML =
+              `${amountFormatted} · ${
+                escapeHtml(service)
+              } · <em>${
+                escapeHtml(clientName)
+              }</em>`;
+
+
+          document
+            .getElementById(
+              'result-link'
+            )
+            .value =
+              paymentUrl;
+
+
+          resultCard.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+
+
+        } catch (err) {
+
+          console.error(
+            'Quote error:',
+            err
+          );
+
+
+          showStatus(
+            'quote-status',
+            'error',
+            err.message ||
+            'Something went wrong.'
+          );
+
+
+        } finally {
+
+          btn.disabled = false;
+
+        }
+
+      }
+    );
+
+
+  /*
+   * ============================================================
+   * COPY PAYMENT LINK
+   * ============================================================
+   */
+
+  document
+    .getElementById(
+      'copyResultBtn'
+    )
+    .addEventListener(
+      'click',
+      async () => {
+
+        const link =
+          document
+            .getElementById(
+              'result-link'
+            )
+            .value;
+
+
+        try {
+
+          await navigator
+            .clipboard
+            .writeText(link);
+
+
+          const btn =
+            document.getElementById(
+              'copyResultBtn'
+            );
+
+
+          btn.textContent =
+            'Copied!';
+
+
+          btn.classList.add(
+            'copied'
+          );
+
+
+          setTimeout(
+            () => {
+
+              btn.textContent =
+                'Copy link';
+
+              btn.classList.remove(
+                'copied'
+              );
+
+            },
+            2500
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            'Copy failed:',
+            error
+          );
+
+        }
+
+      }
+    );
+
 </script>
+
 </body>
 </html>

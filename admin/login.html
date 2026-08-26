@@ -6,89 +6,324 @@
 <title>Admin Sign In | Greywright</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" type="image/png" sizes="32x32" href="../images/img-01.png" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
   :root {
-    --paper: #F4EEDF; --ink: #1B1814; --ink-soft: #564E42; --ink-faint: #8C8270;
-    --oxblood: #6E1B26; --brass: #9C7B2E; --line: rgba(27,24,20,0.16); --error: #8C3B2E;
-    --display: 'Cormorant Garamond', serif; --body: 'Spectral', Georgia, serif;
+    --paper: #F4EEDF;
+    --ink: #1B1814;
+    --ink-soft: #564E42;
+    --ink-faint: #8C8270;
+    --oxblood: #6E1B26;
+    --oxblood-deep: #4F1219;
+    --brass: #9C7B2E;
+    --line: rgba(27,24,20,0.16);
+    --error: #8C3B2E;
+    --display: 'Cormorant Garamond', serif;
+    --body: 'Spectral', Georgia, serif;
   }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--ink); color:var(--paper); font-family:var(--body);
-    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
-  .card { max-width:400px; width:100%; background:#25201a; border:1px solid rgba(244,238,223,0.12);
-    border-radius:4px; padding:40px 36px; }
-  h1 { font-family:var(--display); font-size:26px; margin:0 0 4px; color:var(--paper); }
-  .eyebrow { font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--brass); margin-bottom:20px; }
-  label { display:block; font-size:13px; color:rgba(244,238,223,0.6); margin-bottom:6px; }
-  input { width:100%; padding:11px 12px; border:1px solid rgba(244,238,223,0.2); border-radius:3px;
-    font-family:var(--body); font-size:15px; margin-bottom:16px; background:rgba(244,238,223,0.05); color:var(--paper); }
-  button { width:100%; padding:13px; background:var(--oxblood); color:var(--paper);
-    border:none; border-radius:3px; font-family:var(--body); font-size:15px; cursor:pointer; }
-  button:disabled { opacity:0.6; }
-  .status { font-size:13px; padding:10px 12px; border-radius:3px; margin-bottom:16px; display:none; background:rgba(140,59,46,0.2); color:#e0a89f; }
-  .status.visible { display:block; }
-  .back { display:block; text-align:center; margin-top:20px; font-size:13px; color:rgba(244,238,223,0.4); text-decoration:none; }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--body);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    max-width: 400px;
+    width: 100%;
+    background: #25201a;
+    border: 1px solid rgba(244,238,223,0.12);
+    border-radius: 4px;
+    padding: 40px 36px;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: 26px;
+    margin: 0 0 4px;
+    color: var(--paper);
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: rgba(244,238,223,0.6);
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid rgba(244,238,223,0.2);
+    border-radius: 3px;
+    font-family: var(--body);
+    font-size: 15px;
+    margin-bottom: 16px;
+    background: rgba(244,238,223,0.05);
+    color: var(--paper);
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--brass);
+  }
+
+  button {
+    width: 100%;
+    padding: 13px;
+    background: var(--oxblood);
+    color: var(--paper);
+    border: none;
+    border-radius: 3px;
+    font-family: var(--body);
+    font-size: 15px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: var(--oxblood-deep);
+  }
+
+  button:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .status {
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+    display: none;
+    background: rgba(140,59,46,0.2);
+    color: #e0a89f;
+  }
+
+  .status.visible {
+    display: block;
+  }
+
+  .back {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 13px;
+    color: rgba(244,238,223,0.4);
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--paper);
+  }
 </style>
 </head>
+
 <body>
+
 <div class="card">
-  <div class="eyebrow">Greywright Publishing House</div>
+
+  <div class="eyebrow">
+    Greywright Publishing House
+  </div>
+
   <h1>Admin Sign In</h1>
+
   <div id="status" class="status"></div>
+
   <form id="loginForm">
+
     <label for="email">Email</label>
-    <input type="email" id="email" required autocomplete="email" />
+    <input
+      type="email"
+      id="email"
+      required
+      autocomplete="email"
+    />
+
     <label for="pass">Password</label>
-    <input type="password" id="pass" required autocomplete="current-password" />
-    <button type="submit" id="loginBtn">Sign In</button>
+    <input
+      type="password"
+      id="pass"
+      required
+      autocomplete="current-password"
+    />
+
+    <button type="submit" id="loginBtn">
+      Sign In
+    </button>
+
   </form>
-  <a href="../index.html" class="back">← Back to main site</a>
+
+  <a href="../index.html" class="back">
+    ← Back to main site
+  </a>
+
 </div>
 
 <script>
-  const SUPABASE_URL = 'https://dusfpsafuhopdiyjrhyh.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  /*
+   * SUPABASE CONFIGURATION
+   * Only ONE Supabase client is created on this page.
+   */
+
+  const SUPABASE_URL =
+    'https://dusfpsafuhopdiyjrhyh.supabase.co';
+
+  const SUPABASE_ANON_KEY =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+
+  /*
+   * STATUS MESSAGE
+   */
 
   const statusEl = document.getElementById('status');
-  function showStatus(msg) {
-    statusEl.textContent = msg;
+
+  function showStatus(message) {
+    statusEl.textContent = message;
     statusEl.className = 'status visible';
   }
 
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('loginBtn');
-    btn.disabled = true;
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('pass').value;
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      showStatus(error.message);
-      btn.disabled = false;
-      return;
-    }
+  /*
+   * LOGIN
+   */
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', data.user.id)
-      .maybeSingle();
+  document
+    .getElementById('loginForm')
+    .addEventListener('submit', async (e) => {
 
-    if (!profile || profile.role !== 'admin') {
-      showStatus('This account does not have admin access.');
-      await supabase.auth.signOut();
-      btn.disabled = false;
-      return;
-    }
+      e.preventDefault();
 
-    window.location.href = 'dashboard.html';
-  });
+      const btn = document.getElementById('loginBtn');
+
+      btn.disabled = true;
+      btn.textContent = 'Signing In…';
+
+      const email =
+        document.getElementById('email')
+          .value
+          .trim()
+          .toLowerCase();
+
+      const password =
+        document.getElementById('pass').value;
+
+
+      /*
+       * SIGN IN WITH SUPABASE AUTH
+       */
+
+      const {
+        data,
+        error
+      } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+
+      if (error) {
+        showStatus(error.message);
+
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+
+        return;
+      }
+
+
+      /*
+       * CHECK ADMIN ROLE
+       */
+
+      const {
+        data: profile,
+        error: profileError
+      } = await supabaseClient
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .maybeSingle();
+
+
+      if (profileError) {
+
+        console.error(
+          'Profile lookup error:',
+          profileError
+        );
+
+        showStatus(
+          'Unable to verify your admin account. Please try again.'
+        );
+
+        await supabaseClient.auth.signOut();
+
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+
+        return;
+      }
+
+
+      /*
+       * ONLY ADMINS CAN ENTER THE ADMIN PORTAL
+       */
+
+      if (!profile || profile.role !== 'admin') {
+
+        showStatus(
+          'This account does not have admin access.'
+        );
+
+        await supabaseClient.auth.signOut();
+
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+
+        return;
+      }
+
+
+      /*
+       * SUCCESS
+       */
+
+      window.location.href = 'dashboard.html';
+
+    });
 </script>
+
 </body>
 </html>

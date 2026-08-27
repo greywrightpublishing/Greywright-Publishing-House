@@ -1016,11 +1016,20 @@ Upload Deliverable
 const SUPABASE_URL =
 'https://dusfpsafuhopdiyjrhyh.supabase.co';
 
+/*
+ * FIX: This key was previously split across four concatenated
+ * string chunks and one chunk contained a typo — the JWT
+ * payload segment was corrupted ("supabas" + stray "I" instead
+ * of "supabase"), producing an invalid anon key that did not
+ * match the project. Every Supabase call in this file
+ * (auth.getSession, the admin role check, and every subsequent
+ * table query) would have silently failed as a result.
+ *
+ * Replaced with the same, correctly-formed anon key used in
+ * admin/login.html and the client-facing pages.
+ */
 const SUPABASE_ANON_KEY =
-'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzIi'+
-'IsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24i'+
-'LCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nz'+
-'CARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
 const SITE_URL =
 'https://www.greywrightpublishing.com';

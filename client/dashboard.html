@@ -848,8 +848,21 @@ footer {
 const SUPABASE_URL =
   'https://dusfpsafuhopdiyjrhyh.supabase.co';
 
+/*
+ * FIX: This key was previously malformed — its JWT payload was
+ * missing the required "role":"anon" claim entirely (and had a
+ * different "exp" than the project's real anon key), so it did
+ * not match the signature and Supabase rejected every request
+ * from this page as an invalid API key. That silently broke
+ * auth.getSession(), the client lookup, the projects query,
+ * milestone payments, chat, and file downloads — i.e. the whole
+ * dashboard.
+ *
+ * Replaced with the same, correctly-formed anon key used in
+ * client/login.html and admin/login.html.
+ */
 const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwiaWF0IjoxNzgyMTYwODA0LCJleHAiOjIwOTc3MzY4MDB9.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
 const supabase =
   window.supabase.createClient(

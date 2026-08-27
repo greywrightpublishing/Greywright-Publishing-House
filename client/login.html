@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -6,302 +7,1139 @@
 <title>Client Sign In | Greywright</title>
 <meta name="robots" content="noindex, nofollow" />
 <link rel="icon" type="image/png" sizes="32x32" href="../images/img-01.png" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
   :root {
-    --paper: #F4EEDF; --ink: #1B1814; --ink-soft: #564E42; --ink-faint: #8C8270;
-    --oxblood: #6E1B26; --brass: #9C7B2E; --line: rgba(27,24,20,0.16);
-    --success: #3C5E45; --error: #8C3B2E;
-    --display: 'Cormorant Garamond', serif; --body: 'Spectral', Georgia, serif;
+    --paper: #F4EEDF;
+    --ink: #1B1814;
+    --ink-soft: #564E42;
+    --ink-faint: #8C8270;
+    --oxblood: #6E1B26;
+    --brass: #9C7B2E;
+    --line: rgba(27,24,20,0.16);
+    --success: #3C5E45;
+    --error: #8C3B2E;
+    --display: 'Cormorant Garamond', serif;
+    --body: 'Spectral', Georgia, serif;
     --maxw: 1180px;
   }
-  * { box-sizing: border-box; }
-  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--body); min-height:100vh; }
-  a { color: inherit; text-decoration: none; }
 
-  /* ── NAV (matches site-wide header) ─────────────────────────────── */
-  header.site-header{ position: sticky; top: 0; z-index: 100; background: rgba(244,238,223,0.92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
-  .nav-row{ display:flex; align-items:center; justify-content: space-between; padding: 18px 32px; max-width: var(--maxw); margin: 0 auto; gap: 12px; }
-  .brandmark{ font-family: var(--display); font-size: 22px; font-weight: 700; letter-spacing: 0.01em; display:flex; align-items:baseline; gap: 8px; white-space: nowrap; flex: 0 0 auto; }
-  .brandmark em{ font-style: italic; color: var(--oxblood); font-weight: 600; }
-  nav.main-links{ display:flex; gap: 22px; align-items:center; }
-  nav.main-links a{ font-size: 14px; letter-spacing: 0.03em; color: var(--ink-soft); position: relative; padding-bottom: 4px; white-space: nowrap; }
-  nav.main-links a::after{ content:""; position:absolute; left:0; right:0; bottom:0; height: 1px; background: var(--oxblood); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
-  nav.main-links a:hover::after{ transform: scaleX(1); }
-  .nav-cta{ display:flex; gap:14px; align-items:center; flex: 0 0 auto; }
-  .menu-toggle{ display:none; background:none; border:none; cursor:pointer; padding:6px; }
-  .menu-toggle span{ display:block; width:24px; height:1.5px; background: var(--ink); margin: 5px 0; }
-  @media (max-width: 1650px){
-    .nav-row{ padding-left: 22px; padding-right: 22px; gap: 12px; }
-    nav.main-links{ display:none; position:absolute; top: 100%; left:0; right:0; background: var(--paper); border-bottom: 1px solid var(--line); flex-direction:column; gap:0; padding: 10px 22px 18px; }
-    nav.main-links.open{ display:flex; }
-    nav.main-links a{ padding: 12px 0; border-bottom: 1px solid var(--line); width:100%; white-space: normal; }
-    .menu-toggle{ display:block; flex: 0 0 auto; }
+  * {
+    box-sizing: border-box;
   }
-  @media (max-width: 400px){ .brandmark{ font-size: 18px; } }
 
-  /* ── SIGN-IN CARD ──────────────────────────────────────────────── */
-  .page-wrap{ display:flex; align-items:center; justify-content:center; padding: 48px 24px; min-height: calc(100vh - 76px); }
-  .card { max-width:420px; width:100%; background:#fff; border:1px solid var(--line);
-    border-radius:4px; padding:40px 36px; }
-  h1 { font-family:var(--display); font-size:28px; margin:0 0 4px; }
-  .eyebrow { font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
-    color:var(--brass); margin-bottom:8px; }
-  p.sub { color:var(--ink-soft); margin:0 0 28px; font-size:14px; }
-  .tabs { display:flex; gap:0; margin-bottom:24px; border-bottom:1px solid var(--line); }
-  .tab { flex:1; text-align:center; padding:10px 0; cursor:pointer; color:var(--ink-faint);
-    font-size:14px; border-bottom:2px solid transparent; }
-  .tab.active { color:var(--oxblood); border-bottom-color:var(--oxblood); }
-  label { display:block; font-size:13px; color:var(--ink-soft); margin-bottom:6px; }
-  input { width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:3px;
-    font-family:var(--body); font-size:15px; margin-bottom:16px; }
-  button.submit-btn { width:100%; padding:13px; background:var(--oxblood); color:var(--paper);
-    border:none; border-radius:3px; font-family:var(--body); font-size:15px;
-    cursor:pointer; letter-spacing:0.02em; }
-  button.submit-btn:disabled { opacity:0.6; cursor:default; }
-  .status { font-size:13px; padding:10px 12px; border-radius:3px; margin-bottom:16px; display:none; }
-  .status.error { display:block; background:rgba(140,59,46,0.1); color:var(--error); }
-  .status.success { display:block; background:rgba(60,94,69,0.1); color:var(--success); }
-  .form { display:none; }
-  .form.active { display:block; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    min-height: 100vh;
+  }
 
-  /* ── FOOTER ──────────────────────────────────────────────────────── */
-  footer{ background: var(--ink); color: rgba(244,238,223,0.78); padding: 40px 0; border-top: 1px solid rgba(244,238,223,0.12); }
-  .footer-bottom{ display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(244,238,223,0.5); flex-wrap: wrap; gap: 10px; max-width: var(--maxw); margin: 0 auto; padding: 0 32px; }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────────────────── */
+
+  header.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(244,238,223,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 32px;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    gap: 12px;
+  }
+
+  .brandmark {
+    font-family: var(--display);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    white-space: nowrap;
+    flex: 0 0 auto;
+  }
+
+  .brandmark em {
+    font-style: italic;
+    color: var(--oxblood);
+    font-weight: 600;
+  }
+
+  nav.main-links {
+    display: flex;
+    gap: 22px;
+    align-items: center;
+  }
+
+  nav.main-links a {
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    position: relative;
+    padding-bottom: 4px;
+    white-space: nowrap;
+  }
+
+  nav.main-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--oxblood);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s ease;
+  }
+
+  nav.main-links a:hover::after {
+    transform: scaleX(1);
+  }
+
+  .nav-cta {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 24px;
+    height: 1.5px;
+    background: var(--ink);
+    margin: 5px 0;
+  }
+
+  @media (max-width: 1650px) {
+    .nav-row {
+      padding-left: 22px;
+      padding-right: 22px;
+      gap: 12px;
+    }
+
+    nav.main-links {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      flex-direction: column;
+      gap: 0;
+      padding: 10px 22px 18px;
+    }
+
+    nav.main-links.open {
+      display: flex;
+    }
+
+    nav.main-links a {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      width: 100%;
+      white-space: normal;
+    }
+
+    .menu-toggle {
+      display: block;
+      flex: 0 0 auto;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .brandmark {
+      font-size: 18px;
+    }
+  }
+
+  /* ── SIGN-IN CARD ───────────────────────────────────────────────── */
+
+  .page-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    min-height: calc(100vh - 76px);
+  }
+
+  .card {
+    max-width: 420px;
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 40px 36px;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: 28px;
+    margin: 0 0 4px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 8px;
+  }
+
+  p.sub {
+    color: var(--ink-soft);
+    margin: 0 0 28px;
+    font-size: 14px;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 10px 0;
+    cursor: pointer;
+    color: var(--ink-faint);
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+    user-select: none;
+  }
+
+  .tab.active {
+    color: var(--oxblood);
+    border-bottom-color: var(--oxblood);
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    font-family: var(--body);
+    font-size: 15px;
+    margin-bottom: 16px;
+    color: var(--ink);
+    background: #fff;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--brass);
+  }
+
+  button.submit-btn {
+    width: 100%;
+    padding: 13px;
+    background: var(--oxblood);
+    color: var(--paper);
+    border: none;
+    border-radius: 3px;
+    font-family: var(--body);
+    font-size: 15px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+  }
+
+  button.submit-btn:hover:not(:disabled) {
+    background: #4F1219;
+  }
+
+  button.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .status {
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .status.error {
+    display: block;
+    background: rgba(140,59,46,0.1);
+    color: var(--error);
+  }
+
+  .status.success {
+    display: block;
+    background: rgba(60,94,69,0.1);
+    color: var(--success);
+  }
+
+  .form {
+    display: none;
+  }
+
+  .form.active {
+    display: block;
+  }
+
+  /* ── FOOTER ─────────────────────────────────────────────────────── */
+
+  footer {
+    background: var(--ink);
+    color: rgba(244,238,223,0.78);
+    padding: 40px 0;
+    border-top: 1px solid rgba(244,238,223,0.12);
+  }
+
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: rgba(244,238,223,0.5);
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 32px;
+  }
 </style>
+
 </head>
+
 <body>
 
 <header class="site-header">
   <div class="nav-row">
-    <a href="../index.html#top" class="brandmark">Greywright <em>Publishing House</em></a>
-    <nav class="main-links" id="mainNav">
-      <a href="../index.html#services">Services</a>
-      <a href="../index.html#quote-calculator">Get an Estimate</a>
-      <a href="../index.html#process">Process</a>
-      <a href="../index.html#why">Why Greywright</a>
-      <a href="../index.html#about">About</a>
-      <a href="../index.html#works">Selected Works</a>
-      <a href="../verify.html">Verify a Certificate</a>
-      <a href="../index.html#contact">Contact</a>
-      <a href="../submit.html">Submit Manuscript</a>
-      <a href="../retrieve-booking.html">Retrieve Booking</a>
-    </nav>
-    <div class="nav-cta">
-      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+
+```
+<a href="../index.html#top" class="brandmark">
+  Greywright <em>Publishing House</em>
+</a>
+
+<nav class="main-links" id="mainNav">
+  <a href="../index.html#services">Services</a>
+  <a href="../index.html#quote-calculator">Get an Estimate</a>
+  <a href="../index.html#process">Process</a>
+  <a href="../index.html#why">Why Greywright</a>
+  <a href="../index.html#about">About</a>
+  <a href="../index.html#works">Selected Works</a>
+  <a href="../verify.html">Verify a Certificate</a>
+  <a href="../index.html#contact">Contact</a>
+  <a href="../submit.html">Submit Manuscript</a>
+  <a href="../retrieve-booking.html">Retrieve Booking</a>
+</nav>
+
+<div class="nav-cta">
+
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    type="button"
+    aria-label="Toggle menu"
+    aria-expanded="false">
+
+    <span></span>
+    <span></span>
+    <span></span>
+
+  </button>
+
+</div>
+```
+
   </div>
 </header>
 
 <div class="page-wrap">
-<div class="card">
-  <div class="eyebrow">Greywright Publishing House</div>
-  <h1>Client Portal</h1>
-  <p class="sub">Sign in to view your project and manage payments.</p>
 
-  <div class="tabs">
-    <div class="tab active" data-tab="signin">Sign In</div>
-    <div class="tab" data-tab="signup">Create Account</div>
+  <div class="card">
+
+```
+<div class="eyebrow">
+  Greywright Publishing House
+</div>
+
+<h1>
+  Client Portal
+</h1>
+
+<p class="sub">
+  Sign in to view your project and manage payments.
+</p>
+
+
+<div class="tabs">
+
+  <div
+    class="tab active"
+    data-tab="signin">
+
+    Sign In
+
   </div>
 
-  <div id="status" class="status"></div>
+  <div
+    class="tab"
+    data-tab="signup">
 
-  <form id="form-signin" class="form active">
-    <label for="si-email">Email</label>
-    <input type="email" id="si-email" required autocomplete="email" />
-    <label for="si-pass">Password</label>
-    <input type="password" id="si-pass" required autocomplete="current-password" />
-    <button type="submit" class="submit-btn" id="signinBtn">Sign In</button>
-  </form>
+    Create Account
 
-  <form id="form-signup" class="form">
-    <label for="su-name">Full Name</label>
-    <input type="text" id="su-name" required autocomplete="name" />
-    <label for="su-email">Email</label>
-    <input type="email" id="su-email" required autocomplete="email" />
-    <label for="su-pass">Password</label>
-    <input type="password" id="su-pass" required minlength="8" autocomplete="new-password" />
-    <button type="submit" class="submit-btn" id="signupBtn">Create Account</button>
-  </form>
+  </div>
+
 </div>
+
+
+<div
+  id="status"
+  class="status">
+</div>
+
+
+<!-- SIGN IN -->
+
+<form
+  id="form-signin"
+  class="form active">
+
+  <label for="si-email">
+    Email
+  </label>
+
+  <input
+    type="email"
+    id="si-email"
+    required
+    autocomplete="email"
+  />
+
+
+  <label for="si-pass">
+    Password
+  </label>
+
+  <input
+    type="password"
+    id="si-pass"
+    required
+    autocomplete="current-password"
+  />
+
+
+  <button
+    type="submit"
+    class="submit-btn"
+    id="signinBtn">
+
+    Sign In
+
+  </button>
+
+</form>
+
+
+<!-- CREATE ACCOUNT -->
+
+<form
+  id="form-signup"
+  class="form">
+
+  <label for="su-name">
+    Full Name
+  </label>
+
+  <input
+    type="text"
+    id="su-name"
+    required
+    autocomplete="name"
+  />
+
+
+  <label for="su-email">
+    Email
+  </label>
+
+  <input
+    type="email"
+    id="su-email"
+    required
+    autocomplete="email"
+  />
+
+
+  <label for="su-pass">
+    Password
+  </label>
+
+  <input
+    type="password"
+    id="su-pass"
+    required
+    minlength="8"
+    autocomplete="new-password"
+  />
+
+
+  <button
+    type="submit"
+    class="submit-btn"
+    id="signupBtn">
+
+    Create Account
+
+  </button>
+
+</form>
+```
+
+  </div>
+
 </div>
 
 <footer>
+
   <div class="footer-bottom">
-    <span>© 2026 Greywright Publishing House Limited. All rights reserved.</span>
-    <span>Crafted in Abuja, Nigeria.</span>
+
+```
+<span>
+  © 2026 Greywright Publishing House Limited.
+  All rights reserved.
+</span>
+
+<span>
+  Crafted in Abuja, Nigeria.
+</span>
+```
+
   </div>
+
 </footer>
 
 <script>
-  const SUPABASE_URL = 'https://dusfpsafuhopdiyjrhyh.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/* ============================================================
+   SUPABASE CONFIGURATION
+   ============================================================ */
 
-  const statusEl = document.getElementById('status');
-  function showStatus(msg, type) {
-    statusEl.textContent = msg;
-    statusEl.className = 'status ' + type;
-  }
+const SUPABASE_URL =
+  'https://dusfpsafuhopdiyjrhyh.supabase.co';
 
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
-      tab.classList.add('active');
-      document.getElementById('form-' + tab.dataset.tab).classList.add('active');
-      statusEl.className = 'status';
-    });
-  });
 
-  /*
-   * FIX: linkClient() previously fired without any Authorization
-   * header, so /api/link-client (which requires a Bearer token)
-   * always returned 401 and every signup showed "linking your
-   * project failed." It's now a shared helper that:
-   *   1. Requires an active session (access token) to call at all.
-   *   2. Sends that token as a Bearer header, as the API expects.
-   *   3. Is safe to call on every sign-in, not just signup — the
-   *      API is idempotent (it no-ops if already linked), so this
-   *      also covers accounts where Supabase requires email
-   *      confirmation and therefore has NO session yet at signup
-   *      time. For those, linking simply happens the first time
-   *      they successfully sign in instead.
-   */
-  async function linkClient(session, email, name) {
-    if (!session?.access_token) {
-      return { ok: false, error: 'No active session.' };
-    }
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
-    try {
-      const linkRes = await fetch('/api/link-client', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({ email, name }),
-      });
 
-      const data = await linkRes.json().catch(() => ({}));
+/*
+ * IMPORTANT:
+ *
+ * Do NOT call this variable "supabase".
+ *
+ * The Supabase CDN already exposes window.supabase.
+ * Using "const supabase" here caused:
+ *
+ * Identifier 'supabase' has already been declared
+ *
+ * which prevented the rest of this page's JavaScript
+ * from running.
+ */
 
-      if (!linkRes.ok) {
-        return { ok: false, error: data.error || 'Could not link your client account.' };
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+
+const statusEl =
+  document.getElementById('status');
+
+
+function showStatus(
+  msg,
+  type
+) {
+
+  statusEl.textContent =
+    msg;
+
+  statusEl.className =
+    'status ' + type;
+
+}
+
+
+/* ============================================================
+   TABS
+   ============================================================ */
+
+document
+  .querySelectorAll('.tab')
+  .forEach(tab => {
+
+    tab.addEventListener(
+      'click',
+      () => {
+
+        document
+          .querySelectorAll('.tab')
+          .forEach(t =>
+            t.classList.remove('active')
+          );
+
+
+        document
+          .querySelectorAll('.form')
+          .forEach(form =>
+            form.classList.remove('active')
+          );
+
+
+        tab.classList.add('active');
+
+
+        document
+          .getElementById(
+            'form-' + tab.dataset.tab
+          )
+          .classList.add('active');
+
+
+        statusEl.className =
+          'status';
+
       }
+    );
 
-      return { ok: true, data };
-    } catch (err) {
-      console.error('[login] linkClient network error:', err);
-      return { ok: false, error: 'Network error while linking your account.' };
-    }
-  }
-
-  document.getElementById('form-signin').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('signinBtn');
-    btn.disabled = true;
-    const email = document.getElementById('si-email').value.trim();
-    const password = document.getElementById('si-pass').value;
-
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      showStatus(error.message, 'error');
-      btn.disabled = false;
-      return;
-    }
-
-    /*
-     * Make sure this account is linked to a client record before
-     * moving on. This is a no-op (fast, returns immediately) if
-     * it was already linked at signup — it only does real work
-     * the first time a confirmed-by-email account signs in.
-     */
-    const name =
-      data.user?.user_metadata?.full_name ||
-      (data.user?.email || '').split('@')[0];
-
-    const linkResult = await linkClient(data.session, email, name);
-
-    if (!linkResult.ok) {
-      // Don't block sign-in over this — but do surface it, since an
-      // unlinked account will land on an empty "no projects" screen.
-      console.error('[login] Sign-in linking failed:', linkResult.error);
-    }
-
-    window.location.href = 'dashboard.html';
   });
 
-  document.getElementById('form-signup').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('signupBtn');
-    btn.disabled = true;
-    const name = document.getElementById('su-name').value.trim();
-    const email = document.getElementById('su-email').value.trim();
-    const password = document.getElementById('su-pass').value;
 
-    /*
-     * Store the name in the auth user's metadata at signup time so
-     * it's still available later (e.g. at first sign-in, if email
-     * confirmation delays when a session first exists) without
-     * needing a separate lookup.
-     */
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: name },
-      },
-    });
+/* ============================================================
+   LINK CLIENT
+   ============================================================ */
 
-    if (error) {
-      showStatus(error.message, 'error');
-      btn.disabled = false;
-      return;
+/*
+ * This connects the Supabase Auth account to the existing
+ * client record created by the Admin Dashboard.
+ *
+ * IMPORTANT:
+ * /api/link-client.js requires:
+ *
+ *   user_id
+ *   email
+ *   name
+ *
+ * Therefore all three are sent here.
+ */
+
+async function linkClient(
+  session,
+  email,
+  name
+) {
+
+  if (
+    !session ||
+    !session.access_token
+  ) {
+
+    return {
+      ok: false,
+      error: 'No active session.'
+    };
+
+  }
+
+
+  try {
+
+    const linkRes =
+      await fetch(
+        '/api/link-client',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+
+            'Authorization':
+              `Bearer ${session.access_token}`
+          },
+
+          body:
+            JSON.stringify({
+              user_id:
+                session.user.id,
+
+              email:
+                email,
+
+              name:
+                name
+            })
+        }
+      );
+
+
+    const data =
+      await linkRes
+        .json()
+        .catch(
+          () => ({})
+        );
+
+
+    if (!linkRes.ok) {
+
+      return {
+        ok: false,
+        error:
+          data.error ||
+          'Could not link your client account.'
+      };
+
     }
 
-    if (data.session) {
-      // Email confirmation is off (or already satisfied) — we have
-      // a session immediately, so link the client record right now.
-      const linkResult = await linkClient(data.session, email, name);
 
-      if (!linkResult.ok) {
+    return {
+      ok: true,
+      data
+    };
+
+
+  } catch (err) {
+
+    console.error(
+      '[login] linkClient network error:',
+      err
+    );
+
+
+    return {
+      ok: false,
+      error:
+        'Network error while linking your account.'
+    };
+
+  }
+
+}
+
+
+/* ============================================================
+   SIGN IN
+   ============================================================ */
+
+document
+  .getElementById('form-signin')
+  .addEventListener(
+    'submit',
+    async event => {
+
+      event.preventDefault();
+
+
+      const btn =
+        document.getElementById(
+          'signinBtn'
+        );
+
+
+      btn.disabled = true;
+
+
+      const originalText =
+        btn.textContent;
+
+
+      btn.textContent =
+        'Signing In…';
+
+
+      const email =
+        document
+          .getElementById('si-email')
+          .value
+          .trim();
+
+
+      const password =
+        document
+          .getElementById('si-pass')
+          .value;
+
+
+      try {
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth
+            .signInWithPassword({
+              email,
+              password
+            });
+
+
+        if (error) {
+
+          showStatus(
+            error.message,
+            'error'
+          );
+
+          return;
+
+        }
+
+
+        /*
+         * Make sure the authenticated user is linked
+         * to the existing client record.
+         */
+
+        const name =
+          data.user?.user_metadata?.full_name ||
+          email.split('@')[0];
+
+
+        const linkResult =
+          await linkClient(
+            data.session,
+            email,
+            name
+          );
+
+
+        if (!linkResult.ok) {
+
+          console.error(
+            '[login] Sign-in linking failed:',
+            linkResult.error
+          );
+
+        }
+
+
+        window.location.href =
+          'dashboard.html';
+
+
+      } catch (err) {
+
+        console.error(
+          '[login] Sign-in error:',
+          err
+        );
+
+
         showStatus(
-          `Account created, but linking your project failed: ${linkResult.error} Please contact us.`,
+          err.message ||
+          'Could not sign in. Please try again.',
           'error'
         );
+
+
+      } finally {
+
         btn.disabled = false;
-        return;
+
+        btn.textContent =
+          originalText;
+
       }
 
-      showStatus('Account created and linked. Redirecting…', 'success');
-      window.location.href = 'dashboard.html';
-      return;
     }
+  );
 
-    // No session yet — Supabase is waiting on email confirmation.
-    // There's no access token to call /api/link-client with yet, so
-    // linking is deferred to the first successful sign-in above.
-    showStatus('Account created. Check your email to confirm, then sign in.', 'success');
-    btn.disabled = false;
-  });
-</script>
 
-<script>
-  const menuToggle = document.getElementById('menuToggle');
-  const mainNav = document.getElementById('mainNav');
-  menuToggle.addEventListener('click', () => {
-    const open = mainNav.classList.toggle('open');
-    menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+/* ============================================================
+   CREATE ACCOUNT
+   ============================================================ */
+
+document
+  .getElementById('form-signup')
+  .addEventListener(
+    'submit',
+    async event => {
+
+      event.preventDefault();
+
+
+      const btn =
+        document.getElementById(
+          'signupBtn'
+        );
+
+
+      btn.disabled = true;
+
+
+      const originalText =
+        btn.textContent;
+
+
+      btn.textContent =
+        'Creating Account…';
+
+
+      const name =
+        document
+          .getElementById('su-name')
+          .value
+          .trim();
+
+
+      const email =
+        document
+          .getElementById('su-email')
+          .value
+          .trim()
+          .toLowerCase();
+
+
+      const password =
+        document
+          .getElementById('su-pass')
+          .value;
+
+
+      try {
+
+        /*
+         * Create the Supabase Auth account.
+         */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient.auth
+            .signUp({
+              email,
+              password,
+
+              options: {
+                data: {
+                  full_name:
+                    name
+                }
+              }
+            });
+
+
+        if (error) {
+
+          showStatus(
+            error.message,
+            'error'
+          );
+
+          return;
+
+        }
+
+
+        /*
+         * If Supabase gives us a session immediately,
+         * email confirmation is not required.
+         *
+         * We can therefore link the new Auth user
+         * immediately to the existing client record.
+         */
+
+        if (data.session) {
+
+          const linkResult =
+            await linkClient(
+              data.session,
+              email,
+              name
+            );
+
+
+          if (!linkResult.ok) {
+
+            console.error(
+              '[login] Account created but linking failed:',
+              linkResult.error
+            );
+
+
+            showStatus(
+              `Account created, but linking your existing project failed: ${linkResult.error} Please contact us.`,
+              'error'
+            );
+
+            return;
+
+          }
+
+
+          showStatus(
+            'Account created and linked. Redirecting…',
+            'success'
+          );
+
+
+          window.location.href =
+            'dashboard.html';
+
+
+          return;
+
+        }
+
+
+        /*
+         * If there is no session, Supabase is requiring
+         * email confirmation.
+         *
+         * We cannot call /api/link-client yet because
+         * there is no access token.
+         *
+         * The first successful sign-in will perform
+         * the linking automatically.
+         */
+
+        showStatus(
+          'Account created. Check your email to confirm your account, then sign in.',
+          'success'
+        );
+
+
+      } catch (err) {
+
+        console.error(
+          '[login] Signup error:',
+          err
+        );
+
+
+        showStatus(
+          err.message ||
+          'Could not create your account. Please try again.',
+          'error'
+        );
+
+
+      } finally {
+
+        btn.disabled = false;
+
+        btn.textContent =
+          originalText;
+
+      }
+
+    }
+  );
+
+
+/* ============================================================
+   MOBILE MENU
+   ============================================================ */
+
+const menuToggle =
+  document.getElementById(
+    'menuToggle'
+  );
+
+
+const mainNav =
+  document.getElementById(
+    'mainNav'
+  );
+
+
+menuToggle.addEventListener(
+  'click',
+  () => {
+
+    const open =
+      mainNav.classList.toggle(
+        'open'
+      );
+
+
+    menuToggle.setAttribute(
+      'aria-expanded',
+      open
+        ? 'true'
+        : 'false'
+    );
+
+  }
+);
+
+
+mainNav
+  .querySelectorAll('a')
+  .forEach(link => {
+
+    link.addEventListener(
+      'click',
+      () => {
+
+        mainNav.classList.remove(
+          'open'
+        );
+
+
+        menuToggle.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+      }
+    );
+
   });
-  mainNav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => { mainNav.classList.remove('open'); menuToggle.setAttribute('aria-expanded','false'); });
-  });
+
 </script>
 
 </body>

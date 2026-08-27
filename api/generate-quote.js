@@ -16,10 +16,60 @@
 //     access token in the Authorization header, and we verify that token
 //     server-side against the user's real role.)
 //   - Tokens expire after the configured number of days
+//
+// USD QUOTES — LOCKED NGN AMOUNT:
+//   Paystack settles in NGN, so a USD quote can't simply be forwarded as-is.
+//   When currency is USD, this endpoint looks up a live USD→NGN exchange
+//   rate, computes the NGN amount the client will actually be charged, and
+//   signs that locked amount into the token as `paymentAmountNGN` (along
+//   with the rate and its source, for audit purposes). initialize-quote.js
+//   requires this field to exist for any USD quote — it will refuse to
+//   process the payment otherwise. This file is the ONLY place that field
+//   gets set, so if the exchange-rate lookup ever fails we hard-fail quote
+//   generation here rather than silently issuing a token that can never be
+//   paid.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
+
+// Free, keyless exchange-rate endpoint. If this ever becomes unreliable,
+// swap in a paid provider here — the rest of the file doesn't need to change.
+const EXCHANGE_RATE_API_URL = 'https://open.er-api.com/v6/latest/USD';
+
+async function getUsdToNgnRate() {
+  try {
+    const res = await fetch(EXCHANGE_RATE_API_URL);
+    const data = await res.json();
+
+    const rate = data?.rates?.NGN;
+
+    if (Number.isFinite(rate) && rate > 0) {
+      return {
+        rate,
+        provider: 'open.er-api.com',
+      };
+    }
+
+    throw new Error('NGN rate missing from exchange rate response.');
+  } catch (err) {
+    console.error('[generate-quote] Exchange rate lookup failed:', err);
+
+    // Fallback: an admin-maintained manual rate, so quote generation
+    // doesn't go down if the free API is unavailable. Set this in your
+    // environment variables and update it periodically.
+    const fallbackRate = parseFloat(process.env.USD_TO_NGN_FALLBACK_RATE);
+
+    if (Number.isFinite(fallbackRate) && fallbackRate > 0) {
+      return {
+        rate: fallbackRate,
+        provider: 'manual-fallback',
+      };
+    }
+
+    return null;
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -98,6 +148,38 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server configuration error.' });
   }
 
+  // ── For USD quotes, lock in the NGN amount Paystack will actually charge ──
+  let paymentAmountNGN = null;
+  let exchangeRate = null;
+  let exchangeRateProvider = null;
+  const exchangeRateDate = new Date().toISOString();
+
+  if (currency === 'USD') {
+    const rateInfo = await getUsdToNgnRate();
+
+    if (!rateInfo) {
+      console.error('[generate-quote] Could not determine a USD→NGN exchange rate.');
+
+      return res.status(503).json({
+        error:
+          'Could not fetch a current exchange rate to generate this USD quote. Please try again shortly, or generate the quote in NGN instead.',
+      });
+    }
+
+    exchangeRate = rateInfo.rate;
+    exchangeRateProvider = rateInfo.provider;
+    paymentAmountNGN = Math.round(numAmount * exchangeRate * 100) / 100;
+
+    // Paystack still enforces a ₦1,000 minimum regardless of the quoted
+    // USD amount — catch a USD quote that would convert below that here,
+    // rather than letting the client hit it at checkout.
+    if (paymentAmountNGN < 1000) {
+      return res.status(400).json({
+        error: `At the current exchange rate (₦${exchangeRate.toLocaleString('en-NG')}/USD), this amount converts to less than the ₦1,000 minimum. Please quote a higher USD amount.`,
+      });
+    }
+  }
+
   // ── Build payload ──────────────────────────────────────────────────────────
   const issuedAt  = Date.now();
   const expiresAt = expiryDays && parseInt(expiryDays, 10) > 0
@@ -115,6 +197,14 @@ export default async function handler(req, res) {
     generatedBy:    (generatedBy || 'Greywright').trim(),
     issuedAt,
     expiresAt,
+
+    // Only populated for USD quotes — the locked NGN amount Paystack will
+    // charge, plus the rate/source used to compute it. NGN quotes charge
+    // `amount` directly and don't need these.
+    paymentAmountNGN,
+    exchangeRate,
+    exchangeRateDate: currency === 'USD' ? exchangeRateDate : null,
+    exchangeRateProvider,
   };
 
   // ── Sign the payload ───────────────────────────────────────────────────────
@@ -142,6 +232,9 @@ export default async function handler(req, res) {
       expires_at:       expiresAt ? new Date(expiresAt).toISOString() : null,
       token_preview:    token.slice(0, 16) + '…', // never store full token
       created_by:       userData.user.id,
+      payment_amount_ngn: payload.paymentAmountNGN,
+      exchange_rate:      payload.exchangeRate,
+      exchange_rate_provider: payload.exchangeRateProvider,
     });
   } catch (dbErr) {
     // Log failure but don't block — token is still valid

@@ -487,6 +487,7 @@
       <div class="tab" data-panel="panel-projects">Projects</div>
       <div class="tab" data-panel="panel-payments">Payments</div>
       <div class="tab" data-panel="panel-quotes">Quote Generator</div>
+      <div class="tab" data-panel="panel-files">Files</div>
     </div>
 
     <!-- CLIENTS -->
@@ -797,6 +798,35 @@
 
     </div>
 
+
+    <!-- FILES -->
+    <div class="panel" id="panel-files">
+
+      <div class="card">
+        <h3>Manuscript &amp; Deliverable Files</h3>
+
+        <div class="field">
+          <label>Select Project</label>
+          <select id="f-project"><option value="">Select project…</option></select>
+        </div>
+
+        <div id="files-status" class="status-bar"></div>
+
+        <div id="files-list">
+          <p class="empty">Select a project to view files.</p>
+        </div>
+
+        <div id="upload-deliverable-area" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--line);">
+          <label style="display:block; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--brass); margin-bottom:8px; font-family:var(--display); font-style:italic; font-weight:600;">
+            Upload a Deliverable for This Project
+          </label>
+          <input type="file" id="f-deliverable-input" style="margin-bottom:12px;" />
+          <button class="btn small" id="uploadDeliverableBtn" type="button">Upload Deliverable</button>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
@@ -1037,6 +1067,7 @@
    */
 
   let clientsCache = [];
+  let projectsCache = [];
 
 
   async function loadClients() {
@@ -1077,6 +1108,9 @@
 
     populateClientDropdown();
 
+
+    projectsCache = data || [];
+    populateFileProjectDropdown();
 
     if (!data || data.length === 0) {
 
@@ -2417,6 +2451,98 @@
 
       }
     );
+
+
+  /*
+   * ============================================================
+   * FILES (Stage 4)
+   * ============================================================
+   */
+
+  function populateFileProjectDropdown() {
+    const sel = document.getElementById('f-project');
+    const currentVal = sel.value;
+    sel.innerHTML =
+      '<option value="">Select project…</option>' +
+      projectsCache.map(p =>
+        `<option value="${p.id}">${escapeHtml(p.title)} — ${escapeHtml(p.clients?.name || '')}</option>`
+      ).join('');
+    if (currentVal) sel.value = currentVal;
+  }
+
+  document.getElementById('f-project').addEventListener('change', loadProjectFiles);
+
+  async function loadProjectFiles() {
+    clearStatus('files-status');
+    const projectId = document.getElementById('f-project').value;
+    const listEl = document.getElementById('files-list');
+    const uploadArea = document.getElementById('upload-deliverable-area');
+    if (!projectId) {
+      listEl.innerHTML = '<p class="empty">Select a project to view files.</p>';
+      uploadArea.style.display = 'none';
+      return;
+    }
+    uploadArea.style.display = 'block';
+    listEl.innerHTML = '<p class="empty">Loading…</p>';
+    const { data, error } = await supabaseClient.from('project_files').select('id, file_name, storage_path, file_type, uploaded_by, created_at').eq('project_id', projectId).order('created_at', { ascending: false });
+    if (error) {
+      listEl.innerHTML = `<p class="empty">Could not load files: ${escapeHtml(error.message)}</p>`;
+      return;
+    }
+    if (!data || data.length === 0) {
+      listEl.innerHTML = '<p class="empty">No files uploaded yet for this project.</p>';
+      return;
+    }
+    listEl.innerHTML = `
+      <table><thead><tr><th>File</th><th>Type</th><th>Uploaded By</th><th>Date</th><th></th></tr></thead>
+      <tbody>${data.map(f => `
+        <tr>
+          <td>${escapeHtml(f.file_name)}</td>
+          <td><span class="badge ${f.file_type === 'deliverable' ? 'paid' : 'pending'}">${escapeHtml(f.file_type)}</span></td>
+          <td>${escapeHtml(f.uploaded_by)}</td>
+          <td>${new Date(f.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</td>
+          <td><button class="btn small secondary download-file-btn" data-path="${escapeHtml(f.storage_path)}" type="button">Download</button></td>
+        </tr>`).join('')}</tbody></table>`;
+    listEl.querySelectorAll('.download-file-btn').forEach(btn => btn.addEventListener('click', () => downloadAdminFile(btn.dataset.path)));
+  }
+
+  async function downloadAdminFile(path) {
+    const { data, error } = await supabaseClient.storage.from('project-files').createSignedUrl(path, 60 * 5);
+    if (error || !data?.signedUrl) {
+      alert('Could not generate download link: ' + (error?.message || 'unknown error'));
+      return;
+    }
+    window.open(data.signedUrl, '_blank');
+  }
+
+  document.getElementById('uploadDeliverableBtn').addEventListener('click', async () => {
+    clearStatus('files-status');
+    const projectId = document.getElementById('f-project').value;
+    const fileInput = document.getElementById('f-deliverable-input');
+    const file = fileInput.files[0];
+    if (!projectId) return showStatus('files-status', 'error', 'Select a project first.');
+    if (!file) return showStatus('files-status', 'error', 'Choose a file to upload.');
+    const btn = document.getElementById('uploadDeliverableBtn');
+    btn.disabled = true;
+    showStatus('files-status', 'info', 'Uploading…');
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const storagePath = `${projectId}/deliverable/${Date.now()}_${safeName}`;
+    const { error: uploadErr } = await supabaseClient.storage.from('project-files').upload(storagePath, file);
+    if (uploadErr) {
+      showStatus('files-status', 'error', uploadErr.message);
+      btn.disabled = false;
+      return;
+    }
+    const { error: dbErr } = await supabaseClient.from('project_files').insert({ project_id: projectId, file_name: file.name, storage_path: storagePath, file_type: 'deliverable', uploaded_by: 'admin' });
+    if (dbErr) {
+      showStatus('files-status', 'error', 'Uploaded, but could not record it: ' + dbErr.message);
+    } else {
+      showStatus('files-status', 'success', 'Deliverable uploaded.');
+      fileInput.value = '';
+      loadProjectFiles();
+    }
+    btn.disabled = false;
+  });
 
 </script>
 

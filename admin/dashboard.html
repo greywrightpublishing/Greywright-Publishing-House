@@ -14,456 +14,488 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-  :root {
-    --paper: #F4EEDF;
-    --paper-deep: #EAE0C5;
-    --ink: #1B1814;
-    --ink-soft: #564E42;
-    --ink-faint: #8C8270;
-    --oxblood: #6E1B26;
-    --oxblood-deep: #4F1219;
-    --brass: #9C7B2E;
-    --line: rgba(27,24,20,0.16);
-    --success: #3C5E45;
-    --error: #8C3B2E;
+:root {
+  --paper: #F4EEDF;
+  --paper-deep: #EAE0C5;
+  --ink: #1B1814;
+  --ink-soft: #564E42;
+  --ink-faint: #8C8270;
+  --oxblood: #6E1B26;
+  --oxblood-deep: #4F1219;
+  --brass: #9C7B2E;
+  --line: rgba(27,24,20,0.16);
+  --success: #3C5E45;
+  --error: #8C3B2E;
 
-    --display: 'Cormorant Garamond', serif;
-    --body: 'Spectral', Georgia, serif;
-  }
+  --display: 'Cormorant Garamond', serif;
+  --body: 'Spectral', Georgia, serif;
+}
 
-  * {
-    box-sizing: border-box;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--body);
-    font-size: 15px;
-    line-height: 1.5;
-  }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.5;
+}
 
-  a {
-    color: inherit;
-  }
+a {
+  color: inherit;
+}
 
-  h1,
-  h2,
-  h3 {
-    font-family: var(--display);
-    font-weight: 600;
-    margin: 0;
-  }
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  margin: 0;
+}
 
-  em {
-    font-style: italic;
-    color: var(--oxblood);
-  }
+em {
+  font-style: italic;
+  color: var(--oxblood);
+}
 
-  header {
-    background: var(--ink);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    border-bottom: 1px solid rgba(244,238,223,0.1);
-  }
+header {
+  background: var(--ink);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid rgba(244,238,223,0.1);
+}
 
-  .header-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 56px;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
 
-  .brand {
-    font-family: var(--display);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--paper);
-  }
+.brand {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--paper);
+}
 
-  .brand em {
-    color: var(--brass);
-  }
+.brand em {
+  color: var(--brass);
+}
 
-  .logout-btn {
-    font-size: 12px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: rgba(244,238,223,0.6);
-    background: none;
-    border: 1px solid rgba(244,238,223,0.2);
-    padding: 6px 14px;
-    cursor: pointer;
-    border-radius: 2px;
-  }
+.logout-btn {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(244,238,223,0.6);
+  background: none;
+  border: 1px solid rgba(244,238,223,0.2);
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: 2px;
+}
 
-  .logout-btn:hover {
-    color: var(--paper);
-    border-color: rgba(244,238,223,0.5);
-  }
+.logout-btn:hover {
+  color: var(--paper);
+  border-color: rgba(244,238,223,0.5);
+}
 
-  .wrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 32px 24px 80px;
-  }
+.wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
 
-  .tabs {
-    display: flex;
-    gap: 0;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 32px;
-    overflow-x: auto;
-  }
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 32px;
+  overflow-x: auto;
+}
 
-  .tab {
-    padding: 12px 20px;
-    cursor: pointer;
-    font-size: 14px;
-    color: var(--ink-faint);
-    white-space: nowrap;
-    border-bottom: 2px solid transparent;
-  }
+.tab {
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
 
-  .tab.active {
-    color: var(--oxblood);
-    border-bottom-color: var(--oxblood);
-  }
+.tab.active {
+  color: var(--oxblood);
+  border-bottom-color: var(--oxblood);
+}
 
-  .panel {
-    display: none;
-  }
+.panel {
+  display: none;
+}
 
-  .panel.active {
-    display: block;
-  }
+.panel.active {
+  display: block;
+}
 
-  .card {
-    background: var(--paper-deep);
-    border: 1px solid var(--line);
-    padding: 28px;
-    margin-bottom: 24px;
-  }
+.card {
+  background: var(--paper-deep);
+  border: 1px solid var(--line);
+  padding: 28px;
+  margin-bottom: 24px;
+}
 
-  .card h3 {
-    font-size: 16px;
-    margin-bottom: 20px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--line);
-  }
+.card h3 {
+  font-size: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
 
-  .field {
-    margin-bottom: 16px;
-  }
+.field {
+  margin-bottom: 16px;
+}
 
-  .field label {
-    display: block;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--brass);
-    margin-bottom: 6px;
-    font-family: var(--display);
-    font-style: italic;
-    font-weight: 600;
-  }
+.field label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 6px;
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 600;
+}
 
-  .field input,
-  .field select,
-  .field textarea {
-    width: 100%;
-    font-family: var(--body);
-    font-size: 14px;
-    color: var(--ink);
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    padding: 9px 11px;
-    outline: none;
-  }
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 9px 11px;
+  outline: none;
+}
 
-  .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
-    border-color: var(--oxblood);
-  }
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--oxblood);
+}
 
-  .row2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
+.row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
 
+.row3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--body);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 11px 20px;
+  cursor: pointer;
+  border-radius: 2px;
+  background: var(--oxblood);
+  color: var(--paper);
+  border: 1px solid var(--oxblood);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--oxblood-deep);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn.secondary {
+  background: transparent;
+  color: var(--oxblood);
+}
+
+.btn.small {
+  padding: 6px 12px;
+  font-size: 11.5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+th {
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brass);
+  font-family: var(--display);
+  font-style: italic;
+  padding: 0 10px 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+td {
+  padding: 11px 10px 11px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink-soft);
+  vertical-align: top;
+}
+
+td:first-child {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.empty {
+  color: var(--ink-faint);
+  font-style: italic;
+  font-size: 14px;
+  padding: 12px 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+}
+
+.badge.pending {
+  background: rgba(156,123,46,0.15);
+  color: var(--brass);
+}
+
+.badge.paid {
+  background: rgba(60,94,69,0.15);
+  color: var(--success);
+}
+
+.badge.in_progress {
+  background: rgba(41,128,185,0.12);
+  color: #1a5276;
+}
+
+.badge.review {
+  background: rgba(156,123,46,0.15);
+  color: var(--brass);
+}
+
+.badge.completed {
+  background: rgba(60,94,69,0.15);
+  color: var(--success);
+}
+
+.badge.cancelled {
+  background: rgba(140,59,46,0.12);
+  color: var(--error);
+}
+
+.badge.manuscript {
+  background: rgba(110,27,38,0.12);
+  color: var(--oxblood);
+}
+
+.badge.deliverable {
+  background: rgba(60,94,69,0.15);
+  color: var(--success);
+}
+
+.status-bar {
+  display: none;
+  padding: 11px 16px;
+  border-radius: 2px;
+  font-size: 13.5px;
+  margin-bottom: 16px;
+}
+
+.status-bar.visible {
+  display: block;
+}
+
+.status-bar.error {
+  background: #f9ebea;
+  border: 1px solid #c0392b;
+  color: #922b21;
+}
+
+.status-bar.success {
+  background: #eafaf0;
+  border: 1px solid #2e7d4f;
+  color: #1e5e39;
+}
+
+.status-bar.info {
+  background: #eaf4fd;
+  border: 1px solid #2980b9;
+  color: #1a5276;
+}
+
+.milestone-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 32px;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: var(--error);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+}
+
+.currency-toggle {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.currency-toggle button {
+  flex: 1;
+  font-size: 13px;
+  padding: 8px 0;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.currency-toggle button.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+#result-card {
+  display: none;
+  background: var(--ink);
+  border: 1px solid rgba(244,238,223,0.12);
+  padding: 26px 28px;
+  margin-top: 20px;
+}
+
+#result-card.visible {
+  display: block;
+}
+
+.result-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.result-summary {
+  font-family: var(--display);
+  font-size: 19px;
+  color: var(--paper);
+  margin-bottom: 16px;
+}
+
+.link-box {
+  display: flex;
+  border: 1px solid rgba(244,238,223,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.link-box input {
+  flex: 1;
+  font-family: monospace;
+  font-size: 12.5px;
+  color: rgba(244,238,223,0.85);
+  background: rgba(244,238,223,0.06);
+  border: none;
+  padding: 11px 14px;
+}
+
+.copy-btn {
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 11px 18px;
+  cursor: pointer;
+  background: var(--brass);
+  color: var(--ink);
+  border: none;
+}
+
+.copy-btn.copied {
+  background: var(--success);
+  color: var(--paper);
+}
+
+#screen-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.file-upload-box {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.file-meta {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 3px;
+}
+
+@media (max-width: 640px) {
+  .row2,
   .row3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--body);
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 11px 20px;
-    cursor: pointer;
-    border-radius: 2px;
-    background: var(--oxblood);
-    color: var(--paper);
-    border: 1px solid var(--oxblood);
-  }
-
-  .btn:hover:not(:disabled) {
-    background: var(--oxblood-deep);
-  }
-
-  .btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  .btn.secondary {
-    background: transparent;
-    color: var(--oxblood);
-  }
-
-  .btn.small {
-    padding: 6px 12px;
-    font-size: 11.5px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 13.5px;
-  }
-
-  th {
-    text-align: left;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--brass);
-    font-family: var(--display);
-    font-style: italic;
-    padding: 0 10px 10px 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  td {
-    padding: 11px 10px 11px 0;
-    border-bottom: 1px solid var(--line);
-    color: var(--ink-soft);
-    vertical-align: top;
-  }
-
-  td:first-child {
-    color: var(--ink);
-    font-weight: 500;
-  }
-
-  .empty {
-    color: var(--ink-faint);
-    font-style: italic;
-    font-size: 14px;
-    padding: 12px 0;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 2px 9px;
-    border-radius: 20px;
-    font-size: 11px;
-    letter-spacing: 0.03em;
-  }
-
-  .badge.pending {
-    background: rgba(156,123,46,0.15);
-    color: var(--brass);
-  }
-
-  .badge.paid {
-    background: rgba(60,94,69,0.15);
-    color: var(--success);
-  }
-
-  .badge.in_progress {
-    background: rgba(41,128,185,0.12);
-    color: #1a5276;
-  }
-
-  .badge.review {
-    background: rgba(156,123,46,0.15);
-    color: var(--brass);
-  }
-
-  .badge.completed {
-    background: rgba(60,94,69,0.15);
-    color: var(--success);
-  }
-
-  .badge.cancelled {
-    background: rgba(140,59,46,0.12);
-    color: var(--error);
-  }
-
-  .status-bar {
-    display: none;
-    padding: 11px 16px;
-    border-radius: 2px;
-    font-size: 13.5px;
-    margin-bottom: 16px;
-  }
-
-  .status-bar.visible {
-    display: block;
-  }
-
-  .status-bar.error {
-    background: #f9ebea;
-    border: 1px solid #c0392b;
-    color: #922b21;
-  }
-
-  .status-bar.success {
-    background: #eafaf0;
-    border: 1px solid #2e7d4f;
-    color: #1e5e39;
-  }
-
-  .status-bar.info {
-    background: #eaf4fd;
-    border: 1px solid #2980b9;
-    color: #1a5276;
+    grid-template-columns: 1fr;
   }
 
   .milestone-row {
-    display: grid;
-    grid-template-columns: 1fr 140px 32px;
-    gap: 10px;
-    margin-bottom: 10px;
-    align-items: center;
+    grid-template-columns: 1fr 100px 32px;
   }
 
-  .remove-btn {
-    background: none;
-    border: none;
-    color: var(--error);
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
+  .card {
+    padding: 20px;
   }
 
-  .currency-toggle {
-    display: flex;
-    border: 1px solid var(--line);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .currency-toggle button {
-    flex: 1;
-    font-size: 13px;
-    padding: 8px 0;
-    background: #fff;
-    border: none;
-    cursor: pointer;
-    color: var(--ink-soft);
-  }
-
-  .currency-toggle button.active {
-    background: var(--ink);
-    color: var(--paper);
-  }
-
-  #result-card {
-    display: none;
-    background: var(--ink);
-    border: 1px solid rgba(244,238,223,0.12);
-    padding: 26px 28px;
-    margin-top: 20px;
-  }
-
-  #result-card.visible {
+  table {
     display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
-
-  .result-label {
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--brass);
-    margin-bottom: 8px;
-    font-style: italic;
-  }
-
-  .result-summary {
-    font-family: var(--display);
-    font-size: 19px;
-    color: var(--paper);
-    margin-bottom: 16px;
-  }
-
-  .link-box {
-    display: flex;
-    border: 1px solid rgba(244,238,223,0.2);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 14px;
-  }
-
-  .link-box input {
-    flex: 1;
-    font-family: monospace;
-    font-size: 12.5px;
-    color: rgba(244,238,223,0.85);
-    background: rgba(244,238,223,0.06);
-    border: none;
-    padding: 11px 14px;
-  }
-
-  .copy-btn {
-    font-size: 12px;
-    text-transform: uppercase;
-    padding: 11px 18px;
-    cursor: pointer;
-    background: var(--brass);
-    color: var(--ink);
-    border: none;
-  }
-
-  .copy-btn.copied {
-    background: var(--success);
-    color: var(--paper);
-  }
-
-  #screen-loading {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--ink-faint);
-    font-style: italic;
-  }
-
-  @media (max-width: 640px) {
-    .row2,
-    .row3 {
-      grid-template-columns: 1fr;
-    }
-
-    .milestone-row {
-      grid-template-columns: 1fr 100px 32px;
-    }
-  }
+}
 </style>
 </head>
 
@@ -473,2076 +505,2825 @@
 
 <div id="screen-app" style="display:none;">
 
-  <header>
-    <div class="header-inner">
-      <div class="brand">Greywright <em>Admin</em></div>
-      <button class="logout-btn" id="logoutBtn">Sign out</button>
-    </div>
-  </header>
-
-  <div class="wrap">
-
-    <div class="tabs">
-      <div class="tab active" data-panel="panel-clients">Clients</div>
-      <div class="tab" data-panel="panel-projects">Projects</div>
-      <div class="tab" data-panel="panel-payments">Payments</div>
-      <div class="tab" data-panel="panel-quotes">Quote Generator</div>
-      <div class="tab" data-panel="panel-files">Files</div>
-    </div>
-
-    <!-- CLIENTS -->
-    <div class="panel active" id="panel-clients">
-
-      <div class="card">
-        <h3>New Client</h3>
-
-        <div id="client-status" class="status-bar"></div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Full Name</label>
-            <input id="c-name" type="text" placeholder="Jane Doe" />
-          </div>
-
-          <div class="field">
-            <label>Email</label>
-            <input id="c-email" type="email" placeholder="jane@email.com" />
-          </div>
-
-          <div class="field">
-            <label>Phone (optional)</label>
-            <input id="c-phone" type="text" placeholder="080..." />
-          </div>
-        </div>
-
-        <button class="btn" id="addClientBtn">Add Client</button>
-      </div>
-
-      <div class="card">
-        <h3>All Clients</h3>
-        <div id="clients-table">
-          <p class="empty">Loading…</p>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- PROJECTS -->
-    <div class="panel" id="panel-projects">
-
-      <div class="card">
-        <h3>New Project</h3>
-
-        <div id="project-status" class="status-bar"></div>
-
-        <div class="row2">
-          <div class="field">
-            <label>Client</label>
-            <select id="p-client">
-              <option value="">Select client…</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Project Title</label>
-            <input id="p-title" type="text" placeholder="e.g. The Weight of Morning" />
-          </div>
-        </div>
-
-        <div class="row3">
-          <div class="field">
-            <label>Service Type</label>
-            <input id="p-service" type="text" placeholder="e.g. Developmental Editing" />
-          </div>
-
-          <div class="field">
-            <label>Word Count (optional)</label>
-            <input id="p-words" type="number" placeholder="65000" />
-          </div>
-
-          <div class="field">
-            <label>Total Price (₦, whole naira)</label>
-            <input id="p-price" type="number" placeholder="450000" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Milestones</label>
-
-          <div id="milestone-rows"></div>
-
-          <button class="btn secondary small" id="addMilestoneRowBtn" type="button">
-            + Add Milestone
-          </button>
-
-          <div id="milestone-total"
-               style="margin-top:8px;font-size:13px;color:var(--ink-faint);">
-          </div>
-        </div>
-
-        <button class="btn" id="addProjectBtn" style="margin-top:8px;">
-          Create Project
-        </button>
-      </div>
-
-      <div class="card">
-        <h3>All Projects</h3>
-
-        <div id="projects-table">
-          <p class="empty">Loading…</p>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- PAYMENTS -->
-    <div class="panel" id="panel-payments">
-
-      <div class="card">
-        <h3>Pending Milestones</h3>
-
-        <p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 16px;">
-          Milestones normally get marked paid automatically by the Paystack webhook.
-          Use "Mark Paid" here only as a manual fallback.
-        </p>
-
-        <div id="payments-status" class="status-bar"></div>
-
-        <div id="payments-table">
-          <p class="empty">Loading…</p>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- QUOTE GENERATOR -->
-    <div class="panel" id="panel-quotes">
-
-      <div class="card">
-
-        <h3>Client Details</h3>
-
-        <div id="quote-status" class="status-bar"></div>
-
-        <div class="row2">
-
-          <div class="field">
-            <label>Client Full Name</label>
-            <input id="q-name" type="text" placeholder="Jane Doe" />
-          </div>
-
-          <div class="field">
-            <label>Client Email</label>
-            <input id="q-email" type="email" placeholder="jane@email.com" />
-          </div>
-
-        </div>
-
-        <div class="field">
-          <label>Manuscript Title</label>
-          <input id="q-title" type="text" placeholder="e.g. The Weight of Morning" />
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <h3>Service &amp; Quote</h3>
-
-        <div class="field">
-
-          <label>Service</label>
-
-          <select id="q-service">
-
-            <option value="">Select a service</option>
-            <option>Developmental Editing</option>
-            <option>Line Editing</option>
-            <option>Copyediting</option>
-            <option>Proofreading</option>
-            <option>Academic Editing</option>
-            <option>Ghostwriting</option>
-            <option>Publishing Consultation</option>
-            <option>KDP Publishing Support</option>
-            <option>Full Manuscript Package</option>
-            <option>Custom Service</option>
-
-          </select>
-
-        </div>
-
-        <div class="row2">
-
-          <div class="field">
-
-            <label>Quote Amount</label>
-
-            <input
-              id="q-amount"
-              type="number"
-              placeholder="e.g. 85000"
-              min="1000"
-              step="1"
-            />
-
-          </div>
-
-          <div class="field">
-
-            <label>Currency</label>
-
-            <div class="currency-toggle">
-
-              <button id="q-btn-ngn"
-                      class="active"
-                      type="button">
-                ₦ NGN
-              </button>
-
-              <button id="q-btn-usd"
-                      type="button">
-                $ USD
-              </button>
-
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="field">
-
-          <label>Notes for Client (optional)</label>
-
-          <textarea
-            id="q-notes"
-            rows="3"
-            placeholder="e.g. Includes two revision rounds."
-          ></textarea>
-
-        </div>
-
-      </div>
-
-      <div class="card">
-
-        <h3>Link Expiry</h3>
-
-        <div class="row2">
-
-          <div class="field">
-
-            <label>Expires In</label>
-
-            <select id="q-expiry">
-
-              <option value="3">3 days</option>
-              <option value="7" selected>7 days</option>
-              <option value="14">14 days</option>
-              <option value="30">30 days</option>
-              <option value="0">Never</option>
-
-            </select>
-
-          </div>
-
-          <div class="field">
-
-            <label>Generated by</label>
-
-            <input
-              id="q-by"
-              type="text"
-              placeholder="Gabriel"
-            />
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <button class="btn" id="generateQuoteBtn" type="button">
-        Generate Payment Link
-      </button>
-
-      <div id="result-card">
-
-        <div class="result-label">
-          Payment link ready
-        </div>
-
-        <div class="result-summary"
-             id="result-summary">
-        </div>
-
-        <div class="link-box">
-
-          <input
-            type="text"
-            id="result-link"
-            readonly
-          />
-
-          <button
-            class="copy-btn"
-            id="copyResultBtn"
-            type="button"
-          >
-            Copy link
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- FILES -->
-    <div class="panel" id="panel-files">
-
-      <div class="card">
-        <h3>Manuscript &amp; Deliverable Files</h3>
-
-        <div class="field">
-          <label>Select Project</label>
-          <select id="f-project"><option value="">Select project…</option></select>
-        </div>
-
-        <div id="files-status" class="status-bar"></div>
-
-        <div id="files-list">
-          <p class="empty">Select a project to view files.</p>
-        </div>
-
-        <div id="upload-deliverable-area" style="display:none; margin-top:20px; padding-top:20px; border-top:1px solid var(--line);">
-          <label style="display:block; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--brass); margin-bottom:8px; font-family:var(--display); font-style:italic; font-weight:600;">
-            Upload a Deliverable for This Project
-          </label>
-          <input type="file" id="f-deliverable-input" style="margin-bottom:12px;" />
-          <button class="btn small" id="uploadDeliverableBtn" type="button">Upload Deliverable</button>
-        </div>
-      </div>
-
-    </div>
-
+<header>
+  <div class="header-inner">
+    <div class="brand">Greywright <em>Admin</em></div>
+    <button class="logout-btn" id="logoutBtn">Sign out</button>
   </div>
+</header>
+
+<div class="wrap">
+
+<div class="tabs">
+  <div class="tab active" data-panel="panel-clients">Clients</div>
+  <div class="tab" data-panel="panel-projects">Projects</div>
+  <div class="tab" data-panel="panel-payments">Payments</div>
+  <div class="tab" data-panel="panel-quotes">Quote Generator</div>
+  <div class="tab" data-panel="panel-files">Files</div>
+</div>
+
+<!-- =========================================================
+     CLIENTS
+========================================================= -->
+
+<div class="panel active" id="panel-clients">
+
+<div class="card">
+
+<h3>New Client</h3>
+
+<div id="client-status" class="status-bar"></div>
+
+<div class="row3">
+
+<div class="field">
+<label>Full Name</label>
+<input id="c-name" type="text" placeholder="Jane Doe" />
+</div>
+
+<div class="field">
+<label>Email</label>
+<input id="c-email" type="email" placeholder="jane@email.com" />
+</div>
+
+<div class="field">
+<label>Phone (optional)</label>
+<input id="c-phone" type="text" placeholder="080..." />
+</div>
+
+</div>
+
+<button class="btn" id="addClientBtn">Add Client</button>
+
+</div>
+
+<div class="card">
+
+<h3>All Clients</h3>
+
+<div id="clients-table">
+<p class="empty">Loading…</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     PROJECTS
+========================================================= -->
+
+<div class="panel" id="panel-projects">
+
+<div class="card">
+
+<h3>New Project</h3>
+
+<div id="project-status" class="status-bar"></div>
+
+<div class="row2">
+
+<div class="field">
+<label>Client</label>
+
+<select id="p-client">
+<option value="">Select client…</option>
+</select>
+
+</div>
+
+<div class="field">
+<label>Project Title</label>
+
+<input
+id="p-title"
+type="text"
+placeholder="e.g. The Weight of Morning"
+/>
+
+</div>
+
+</div>
+
+<div class="row3">
+
+<div class="field">
+<label>Service Type</label>
+
+<input
+id="p-service"
+type="text"
+placeholder="e.g. Developmental Editing"
+/>
+
+</div>
+
+<div class="field">
+<label>Word Count (optional)</label>
+
+<input
+id="p-words"
+type="number"
+placeholder="65000"
+/>
+
+</div>
+
+<div class="field">
+<label>Total Price (₦, whole naira)</label>
+
+<input
+id="p-price"
+type="number"
+placeholder="450000"
+/>
+
+</div>
+
+</div>
+
+<div class="field">
+
+<label>Milestones</label>
+
+<div id="milestone-rows"></div>
+
+<button
+class="btn secondary small"
+id="addMilestoneRowBtn"
+type="button"
+>
++ Add Milestone
+</button>
+
+<div
+id="milestone-total"
+style="margin-top:8px;font-size:13px;color:var(--ink-faint);"
+></div>
+
+</div>
+
+<button
+class="btn"
+id="addProjectBtn"
+style="margin-top:8px;"
+>
+Create Project
+</button>
+
+</div>
+
+<div class="card">
+
+<h3>All Projects</h3>
+
+<div id="projects-table">
+<p class="empty">Loading…</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     PAYMENTS
+========================================================= -->
+
+<div class="panel" id="panel-payments">
+
+<div class="card">
+
+<h3>Pending Milestones</h3>
+
+<p style="font-size:13.5px;color:var(--ink-soft);margin:0 0 16px;">
+Milestones normally get marked paid automatically by the Paystack webhook.
+Use "Mark Paid" here only as a manual fallback.
+</p>
+
+<div id="payments-status" class="status-bar"></div>
+
+<div id="payments-table">
+<p class="empty">Loading…</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     QUOTE GENERATOR
+========================================================= -->
+
+<div class="panel" id="panel-quotes">
+
+<div class="card">
+
+<h3>Client Details</h3>
+
+<div id="quote-status" class="status-bar"></div>
+
+<div class="row2">
+
+<div class="field">
+
+<label>Client Full Name</label>
+
+<input
+id="q-name"
+type="text"
+placeholder="Jane Doe"
+/>
+
+</div>
+
+<div class="field">
+
+<label>Client Email</label>
+
+<input
+id="q-email"
+type="email"
+placeholder="jane@email.com"
+/>
+
+</div>
+
+</div>
+
+<div class="field">
+
+<label>Manuscript Title</label>
+
+<input
+id="q-title"
+type="text"
+placeholder="e.g. The Weight of Morning"
+/>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Service &amp; Quote</h3>
+
+<div class="field">
+
+<label>Service</label>
+
+<select id="q-service">
+
+<option value="">Select a service</option>
+<option>Developmental Editing</option>
+<option>Line Editing</option>
+<option>Copyediting</option>
+<option>Proofreading</option>
+<option>Academic Editing</option>
+<option>Ghostwriting</option>
+<option>Publishing Consultation</option>
+<option>KDP Publishing Support</option>
+<option>Full Manuscript Package</option>
+<option>Custom Service</option>
+
+</select>
+
+</div>
+
+<div class="row2">
+
+<div class="field">
+
+<label>Quote Amount</label>
+
+<input
+id="q-amount"
+type="number"
+placeholder="e.g. 85000"
+min="1000"
+step="1"
+/>
+
+</div>
+
+<div class="field">
+
+<label>Currency</label>
+
+<div class="currency-toggle">
+
+<button
+id="q-btn-ngn"
+class="active"
+type="button"
+>
+₦ NGN
+</button>
+
+<button
+id="q-btn-usd"
+type="button"
+>
+$ USD
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="field">
+
+<label>Notes for Client (optional)</label>
+
+<textarea
+id="q-notes"
+rows="3"
+placeholder="e.g. Includes two revision rounds."
+></textarea>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Link Expiry</h3>
+
+<div class="row2">
+
+<div class="field">
+
+<label>Expires In</label>
+
+<select id="q-expiry">
+
+<option value="3">3 days</option>
+<option value="7" selected>7 days</option>
+<option value="14">14 days</option>
+<option value="30">30 days</option>
+<option value="0">Never</option>
+
+</select>
+
+</div>
+
+<div class="field">
+
+<label>Generated by</label>
+
+<input
+id="q-by"
+type="text"
+placeholder="Gabriel"
+/>
+
+</div>
+
+</div>
+
+</div>
+
+<button
+class="btn"
+id="generateQuoteBtn"
+type="button"
+>
+Generate Payment Link
+</button>
+
+<div id="result-card">
+
+<div class="result-label">
+Payment link ready
+</div>
+
+<div
+class="result-summary"
+id="result-summary"
+></div>
+
+<div class="link-box">
+
+<input
+type="text"
+id="result-link"
+readonly
+/>
+
+<button
+class="copy-btn"
+id="copyResultBtn"
+type="button"
+>
+Copy link
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- =========================================================
+     FILES
+========================================================= -->
+
+<div class="panel" id="panel-files">
+
+<div class="card">
+
+<h3>Manuscript &amp; Deliverable Files</h3>
+
+<div class="field">
+
+<label>Select Project</label>
+
+<select id="f-project">
+
+<option value="">
+Select project…
+</option>
+
+</select>
+
+</div>
+
+<div id="files-status" class="status-bar"></div>
+
+<div id="files-list">
+
+<p class="empty">
+Select a project to view files.
+</p>
+
+</div>
+
+<div
+id="upload-deliverable-area"
+class="file-upload-box"
+style="display:none;"
+>
+
+<label
+style="
+display:block;
+font-size:11px;
+letter-spacing:0.06em;
+text-transform:uppercase;
+color:var(--brass);
+margin-bottom:8px;
+font-family:var(--display);
+font-style:italic;
+font-weight:600;
+"
+>
+Upload a Deliverable for This Project
+</label>
+
+<input
+type="file"
+id="f-deliverable-input"
+style="margin-bottom:12px;"
+/>
+
+<br />
+
+<button
+class="btn small"
+id="uploadDeliverableBtn"
+type="button"
+>
+Upload Deliverable
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 </div>
 
 <script>
-  /*
-   * ============================================================
-   * SUPABASE CONFIGURATION
-   * ============================================================
-   */
 
-  const SUPABASE_URL =
-    'https://dusfpsafuhopdiyjrhyh.supabase.co';
+/* ============================================================
+   SUPABASE CONFIGURATION
+============================================================ */
 
-  const SUPABASE_ANON_KEY =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
+const SUPABASE_URL =
+'https://dusfpsafuhopdiyjrhyh.supabase.co';
 
-  const SITE_URL =
-    'https://www.greywrightpublishing.com';
+const SUPABASE_ANON_KEY =
+'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzIi'+
+'IsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24i'+
+'LCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nz'+
+'CARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
+const SITE_URL =
+'https://www.greywrightpublishing.com';
 
-  /*
-   * IMPORTANT:
-   *
-   * We intentionally call this variable "supabaseClient"
-   * instead of "supabase".
-   *
-   * The Supabase CDN already creates window.supabase.
-   * Using "const supabase" can cause:
-   *
-   * Identifier 'supabase' has already been declared
-   *
-   * ============================================================
-   */
+const STORAGE_BUCKET =
+'project-files';
 
-  const supabaseClient =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
 
+let currentUser = null;
+let clientsCache = [];
+let projectsCache = [];
 
-  let currentUser = null;
 
+/* ============================================================
+   AUTH GUARD
+============================================================ */
 
-  /*
-   * ============================================================
-   * AUTH GUARD
-   * ============================================================
-   */
+(async function init() {
 
-  (async function init() {
+try {
 
-    try {
+const {
+data: { session },
+error: sessionError
+} =
+await supabaseClient.auth.getSession();
 
-      const {
-        data: { session },
-        error: sessionError
-      } = await supabaseClient.auth.getSession();
+if (sessionError) {
 
-      if (sessionError) {
-        console.error('Session error:', sessionError);
-        return redirectToLogin();
-      }
+console.error(sessionError);
 
-      if (!session) {
-        return redirectToLogin();
-      }
+return redirectToLogin();
 
+}
 
-      const {
-        data: profile,
-        error: profileError
-      } = await supabaseClient
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .maybeSingle();
+if (!session) {
 
+return redirectToLogin();
 
-      if (profileError) {
-        console.error('Profile error:', profileError);
-        return redirectToLogin();
-      }
+}
 
+const {
+data: profile,
+error: profileError
+} =
+await supabaseClient
+.from('profiles')
+.select('role')
+.eq('id', session.user.id)
+.maybeSingle();
 
-      if (!profile || profile.role !== 'admin') {
-        return redirectToLogin();
-      }
+if (profileError) {
 
+console.error(profileError);
 
-      currentUser = session.user;
+return redirectToLogin();
 
+}
 
-      document.getElementById('screen-loading').style.display =
-        'none';
+if (!profile || profile.role !== 'admin') {
 
-      document.getElementById('screen-app').style.display =
-        'block';
+return redirectToLogin();
 
+}
 
-      /*
-       * Load dashboard data
-       */
+currentUser = session.user;
 
-      await loadClients();
-      await loadProjects();
-      await loadPayments();
+document.getElementById(
+'screen-loading'
+).style.display = 'none';
 
-      addMilestoneRow();
+document.getElementById(
+'screen-app'
+).style.display = 'block';
 
+await loadClients();
+await loadProjects();
+await loadPayments();
 
-    } catch (error) {
+addMilestoneRow();
 
-      console.error('Dashboard initialization error:', error);
+}
+catch(error) {
 
-      redirectToLogin();
+console.error(
+'Dashboard initialization error:',
+error
+);
 
-    }
+redirectToLogin();
 
-  })();
+}
 
+})();
 
-  function redirectToLogin() {
 
-    window.location.href = 'login.html';
+function redirectToLogin() {
 
-  }
+window.location.href =
+'login.html';
 
+}
 
-  /*
-   * ============================================================
-   * LOGOUT
-   * ============================================================
-   */
 
-  document
-    .getElementById('logoutBtn')
-    .addEventListener('click', async () => {
+/* ============================================================
+   LOGOUT
+============================================================ */
 
-      await supabaseClient.auth.signOut();
+document
+.getElementById('logoutBtn')
+.addEventListener(
+'click',
+async () => {
 
-      redirectToLogin();
+await supabaseClient.auth.signOut();
 
-    });
+redirectToLogin();
 
+}
+);
 
-  /*
-   * ============================================================
-   * TABS
-   * ============================================================
-   */
 
-  document
-    .querySelectorAll('.tab')
-    .forEach(tab => {
+/* ============================================================
+   TABS
+============================================================ */
 
-      tab.addEventListener('click', () => {
+document
+.querySelectorAll('.tab')
+.forEach(tab => {
 
-        document
-          .querySelectorAll('.tab')
-          .forEach(t =>
-            t.classList.remove('active')
-          );
+tab.addEventListener(
+'click',
+() => {
 
-        document
-          .querySelectorAll('.panel')
-          .forEach(p =>
-            p.classList.remove('active')
-          );
+document
+.querySelectorAll('.tab')
+.forEach(t =>
+t.classList.remove('active')
+);
 
-        tab.classList.add('active');
+document
+.querySelectorAll('.panel')
+.forEach(p =>
+p.classList.remove('active')
+);
 
-        document
-          .getElementById(tab.dataset.panel)
-          .classList.add('active');
+tab.classList.add('active');
 
-      });
+document
+.getElementById(
+tab.dataset.panel
+)
+.classList.add('active');
 
-    });
+}
+);
 
+});
 
-  /*
-   * ============================================================
-   * UTILITIES
-   * ============================================================
-   */
 
-  function showStatus(id, type, msg) {
+/* ============================================================
+   UTILITIES
+============================================================ */
 
-    const el = document.getElementById(id);
+function showStatus(
+id,
+type,
+msg
+) {
 
-    el.className =
-      `status-bar visible ${type}`;
+const el =
+document.getElementById(id);
 
-    el.textContent = msg;
+el.className =
+`status-bar visible ${type}`;
 
-  }
+el.textContent =
+msg;
 
+}
 
-  function clearStatus(id) {
 
-    document.getElementById(id).className =
-      'status-bar';
+function clearStatus(id) {
 
-  }
+document.getElementById(id)
+.className =
+'status-bar';
 
+}
 
-  function nairaFromKobo(k) {
 
-    return '₦' +
-      (Number(k || 0) / 100)
-        .toLocaleString('en-NG');
+function nairaFromKobo(k) {
 
-  }
+return '₦' +
+(
+Number(k || 0) / 100
+)
+.toLocaleString('en-NG');
 
+}
 
-  function escapeHtml(str) {
 
-    return String(str ?? '')
-      .replace(
-        /[&<>"']/g,
-        c => ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        }[c])
-      );
+function escapeHtml(str) {
 
-  }
+return String(str ?? '')
+.replace(
+/[&<>"']/g,
+c => ({
+'&': '&amp;',
+'<': '&lt;',
+'>': '&gt;',
+'"': '&quot;',
+"'": '&#39;'
+}[c])
+);
 
+}
 
-  /*
-   * ============================================================
-   * CLIENTS
-   * ============================================================
-   */
 
-  let clientsCache = [];
-  let projectsCache = [];
+function formatDate(date) {
 
+if (!date) return '—';
 
-  async function loadClients() {
+return new Date(date)
+.toLocaleDateString(
+'en-GB',
+{
+day: 'numeric',
+month: 'long',
+year: 'numeric'
+}
+);
 
-    const {
-      data,
-      error
-    } = await supabaseClient
-      .from('clients')
-      .select(
-        'id, name, email, phone, created_at, projects(count)'
-      )
-      .order(
-        'created_at',
-        { ascending: false }
-      );
+}
 
 
-    const container =
-      document.getElementById('clients-table');
+/* ============================================================
+   CLIENTS
+============================================================ */
 
+async function loadClients() {
 
-    if (error) {
+const {
+data,
+error
+} =
+await supabaseClient
+.from('clients')
+.select(
+'id, name, email, phone, created_at, projects(count)'
+)
+.order(
+'created_at',
+{
+ascending: false
+}
+);
 
-      console.error('Clients error:', error);
+const container =
+document.getElementById(
+'clients-table'
+);
 
-      container.innerHTML =
-        `<p class="empty">
-          Could not load clients.
-        </p>`;
+if (error) {
 
-      return;
+console.error(
+'Clients error:',
+error
+);
 
-    }
+container.innerHTML =
+`<p class="empty">
+Could not load clients.
+</p>`;
 
+return;
 
-    clientsCache = data || [];
+}
 
-    populateClientDropdown();
+clientsCache =
+data || [];
 
+populateClientDropdown();
 
-    projectsCache = data || [];
-    populateFileProjectDropdown();
+if (
+!data ||
+data.length === 0
+) {
 
-    if (!data || data.length === 0) {
+container.innerHTML =
+`<p class="empty">
+No clients yet.
+</p>`;
 
-      container.innerHTML =
-        `<p class="empty">
-          No clients yet.
-        </p>`;
+return;
 
-      return;
+}
 
-    }
+container.innerHTML = `
 
+<table>
 
-    container.innerHTML = `
+<thead>
 
-      <table>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Projects</th>
+</tr>
 
-        <thead>
+</thead>
 
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>Projects</th>
-          </tr>
+<tbody>
 
-        </thead>
+${data.map(c => `
 
-        <tbody>
+<tr>
 
-          ${data.map(c => `
+<td>
+${escapeHtml(c.name)}
+</td>
 
-            <tr>
+<td>
+${escapeHtml(c.email)}
+</td>
 
-              <td>
-                ${escapeHtml(c.name)}
-              </td>
+<td>
+${escapeHtml(c.phone || '—')}
+</td>
 
-              <td>
-                ${escapeHtml(c.email)}
-              </td>
+<td>
+${c.projects?.[0]?.count ?? 0}
+</td>
 
-              <td>
-                ${escapeHtml(c.phone || '—')}
-              </td>
+</tr>
 
-              <td>
-                ${c.projects?.[0]?.count ?? 0}
-              </td>
+`).join('')}
 
-            </tr>
+</tbody>
 
-          `).join('')}
+</table>
 
-        </tbody>
+`;
 
-      </table>
+}
 
-    `;
 
-  }
+function populateClientDropdown() {
 
+const sel =
+document.getElementById(
+'p-client'
+);
 
-  function populateClientDropdown() {
+sel.innerHTML =
+'<option value="">Select client…</option>' +
 
-    const sel =
-      document.getElementById('p-client');
+clientsCache
+.map(c =>
+`<option value="${c.id}">
+${escapeHtml(c.name)}
+(${escapeHtml(c.email)})
+</option>`
+)
+.join('');
 
+}
 
-    sel.innerHTML =
-      '<option value="">Select client…</option>' +
 
-      clientsCache
-        .map(c =>
-          `<option value="${c.id}">
-            ${escapeHtml(c.name)}
-            (${escapeHtml(c.email)})
-          </option>`
-        )
-        .join('');
+/* ============================================================
+   ADD CLIENT
+============================================================ */
 
-  }
+document
+.getElementById('addClientBtn')
+.addEventListener(
+'click',
+async () => {
 
+clearStatus(
+'client-status'
+);
 
-  document
-    .getElementById('addClientBtn')
-    .addEventListener('click', async () => {
+const name =
+document
+.getElementById('c-name')
+.value
+.trim();
 
-      clearStatus('client-status');
+const email =
+document
+.getElementById('c-email')
+.value
+.trim()
+.toLowerCase();
 
+const phone =
+document
+.getElementById('c-phone')
+.value
+.trim();
 
-      const name =
-        document
-          .getElementById('c-name')
-          .value
-          .trim();
+if (
+!name ||
+!/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+.test(email)
+) {
 
+return showStatus(
+'client-status',
+'error',
+'Please enter a name and valid email.'
+);
 
-      const email =
-        document
-          .getElementById('c-email')
-          .value
-          .trim()
-          .toLowerCase();
+}
 
+const {
+error
+} =
+await supabaseClient
+.from('clients')
+.insert({
 
-      const phone =
-        document
-          .getElementById('c-phone')
-          .value
-          .trim();
+name,
+email,
+phone:
+phone || null
 
+});
 
-      if (
-        !name ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-      ) {
+if (error) {
 
-        return showStatus(
-          'client-status',
-          'error',
-          'Please enter a name and valid email.'
-        );
+return showStatus(
+'client-status',
+'error',
+error.message
+);
 
-      }
+}
 
+showStatus(
+'client-status',
+'success',
+'Client added.'
+);
 
-      const {
-        error
-      } = await supabaseClient
-        .from('clients')
-        .insert({
-          name,
-          email,
-          phone: phone || null
-        });
+document.getElementById(
+'c-name'
+).value = '';
 
+document.getElementById(
+'c-email'
+).value = '';
 
-      if (error) {
+document.getElementById(
+'c-phone'
+).value = '';
 
-        return showStatus(
-          'client-status',
-          'error',
-          error.message
-        );
+await loadClients();
 
-      }
+}
+);
 
 
-      showStatus(
-        'client-status',
-        'success',
-        'Client added.'
-      );
+/* ============================================================
+   MILESTONES
+============================================================ */
 
+function addMilestoneRow() {
 
-      document.getElementById('c-name').value = '';
-      document.getElementById('c-email').value = '';
-      document.getElementById('c-phone').value = '';
+const row =
+document.createElement(
+'div'
+);
 
+row.className =
+'milestone-row';
 
-      await loadClients();
+row.innerHTML = `
 
-    });
+<input
+type="text"
+placeholder="Milestone name (e.g. Deposit)"
+class="ms-name"
+/>
 
+<input
+type="number"
+placeholder="Amount ₦"
+class="ms-amount"
+min="0"
+/>
 
-  /*
-   * ============================================================
-   * PROJECTS / MILESTONES
-   * ============================================================
-   */
+<button
+type="button"
+class="remove-btn"
+>
+&times;
+</button>
 
-  function addMilestoneRow() {
+`;
 
-    const row =
-      document.createElement('div');
+row
+.querySelector('.remove-btn')
+.addEventListener(
+'click',
+() => {
 
-    row.className =
-      'milestone-row';
+row.remove();
 
+updateMilestoneTotal();
 
-    row.innerHTML = `
+}
+);
 
-      <input
-        type="text"
-        placeholder="Milestone name (e.g. Deposit)"
-        class="ms-name"
-      />
+row
+.querySelectorAll('input')
+.forEach(input =>
+input.addEventListener(
+'input',
+updateMilestoneTotal
+)
+);
 
-      <input
-        type="number"
-        placeholder="Amount ₦"
-        class="ms-amount"
-        min="0"
-      />
+document
+.getElementById(
+'milestone-rows'
+)
+.appendChild(row);
 
-      <button
-        type="button"
-        class="remove-btn"
-      >
-        &times;
-      </button>
+}
 
-    `;
 
+document
+.getElementById(
+'addMilestoneRowBtn'
+)
+.addEventListener(
+'click',
+addMilestoneRow
+);
 
-    row
-      .querySelector('.remove-btn')
-      .addEventListener(
-        'click',
-        () => {
 
-          row.remove();
+function getMilestoneRows() {
 
-          updateMilestoneTotal();
+return Array
+.from(
+document.querySelectorAll(
+'.milestone-row'
+)
+)
+.map(row => ({
 
-        }
-      );
+name:
+row
+.querySelector('.ms-name')
+.value
+.trim(),
 
+amount:
+parseFloat(
+row
+.querySelector('.ms-amount')
+.value
+)
 
-    row
-      .querySelectorAll('input')
-      .forEach(i =>
-        i.addEventListener(
-          'input',
-          updateMilestoneTotal
-        )
-      );
+}))
+.filter(m =>
+m.name &&
+Number.isFinite(m.amount) &&
+m.amount > 0
+);
 
+}
 
-    document
-      .getElementById('milestone-rows')
-      .appendChild(row);
 
-  }
+function updateMilestoneTotal() {
 
+const total =
+getMilestoneRows()
+.reduce(
+(s, m) =>
+s + m.amount,
+0
+);
 
-  document
-    .getElementById('addMilestoneRowBtn')
-    .addEventListener(
-      'click',
-      addMilestoneRow
-    );
+document
+.getElementById(
+'milestone-total'
+)
+.textContent =
+total > 0
+?
+`Milestone total: ₦${total.toLocaleString('en-NG')}`
+:
+'';
 
+}
 
-  function getMilestoneRows() {
 
-    return Array
-      .from(
-        document.querySelectorAll(
-          '.milestone-row'
-        )
-      )
-      .map(row => ({
+/* ============================================================
+   PROJECTS
+============================================================ */
 
-        name:
-          row
-            .querySelector('.ms-name')
-            .value
-            .trim(),
+async function loadProjects() {
 
-        amount:
-          parseFloat(
-            row
-              .querySelector('.ms-amount')
-              .value
-          )
+const {
+data,
+error
+} =
+await supabaseClient
+.from('projects')
+.select(
+'id, client_id, title, status, total_price, amount_paid, created_at, clients(name)'
+)
+.order(
+'created_at',
+{
+ascending: false
+}
+);
 
-      }))
-      .filter(m =>
-        m.name &&
-        Number.isFinite(m.amount) &&
-        m.amount > 0
-      );
+const container =
+document.getElementById(
+'projects-table'
+);
 
-  }
+if (error) {
 
+console.error(
+'Projects error:',
+error
+);
 
-  function updateMilestoneTotal() {
+container.innerHTML =
+`<p class="empty">
+Could not load projects.
+</p>`;
 
-    const total =
-      getMilestoneRows()
-        .reduce(
-          (s, m) => s + m.amount,
-          0
-        );
+return;
 
+}
 
-    document
-      .getElementById('milestone-total')
-      .textContent =
-        total > 0
-          ? `Milestone total: ₦${total.toLocaleString('en-NG')}`
-          : '';
+projectsCache =
+data || [];
 
-  }
+populateFileProjectDropdown();
 
+if (
+!data ||
+data.length === 0
+) {
 
-  async function loadProjects() {
+container.innerHTML =
+`<p class="empty">
+No projects yet.
+</p>`;
 
-    const {
-      data,
-      error
-    } = await supabaseClient
-      .from('projects')
-      .select(
-        'id, title, status, total_price, amount_paid, clients(name)'
-      )
-      .order(
-        'created_at',
-        { ascending: false }
-      );
+return;
 
+}
 
-    const container =
-      document.getElementById('projects-table');
+container.innerHTML = `
 
+<table>
 
-    if (error) {
+<thead>
 
-      console.error('Projects error:', error);
+<tr>
+<th>Project</th>
+<th>Client</th>
+<th>Status</th>
+<th>Price</th>
+<th>Paid</th>
+</tr>
 
-      container.innerHTML =
-        `<p class="empty">
-          Could not load projects.
-        </p>`;
+</thead>
 
-      return;
+<tbody>
 
-    }
+${data.map(p => `
 
+<tr>
 
-    if (!data || data.length === 0) {
+<td>
+${escapeHtml(p.title)}
+</td>
 
-      container.innerHTML =
-        `<p class="empty">
-          No projects yet.
-        </p>`;
+<td>
+${escapeHtml(
+p.clients?.name || '—'
+)}
+</td>
 
-      return;
+<td>
 
-    }
+<span class="badge ${escapeHtml(p.status)}">
 
+${escapeHtml(
+String(p.status || '')
+.replace(/_/g, ' ')
+)}
 
-    container.innerHTML = `
+</span>
 
-      <table>
+</td>
 
-        <thead>
+<td>
+${nairaFromKobo(
+p.total_price
+)}
+</td>
 
-          <tr>
-            <th>Project</th>
-            <th>Client</th>
-            <th>Status</th>
-            <th>Price</th>
-            <th>Paid</th>
-          </tr>
+<td>
+${nairaFromKobo(
+p.amount_paid
+)}
+</td>
 
-        </thead>
+</tr>
 
-        <tbody>
+`).join('')}
 
-          ${data.map(p => `
+</tbody>
 
-            <tr>
+</table>
 
-              <td>
-                ${escapeHtml(p.title)}
-              </td>
+`;
 
-              <td>
-                ${escapeHtml(
-                  p.clients?.name || '—'
-                )}
-              </td>
+}
 
-              <td>
 
-                <span class="badge ${escapeHtml(p.status)}">
-                  ${escapeHtml(
-                    String(p.status || '')
-                      .replace('_', ' ')
-                  )}
-                </span>
+/* ============================================================
+   CREATE PROJECT
+============================================================ */
 
-              </td>
+document
+.getElementById('addProjectBtn')
+.addEventListener(
+'click',
+async () => {
 
-              <td>
-                ${nairaFromKobo(p.total_price)}
-              </td>
+clearStatus(
+'project-status'
+);
 
-              <td>
-                ${nairaFromKobo(p.amount_paid)}
-              </td>
+const clientId =
+document
+.getElementById('p-client')
+.value;
 
-            </tr>
+const title =
+document
+.getElementById('p-title')
+.value
+.trim();
 
-          `).join('')}
+const service =
+document
+.getElementById('p-service')
+.value
+.trim();
 
-        </tbody>
+const words =
+parseInt(
+document
+.getElementById('p-words')
+.value,
+10
+) || null;
 
-      </table>
+const priceNaira =
+parseFloat(
+document
+.getElementById('p-price')
+.value
+);
 
-    `;
+const milestones =
+getMilestoneRows();
 
-  }
+if (!clientId) {
 
+return showStatus(
+'project-status',
+'error',
+'Select a client.'
+);
 
-  document
-    .getElementById('addProjectBtn')
-    .addEventListener(
-      'click',
-      async () => {
+}
 
-        clearStatus('project-status');
+if (!title) {
 
+return showStatus(
+'project-status',
+'error',
+'Enter a project title.'
+);
 
-        const clientId =
-          document
-            .getElementById('p-client')
-            .value;
+}
 
+if (
+!Number.isFinite(priceNaira) ||
+priceNaira <= 0
+) {
 
-        const title =
-          document
-            .getElementById('p-title')
-            .value
-            .trim();
+return showStatus(
+'project-status',
+'error',
+'Enter a valid total price.'
+);
 
+}
 
-        const service =
-          document
-            .getElementById('p-service')
-            .value
-            .trim();
+if (
+milestones.length === 0
+) {
 
+return showStatus(
+'project-status',
+'error',
+'Add at least one milestone.'
+);
 
-        const words =
-          parseInt(
-            document
-              .getElementById('p-words')
-              .value,
-            10
-          ) || null;
+}
 
+const totalPriceKobo =
+Math.round(
+priceNaira * 100
+);
 
-        const priceNaira =
-          parseFloat(
-            document
-              .getElementById('p-price')
-              .value
-          );
+const milestoneTotalKobo =
+Math.round(
+milestones.reduce(
+(s, m) =>
+s + m.amount,
+0
+) * 100
+);
 
+if (
+milestoneTotalKobo !==
+totalPriceKobo
+) {
 
-        const milestones =
-          getMilestoneRows();
+return showStatus(
+'project-status',
+'error',
 
+`Milestones (₦${(
+milestoneTotalKobo / 100
+).toLocaleString('en-NG')})
+must add up to the total price
+(₦${priceNaira.toLocaleString('en-NG')}).`
+);
 
-        if (!clientId) {
+}
 
-          return showStatus(
-            'project-status',
-            'error',
-            'Select a client.'
-          );
+const {
+data: project,
+error: projErr
+} =
+await supabaseClient
+.from('projects')
+.insert({
 
-        }
+client_id:
+clientId,
 
+title,
 
-        if (!title) {
+service_type:
+service || null,
 
-          return showStatus(
-            'project-status',
-            'error',
-            'Enter a project title.'
-          );
+word_count:
+words,
 
-        }
+total_price:
+totalPriceKobo,
 
+amount_paid:
+0,
 
-        if (
-          !Number.isFinite(priceNaira) ||
-          priceNaira <= 0
-        ) {
+status:
+'pending',
 
-          return showStatus(
-            'project-status',
-            'error',
-            'Enter a valid total price.'
-          );
+quote_currency:
+'NGN'
 
-        }
+})
+.select()
+.single();
 
+if (projErr) {
 
-        if (milestones.length === 0) {
+return showStatus(
+'project-status',
+'error',
+projErr.message
+);
 
-          return showStatus(
-            'project-status',
-            'error',
-            'Add at least one milestone.'
-          );
+}
 
-        }
+const milestoneRows =
+milestones.map(
+(m, i) => ({
 
+project_id:
+project.id,
 
-        const totalPriceKobo =
-          Math.round(
-            priceNaira * 100
-          );
+name:
+m.name,
 
+amount:
+Math.round(
+m.amount * 100
+),
 
-        const milestoneTotalKobo =
-          Math.round(
-            milestones.reduce(
-              (s, m) => s + m.amount,
-              0
-            ) * 100
-          );
+order_index:
+i,
 
+status:
+'pending'
 
-        if (
-          milestoneTotalKobo !==
-          totalPriceKobo
-        ) {
+})
+);
 
-          return showStatus(
-            'project-status',
-            'error',
+const {
+error: msErr
+} =
+await supabaseClient
+.from('milestones')
+.insert(
+milestoneRows
+);
 
-            `Milestones (₦${(
-              milestoneTotalKobo / 100
-            ).toLocaleString('en-NG')})
-            must add up to the total price
-            (₦${priceNaira.toLocaleString('en-NG')}).`
-          );
+if (msErr) {
 
-        }
+return showStatus(
+'project-status',
+'error',
 
+`Project created, but milestones failed: ${msErr.message}`
+);
 
-        const {
-          data: project,
-          error: projErr
-        } = await supabaseClient
-          .from('projects')
-          .insert({
+}
 
-            client_id: clientId,
-            title,
-            service_type:
-              service || null,
-            word_count: words,
-            total_price:
-              totalPriceKobo
+showStatus(
+'project-status',
+'success',
+'Project and milestones created.'
+);
 
-          })
-          .select()
-          .single();
+document.getElementById(
+'p-title'
+).value = '';
 
+document.getElementById(
+'p-service'
+).value = '';
 
-        if (projErr) {
+document.getElementById(
+'p-words'
+).value = '';
 
-          return showStatus(
-            'project-status',
-            'error',
-            projErr.message
-          );
+document.getElementById(
+'p-price'
+).value = '';
 
-        }
+document.getElementById(
+'milestone-rows'
+).innerHTML = '';
 
+addMilestoneRow();
 
-        const milestoneRows =
-          milestones.map(
-            (m, i) => ({
+updateMilestoneTotal();
 
-              project_id:
-                project.id,
+await loadProjects();
+await loadPayments();
 
-              name:
-                m.name,
+}
+);
 
-              amount:
-                Math.round(
-                  m.amount * 100
-                ),
 
-              order_index:
-                i
+/* ============================================================
+   PAYMENTS
+============================================================ */
 
-            })
-          );
+async function loadPayments() {
 
+const {
+data,
+error
+} =
+await supabaseClient
+.from('milestones')
+.select(
+'id, name, amount, status, paid_at, projects(title, clients(name))'
+)
+.eq(
+'status',
+'pending'
+)
+.order(
+'order_index',
+{
+ascending: true
+}
+);
 
-        const {
-          error: msErr
-        } = await supabaseClient
-          .from('milestones')
-          .insert(milestoneRows);
+const container =
+document.getElementById(
+'payments-table'
+);
 
+if (error) {
 
-        if (msErr) {
+console.error(
+'Payments error:',
+error
+);
 
-          return showStatus(
-            'project-status',
-            'error',
-            `Project created, but milestones failed: ${msErr.message}`
-          );
+container.innerHTML =
+`<p class="empty">
+Could not load milestones.
+</p>`;
 
-        }
+return;
 
+}
 
-        showStatus(
-          'project-status',
-          'success',
-          'Project and milestones created.'
-        );
+if (
+!data ||
+data.length === 0
+) {
 
+container.innerHTML =
+`<p class="empty">
+No pending milestones.
+</p>`;
 
-        document.getElementById('p-title').value = '';
-        document.getElementById('p-service').value = '';
-        document.getElementById('p-words').value = '';
-        document.getElementById('p-price').value = '';
+return;
 
-        document.getElementById(
-          'milestone-rows'
-        ).innerHTML = '';
+}
 
-        addMilestoneRow();
+container.innerHTML = `
 
-        updateMilestoneTotal();
+<table>
 
+<thead>
 
-        await loadProjects();
-        await loadPayments();
+<tr>
+<th>Milestone</th>
+<th>Project</th>
+<th>Client</th>
+<th>Amount</th>
+<th></th>
+</tr>
 
-      }
-    );
+</thead>
 
+<tbody>
 
-  /*
-   * ============================================================
-   * PAYMENTS
-   * ============================================================
-   */
+${data.map(m => `
 
-  async function loadPayments() {
+<tr>
 
-    const {
-      data,
-      error
-    } = await supabaseClient
-      .from('milestones')
-      .select(
-        'id, name, amount, status, projects(title, clients(name))'
-      )
-      .eq('status', 'pending')
-      .order('id');
+<td>
+${escapeHtml(m.name)}
+</td>
 
+<td>
+${escapeHtml(
+m.projects?.title || '—'
+)}
+</td>
 
-    const container =
-      document.getElementById(
-        'payments-table'
-      );
+<td>
+${escapeHtml(
+m.projects?.clients?.name || '—'
+)}
+</td>
 
+<td>
+${nairaFromKobo(m.amount)}
+</td>
 
-    if (error) {
+<td>
 
-      console.error(
-        'Payments error:',
-        error
-      );
+<button
+class="btn small mark-paid-btn"
+data-id="${m.id}"
+data-amount="${m.amount}"
+type="button"
+>
+Mark Paid
+</button>
 
-      container.innerHTML =
-        `<p class="empty">
-          Could not load milestones.
-        </p>`;
+</td>
 
-      return;
+</tr>
 
-    }
+`).join('')}
 
+</tbody>
 
-    if (!data || data.length === 0) {
+</table>
 
-      container.innerHTML =
-        `<p class="empty">
-          No pending milestones.
-        </p>`;
+`;
 
-      return;
+container
+.querySelectorAll(
+'.mark-paid-btn'
+)
+.forEach(btn => {
 
-    }
+btn.addEventListener(
+'click',
+() =>
+markMilestonePaid(
+btn.dataset.id,
+parseInt(
+btn.dataset.amount,
+10
+)
+)
+);
 
+});
 
-    container.innerHTML = `
+}
 
-      <table>
 
-        <thead>
+/* ============================================================
+   MARK MILESTONE PAID
+============================================================ */
 
-          <tr>
-            <th>Milestone</th>
-            <th>Project</th>
-            <th>Client</th>
-            <th>Amount</th>
-            <th></th>
-          </tr>
+async function markMilestonePaid(
+milestoneId,
+amount
+) {
 
-        </thead>
+clearStatus(
+'payments-status'
+);
 
-        <tbody>
+const {
+data: milestone,
+error: fetchErr
+} =
+await supabaseClient
+.from('milestones')
+.select('project_id')
+.eq(
+'id',
+milestoneId
+)
+.single();
 
-          ${data.map(m => `
+if (fetchErr) {
 
-            <tr>
+return showStatus(
+'payments-status',
+'error',
+fetchErr.message
+);
 
-              <td>
-                ${escapeHtml(m.name)}
-              </td>
+}
 
-              <td>
-                ${escapeHtml(
-                  m.projects?.title || '—'
-                )}
-              </td>
+const {
+data: currentMilestone,
+error: milestoneErr
+} =
+await supabaseClient
+.from('milestones')
+.select('status')
+.eq('id', milestoneId)
+.single();
 
-              <td>
-                ${escapeHtml(
-                  m.projects?.clients?.name || '—'
-                )}
-              </td>
+if (milestoneErr) {
 
-              <td>
-                ${nairaFromKobo(m.amount)}
-              </td>
+return showStatus(
+'payments-status',
+'error',
+milestoneErr.message
+);
 
-              <td>
+}
 
-                <button
-                  class="btn small mark-paid-btn"
-                  data-id="${m.id}"
-                  data-amount="${m.amount}"
-                  type="button"
-                >
-                  Mark Paid
-                </button>
+if (
+currentMilestone.status ===
+'paid'
+) {
 
-              </td>
+return showStatus(
+'payments-status',
+'info',
+'This milestone is already marked as paid.'
+);
 
-            </tr>
+}
 
-          `).join('')}
+const {
+error: msErr
+} =
+await supabaseClient
+.from('milestones')
+.update({
 
-        </tbody>
+status:
+'paid',
 
-      </table>
+paid_at:
+new Date().toISOString()
 
-    `;
+})
+.eq(
+'id',
+milestoneId
+);
 
+if (msErr) {
 
-    container
-      .querySelectorAll(
-        '.mark-paid-btn'
-      )
-      .forEach(btn => {
+return showStatus(
+'payments-status',
+'error',
+msErr.message
+);
 
-        btn.addEventListener(
-          'click',
-          () =>
-            markMilestonePaid(
-              btn.dataset.id,
-              parseInt(
-                btn.dataset.amount,
-                10
-              )
-            )
-        );
+}
 
-      });
+const {
+data: project,
+error: projFetchErr
+} =
+await supabaseClient
+.from('projects')
+.select(
+'amount_paid, total_price'
+)
+.eq(
+'id',
+milestone.project_id
+)
+.single();
 
-  }
+if (
+projFetchErr ||
+!project
+) {
 
+return showStatus(
+'payments-status',
+'error',
+'Milestone paid, but project payment total could not be updated.'
+);
 
-  async function markMilestonePaid(
-    milestoneId,
-    amount
-  ) {
+}
 
-    clearStatus(
-      'payments-status'
-    );
+const newAmountPaid =
+Number(project.amount_paid || 0) +
+Number(amount);
 
+const newStatus =
+newAmountPaid >=
+Number(project.total_price)
+?
+'completed'
+:
+'in_progress';
 
-    const {
-      data: milestone,
-      error: fetchErr
-    } = await supabaseClient
-      .from('milestones')
-      .select('project_id')
-      .eq('id', milestoneId)
-      .single();
+const {
+error: projectUpdateError
+} =
+await supabaseClient
+.from('projects')
+.update({
 
+amount_paid:
+newAmountPaid,
 
-    if (fetchErr) {
+status:
+newStatus
 
-      return showStatus(
-        'payments-status',
-        'error',
-        fetchErr.message
-      );
+})
+.eq(
+'id',
+milestone.project_id
+);
 
-    }
+if (projectUpdateError) {
 
+return showStatus(
+'payments-status',
+'error',
+`Milestone paid, but project total could not be updated: ${projectUpdateError.message}`
+);
 
-    const {
-      error: msErr
-    } = await supabaseClient
-      .from('milestones')
-      .update({
+}
 
-        status: 'paid',
-        paid_at:
-          new Date().toISOString()
+showStatus(
+'payments-status',
+'success',
+'Milestone marked paid and project payment total updated.'
+);
 
-      })
-      .eq(
-        'id',
-        milestoneId
-      );
+await loadPayments();
+await loadProjects();
 
+}
 
-    if (msErr) {
 
-      return showStatus(
-        'payments-status',
-        'error',
-        msErr.message
-      );
+/* ============================================================
+   QUOTE GENERATOR
+============================================================ */
 
-    }
+let quoteCurrency =
+'NGN';
 
+document
+.getElementById(
+'q-btn-ngn'
+)
+.addEventListener(
+'click',
+() =>
+setQuoteCurrency('NGN')
+);
 
-    const {
-      data: project,
-      error: projFetchErr
-    } = await supabaseClient
-      .from('projects')
-      .select('amount_paid')
-      .eq(
-        'id',
-        milestone.project_id
-      )
-      .single();
+document
+.getElementById(
+'q-btn-usd'
+)
+.addEventListener(
+'click',
+() =>
+setQuoteCurrency('USD')
+);
 
 
-    if (
-      !projFetchErr &&
-      project
-    ) {
+function setQuoteCurrency(c) {
 
-      await supabaseClient
-        .from('projects')
-        .update({
+quoteCurrency =
+c;
 
-          amount_paid:
-            Number(project.amount_paid || 0) +
-            Number(amount)
+document
+.getElementById(
+'q-btn-ngn'
+)
+.classList.toggle(
+'active',
+c === 'NGN'
+);
 
-        })
-        .eq(
-          'id',
-          milestone.project_id
-        );
+document
+.getElementById(
+'q-btn-usd'
+)
+.classList.toggle(
+'active',
+c === 'USD'
+);
 
-    }
+const amt =
+document.getElementById(
+'q-amount'
+);
 
+amt.min =
+c === 'NGN'
+?
+'1000'
+:
+'1';
 
-    showStatus(
-      'payments-status',
-      'success',
-      'Milestone marked paid.'
-    );
+amt.step =
+c === 'NGN'
+?
+'1'
+:
+'0.01';
 
+}
 
-    await loadPayments();
-    await loadProjects();
 
-  }
+/* ============================================================
+   GENERATE QUOTE
+============================================================ */
 
+document
+.getElementById(
+'generateQuoteBtn'
+)
+.addEventListener(
+'click',
+async () => {
 
-  /*
-   * ============================================================
-   * QUOTE GENERATOR
-   * ============================================================
-   */
+clearStatus(
+'quote-status'
+);
 
-  let quoteCurrency = 'NGN';
+const clientName =
+document
+.getElementById('q-name')
+.value
+.trim();
 
+const clientEmail =
+document
+.getElementById('q-email')
+.value
+.trim();
 
-  document
-    .getElementById('q-btn-ngn')
-    .addEventListener(
-      'click',
-      () =>
-        setQuoteCurrency('NGN')
-    );
+const manuscriptTitle =
+document
+.getElementById('q-title')
+.value
+.trim();
 
+const service =
+document
+.getElementById('q-service')
+.value;
 
-  document
-    .getElementById('q-btn-usd')
-    .addEventListener(
-      'click',
-      () =>
-        setQuoteCurrency('USD')
-    );
+const amount =
+parseFloat(
+document
+.getElementById('q-amount')
+.value
+);
 
+const notes =
+document
+.getElementById('q-notes')
+.value
+.trim();
 
-  function setQuoteCurrency(c) {
+const expiryDays =
+parseInt(
+document
+.getElementById('q-expiry')
+.value,
+10
+);
 
-    quoteCurrency = c;
+const generatedBy =
+document
+.getElementById('q-by')
+.value
+.trim()
+||
+'Greywright';
 
+const errors = [];
 
-    document
-      .getElementById('q-btn-ngn')
-      .classList.toggle(
-        'active',
-        c === 'NGN'
-      );
+if (!clientName)
+errors.push('Client name');
 
+if (
+!clientEmail ||
+!/^[^\s@]+@[^\s@]+\.[^\s@]+$/
+.test(clientEmail)
+)
+errors.push('Valid client email');
 
-    document
-      .getElementById('q-btn-usd')
-      .classList.toggle(
-        'active',
-        c === 'USD'
-      );
+if (!service)
+errors.push('Service type');
 
+const minAmount =
+quoteCurrency === 'NGN'
+?
+1000
+:
+1;
 
-    const amt =
-      document.getElementById(
-        'q-amount'
-      );
+if (
+!Number.isFinite(amount) ||
+amount < minAmount
+) {
 
+errors.push(
+`Amount (min ${
+quoteCurrency === 'NGN'
+?
+'₦1,000'
+:
+'$1'
+})`
+);
 
-    amt.min =
-      c === 'NGN'
-        ? '1000'
-        : '1';
+}
 
+if (errors.length) {
 
-    amt.step =
-      c === 'NGN'
-        ? '1'
-        : '0.01';
+return showStatus(
+'quote-status',
+'error',
+`Please fill in: ${errors.join(', ')}.`
+);
 
-  }
+}
 
+const btn =
+document.getElementById(
+'generateQuoteBtn'
+);
+
+btn.disabled =
+true;
 
-  document
-    .getElementById(
-      'generateQuoteBtn'
-    )
-    .addEventListener(
-      'click',
-      async () => {
+showStatus(
+'quote-status',
+'info',
+'Generating secure payment link…'
+);
+
+try {
 
-        clearStatus(
-          'quote-status'
-        );
+const {
+data: {
+session
+}
+} =
+await supabaseClient
+.auth
+.getSession();
+
+if (!session) {
+
+throw new Error(
+'Your session expired. Please sign in again.'
+);
+
+}
+
+const res =
+await fetch(
+'/api/generate-quote',
+{
+
+method:
+'POST',
+
+headers:
+{
+
+'Content-Type':
+'application/json',
+
+'Authorization':
+`Bearer ${session.access_token}`
+
+},
+
+body:
+JSON.stringify({
+
+clientName,
+clientEmail,
+manuscriptTitle,
+service,
+amount,
+currency:
+quoteCurrency,
+notes,
+expiryDays,
+generatedBy
+
+})
+
+}
+);
+
+const data =
+await res.json();
+
+if (
+!res.ok ||
+!data.token
+) {
+
+throw new Error(
+data.error ||
+'Could not generate link.'
+);
+
+}
+
+const paymentUrl =
+`${SITE_URL}/quote-checkout.html?token=${data.token}`;
+
+const amountFormatted =
+quoteCurrency === 'NGN'
+?
+`₦${amount.toLocaleString('en-NG')}`
+:
+`$${amount.toLocaleString(
+'en-US',
+{
+maximumFractionDigits: 2
+}
+)}`;
+
+clearStatus(
+'quote-status'
+);
+
+const resultCard =
+document.getElementById(
+'result-card'
+);
+
+resultCard.classList.add(
+'visible'
+);
+
+document
+.getElementById(
+'result-summary'
+)
+.innerHTML =
+`${amountFormatted} · ${escapeHtml(service)} · <em>${escapeHtml(clientName)}</em>`;
+
+document
+.getElementById(
+'result-link'
+)
+.value =
+paymentUrl;
 
+resultCard.scrollIntoView({
+behavior:
+'smooth',
+block:
+'start'
+});
 
-        const clientName =
-          document
-            .getElementById('q-name')
-            .value
-            .trim();
+}
+catch(err) {
+
+console.error(
+'Quote error:',
+err
+);
 
+showStatus(
+'quote-status',
+'error',
+err.message ||
+'Something went wrong.'
+);
+
+}
+finally {
+
+btn.disabled =
+false;
+
+}
+
+}
+);
+
+
+/* ============================================================
+   COPY PAYMENT LINK
+============================================================ */
 
-        const clientEmail =
-          document
-            .getElementById('q-email')
-            .value
-            .trim();
+document
+.getElementById(
+'copyResultBtn'
+)
+.addEventListener(
+'click',
+async () => {
 
+const link =
+document
+.getElementById(
+'result-link'
+)
+.value;
 
-        const manuscriptTitle =
-          document
-            .getElementById('q-title')
-            .value
-            .trim();
+try {
 
+await navigator
+.clipboard
+.writeText(link);
 
-        const service =
-          document
-            .getElementById('q-service')
-            .value;
+const btn =
+document.getElementById(
+'copyResultBtn'
+);
 
+btn.textContent =
+'Copied!';
 
-        const amount =
-          parseFloat(
-            document
-              .getElementById('q-amount')
-              .value
-          );
+btn.classList.add(
+'copied'
+);
 
+setTimeout(
+() => {
+
+btn.textContent =
+'Copy link';
+
+btn.classList.remove(
+'copied'
+);
+
+},
+2500
+);
+
+}
+catch(error) {
 
-        const notes =
-          document
-            .getElementById('q-notes')
-            .value
-            .trim();
+console.error(
+'Copy failed:',
+error
+);
 
+}
 
-        const expiryDays =
-          parseInt(
-            document
-              .getElementById('q-expiry')
-              .value,
-            10
-          );
+}
+);
 
 
-        const generatedBy =
-          document
-            .getElementById('q-by')
-            .value
-            .trim() ||
-          'Greywright';
+/* ============================================================
+   FILE PROJECT DROPDOWN
+============================================================ */
 
+function populateFileProjectDropdown() {
 
-        const errors = [];
+const sel =
+document.getElementById(
+'f-project'
+);
+
+const currentVal =
+sel.value;
+
+sel.innerHTML =
+'<option value="">Select project…</option>' +
+
+projectsCache
+.map(p =>
+`<option value="${p.id}">
+${escapeHtml(p.title)}
+—
+${escapeHtml(
+p.clients?.name || ''
+)}
+</option>`
+)
+.join('');
+
+if (currentVal) {
+
+sel.value =
+currentVal;
+
+}
+
+}
+
+
+/* ============================================================
+   FILE PROJECT CHANGE
+============================================================ */
+
+document
+.getElementById(
+'f-project'
+)
+.addEventListener(
+'change',
+loadProjectFiles
+);
+
+
+/* ============================================================
+   LOAD PROJECT FILES
+============================================================ */
+
+async function loadProjectFiles() {
+
+clearStatus(
+'files-status'
+);
+
+const projectId =
+document
+.getElementById(
+'f-project'
+)
+.value;
+
+const listEl =
+document.getElementById(
+'files-list'
+);
 
+const uploadArea =
+document.getElementById(
+'upload-deliverable-area'
+);
 
-        if (!clientName) {
-          errors.push(
-            'Client name'
-          );
-        }
+if (!projectId) {
+
+listEl.innerHTML =
+`<p class="empty">
+Select a project to view files.
+</p>`;
+
+uploadArea.style.display =
+'none';
+
+return;
 
+}
 
-        if (
-          !clientEmail ||
-          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/
-            .test(clientEmail)
-        ) {
+uploadArea.style.display =
+'block';
 
-          errors.push(
-            'Valid client email'
-          );
+listEl.innerHTML =
+`<p class="empty">
+Loading files…
+</p>`;
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from('project_files')
+.select(
+'id, file_name, storage_path, file_type, uploaded_by, created_at'
+)
+.eq(
+'project_id',
+projectId
+)
+.order(
+'created_at',
+{
+ascending: false
+}
+);
 
-        }
+if (error) {
 
+console.error(
+'Project files error:',
+error
+);
 
-        if (!service) {
+listEl.innerHTML =
+`<p class="empty">
+Could not load files:
+${escapeHtml(error.message)}
+</p>`;
+
+return;
+
+}
+
+if (
+!data ||
+data.length === 0
+) {
 
-          errors.push(
-            'Service type'
-          );
+listEl.innerHTML =
+`<p class="empty">
+No files uploaded yet for this project.
+</p>`;
 
-        }
+return;
 
+}
 
-        const minAmount =
-          quoteCurrency === 'NGN'
-            ? 1000
-            : 1;
+listEl.innerHTML = `
 
+<table>
 
-        if (
-          !Number.isFinite(amount) ||
-          amount < minAmount
-        ) {
+<thead>
 
-          errors.push(
-            `Amount (min ${
-              quoteCurrency === 'NGN'
-                ? '₦1,000'
-                : '$1'
-            })`
-          );
+<tr>
+<th>File</th>
+<th>Type</th>
+<th>Uploaded By</th>
+<th>Date</th>
+<th></th>
+</tr>
 
-        }
+</thead>
 
+<tbody>
 
-        if (errors.length) {
+${data.map(file => {
 
-          return showStatus(
-            'quote-status',
-            'error',
-            `Please fill in: ${errors.join(', ')}.`
-          );
+const type =
+String(
+file.file_type || ''
+)
+.toLowerCase();
 
-        }
+const badgeClass =
+type === 'deliverable'
+?
+'deliverable'
+:
+'manuscript';
 
+return `
 
-        const btn =
-          document.getElementById(
-            'generateQuoteBtn'
-          );
+<tr>
 
+<td>
 
-        btn.disabled = true;
+${escapeHtml(
+file.file_name
+)}
 
+<div class="file-meta">
+${escapeHtml(
+file.storage_path
+)}
+</div>
 
-        showStatus(
-          'quote-status',
-          'info',
-          'Generating secure payment link…'
-        );
+</td>
 
+<td>
 
-        try {
+<span class="badge ${badgeClass}">
+${escapeHtml(
+file.file_type
+)}
+</span>
 
-          const {
-            data: {
-              session
-            }
-          } =
-            await supabaseClient
-              .auth
-              .getSession();
+</td>
 
+<td>
+${escapeHtml(
+file.uploaded_by
+)}
+</td>
 
-          if (!session) {
+<td>
+${formatDate(
+file.created_at
+)}
+</td>
 
-            throw new Error(
-              'Your session expired. Please sign in again.'
-            );
+<td>
 
-          }
+<button
+class="btn small secondary download-file-btn"
+data-path="${encodeURIComponent(
+file.storage_path
+)}"
+type="button"
+>
+Download
+</button>
 
+</td>
 
-          const res =
-            await fetch(
-              '/api/generate-quote',
-              {
+</tr>
 
-                method: 'POST',
+`;
 
-                headers: {
+}).join('')}
 
-                  'Content-Type':
-                    'application/json',
+</tbody>
 
-                  'Authorization':
-                    `Bearer ${session.access_token}`
+</table>
 
-                },
+`;
 
-                body:
-                  JSON.stringify({
+listEl
+.querySelectorAll(
+'.download-file-btn'
+)
+.forEach(btn => {
 
-                    clientName,
-                    clientEmail,
-                    manuscriptTitle,
-                    service,
-                    amount,
-                    currency:
-                      quoteCurrency,
-                    notes,
-                    expiryDays,
-                    generatedBy
+btn.addEventListener(
+'click',
+() => {
 
-                  })
+const path =
+decodeURIComponent(
+btn.dataset.path
+);
 
-              }
-            );
+downloadAdminFile(path);
 
+}
+);
 
-          const data =
-            await res.json();
+});
 
+}
 
-          if (
-            !res.ok ||
-            !data.token
-          ) {
 
-            throw new Error(
-              data.error ||
-              'Could not generate link.'
-            );
+/* ============================================================
+   ADMIN FILE DOWNLOAD
+============================================================ */
 
-          }
+async function downloadAdminFile(
+path
+) {
 
+if (!path) {
 
-          const paymentUrl =
-            `${SITE_URL}/quote-checkout.html?token=${data.token}`;
+alert(
+'File path is missing.'
+);
 
+return;
 
-          const amountFormatted =
-            quoteCurrency === 'NGN'
+}
 
-              ? `₦${amount.toLocaleString('en-NG')}`
+try {
 
-              : `$${amount.toLocaleString(
-                  'en-US',
-                  {
-                    maximumFractionDigits: 2
-                  }
-                )}`;
+const {
+data,
+error
+} =
+await supabaseClient
+.storage
+.from(
+STORAGE_BUCKET
+)
+.createSignedUrl(
+path,
+60 * 5
+);
 
+if (
+error ||
+!data?.signedUrl
+) {
 
-          clearStatus(
-            'quote-status'
-          );
+throw new Error(
+error?.message ||
+'Could not generate download link.'
+);
 
+}
 
-          const resultCard =
-            document.getElementById(
-              'result-card'
-            );
+window.open(
+data.signedUrl,
+'_blank'
+);
 
+}
+catch(error) {
 
-          resultCard.classList.add(
-            'visible'
-          );
+console.error(
+'Download error:',
+error
+);
 
+alert(
+'Could not download file: ' +
+error.message
+);
 
-          document
-            .getElementById(
-              'result-summary'
-            )
-            .innerHTML =
-              `${amountFormatted} · ${
-                escapeHtml(service)
-              } · <em>${
-                escapeHtml(clientName)
-              }</em>`;
+}
 
+}
 
-          document
-            .getElementById(
-              'result-link'
-            )
-            .value =
-              paymentUrl;
 
+/* ============================================================
+   UPLOAD DELIVERABLE
+============================================================ */
 
-          resultCard.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
+document
+.getElementById(
+'uploadDeliverableBtn'
+)
+.addEventListener(
+'click',
+async () => {
 
+clearStatus(
+'files-status'
+);
 
-        } catch (err) {
+const projectId =
+document
+.getElementById(
+'f-project'
+)
+.value;
 
-          console.error(
-            'Quote error:',
-            err
-          );
+const fileInput =
+document.getElementById(
+'f-deliverable-input'
+);
 
+const file =
+fileInput.files[0];
 
-          showStatus(
-            'quote-status',
-            'error',
-            err.message ||
-            'Something went wrong.'
-          );
+if (!projectId) {
 
+return showStatus(
+'files-status',
+'error',
+'Select a project first.'
+);
 
-        } finally {
+}
 
-          btn.disabled = false;
+if (!file) {
 
-        }
+return showStatus(
+'files-status',
+'error',
+'Choose a file to upload.'
+);
 
-      }
-    );
+}
 
+const btn =
+document.getElementById(
+'uploadDeliverableBtn'
+);
 
-  /*
-   * ============================================================
-   * COPY PAYMENT LINK
-   * ============================================================
-   */
+btn.disabled =
+true;
 
-  document
-    .getElementById(
-      'copyResultBtn'
-    )
-    .addEventListener(
-      'click',
-      async () => {
+showStatus(
+'files-status',
+'info',
+'Uploading deliverable…'
+);
 
-        const link =
-          document
-            .getElementById(
-              'result-link'
-            )
-            .value;
+try {
 
+const safeName =
+file.name
+.replace(
+/[^a-zA-Z0-9._-]/g,
+'_'
+);
 
-        try {
+const storagePath =
+`${projectId}/deliverable/${Date.now()}_${safeName}`;
 
-          await navigator
-            .clipboard
-            .writeText(link);
 
+/*
+ * Upload to the private
+ * project-files bucket.
+ */
 
-          const btn =
-            document.getElementById(
-              'copyResultBtn'
-            );
+const {
+error: uploadErr
+} =
+await supabaseClient
+.storage
+.from(
+STORAGE_BUCKET
+)
+.upload(
+storagePath,
+file,
+{
+cacheControl:
+'3600',
+upsert:
+false
+}
+);
 
+if (uploadErr) {
 
-          btn.textContent =
-            'Copied!';
+throw new Error(
+uploadErr.message
+);
 
+}
 
-          btn.classList.add(
-            'copied'
-          );
 
+/*
+ * Record the file in
+ * project_files.
+ */
 
-          setTimeout(
-            () => {
+const {
+error: dbErr
+} =
+await supabaseClient
+.from('project_files')
+.insert({
 
-              btn.textContent =
-                'Copy link';
+project_id:
+projectId,
 
-              btn.classList.remove(
-                'copied'
-              );
+file_name:
+file.name,
 
-            },
-            2500
-          );
+storage_path:
+storagePath,
 
+file_type:
+'deliverable',
 
-        } catch (error) {
+uploaded_by:
+currentUser?.email ||
+'admin'
 
-          console.error(
-            'Copy failed:',
-            error
-          );
+});
 
-        }
+if (dbErr) {
 
-      }
-    );
+/*
+ * The storage upload succeeded
+ * but the database record failed.
+ *
+ * Attempt cleanup so we do not
+ * leave an orphaned storage file.
+ */
 
+await supabaseClient
+.storage
+.from(
+STORAGE_BUCKET
+)
+.remove([
+storagePath
+]);
 
-  /*
-   * ============================================================
-   * FILES (Stage 4)
-   * ============================================================
-   */
+throw new Error(
+'File uploaded, but the database record failed: ' +
+dbErr.message
+);
 
-  function populateFileProjectDropdown() {
-    const sel = document.getElementById('f-project');
-    const currentVal = sel.value;
-    sel.innerHTML =
-      '<option value="">Select project…</option>' +
-      projectsCache.map(p =>
-        `<option value="${p.id}">${escapeHtml(p.title)} — ${escapeHtml(p.clients?.name || '')}</option>`
-      ).join('');
-    if (currentVal) sel.value = currentVal;
-  }
+}
 
-  document.getElementById('f-project').addEventListener('change', loadProjectFiles);
+showStatus(
+'files-status',
+'success',
+'Deliverable uploaded successfully.'
+);
 
-  async function loadProjectFiles() {
-    clearStatus('files-status');
-    const projectId = document.getElementById('f-project').value;
-    const listEl = document.getElementById('files-list');
-    const uploadArea = document.getElementById('upload-deliverable-area');
-    if (!projectId) {
-      listEl.innerHTML = '<p class="empty">Select a project to view files.</p>';
-      uploadArea.style.display = 'none';
-      return;
-    }
-    uploadArea.style.display = 'block';
-    listEl.innerHTML = '<p class="empty">Loading…</p>';
-    const { data, error } = await supabaseClient.from('project_files').select('id, file_name, storage_path, file_type, uploaded_by, created_at').eq('project_id', projectId).order('created_at', { ascending: false });
-    if (error) {
-      listEl.innerHTML = `<p class="empty">Could not load files: ${escapeHtml(error.message)}</p>`;
-      return;
-    }
-    if (!data || data.length === 0) {
-      listEl.innerHTML = '<p class="empty">No files uploaded yet for this project.</p>';
-      return;
-    }
-    listEl.innerHTML = `
-      <table><thead><tr><th>File</th><th>Type</th><th>Uploaded By</th><th>Date</th><th></th></tr></thead>
-      <tbody>${data.map(f => `
-        <tr>
-          <td>${escapeHtml(f.file_name)}</td>
-          <td><span class="badge ${f.file_type === 'deliverable' ? 'paid' : 'pending'}">${escapeHtml(f.file_type)}</span></td>
-          <td>${escapeHtml(f.uploaded_by)}</td>
-          <td>${new Date(f.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</td>
-          <td><button class="btn small secondary download-file-btn" data-path="${escapeHtml(f.storage_path)}" type="button">Download</button></td>
-        </tr>`).join('')}</tbody></table>`;
-    listEl.querySelectorAll('.download-file-btn').forEach(btn => btn.addEventListener('click', () => downloadAdminFile(btn.dataset.path)));
-  }
+fileInput.value = '';
 
-  async function downloadAdminFile(path) {
-    const { data, error } = await supabaseClient.storage.from('project-files').createSignedUrl(path, 60 * 5);
-    if (error || !data?.signedUrl) {
-      alert('Could not generate download link: ' + (error?.message || 'unknown error'));
-      return;
-    }
-    window.open(data.signedUrl, '_blank');
-  }
+await loadProjectFiles();
 
-  document.getElementById('uploadDeliverableBtn').addEventListener('click', async () => {
-    clearStatus('files-status');
-    const projectId = document.getElementById('f-project').value;
-    const fileInput = document.getElementById('f-deliverable-input');
-    const file = fileInput.files[0];
-    if (!projectId) return showStatus('files-status', 'error', 'Select a project first.');
-    if (!file) return showStatus('files-status', 'error', 'Choose a file to upload.');
-    const btn = document.getElementById('uploadDeliverableBtn');
-    btn.disabled = true;
-    showStatus('files-status', 'info', 'Uploading…');
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const storagePath = `${projectId}/deliverable/${Date.now()}_${safeName}`;
-    const { error: uploadErr } = await supabaseClient.storage.from('project-files').upload(storagePath, file);
-    if (uploadErr) {
-      showStatus('files-status', 'error', uploadErr.message);
-      btn.disabled = false;
-      return;
-    }
-    const { error: dbErr } = await supabaseClient.from('project_files').insert({ project_id: projectId, file_name: file.name, storage_path: storagePath, file_type: 'deliverable', uploaded_by: 'admin' });
-    if (dbErr) {
-      showStatus('files-status', 'error', 'Uploaded, but could not record it: ' + dbErr.message);
-    } else {
-      showStatus('files-status', 'success', 'Deliverable uploaded.');
-      fileInput.value = '';
-      loadProjectFiles();
-    }
-    btn.disabled = false;
-  });
+}
+catch(error) {
+
+console.error(
+'Deliverable upload error:',
+error
+);
+
+showStatus(
+'files-status',
+'error',
+error.message ||
+'Could not upload deliverable.'
+);
+
+}
+finally {
+
+btn.disabled =
+false;
+
+}
+
+});
+
+
+/* ============================================================
+   AUTH STATE CHANGES
+============================================================ */
+
+supabaseClient
+.auth
+.onAuthStateChange(
+(event, session) => {
+
+if (
+event === 'SIGNED_OUT' ||
+!session
+) {
+
+redirectToLogin();
+
+}
+
+});
 
 </script>
 

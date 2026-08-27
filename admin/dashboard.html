@@ -630,7 +630,7 @@ placeholder="65000"
 </div>
 
 <div class="field">
-<label>Total Price (₦, whole naira)</label>
+<label id="p-price-label">Total Price (₦, whole naira)</label>
 
 <input
 id="p-price"
@@ -644,7 +644,32 @@ placeholder="450000"
 
 <div class="field">
 
-<label>Milestones</label>
+<label>Currency</label>
+
+<div class="currency-toggle">
+
+<button
+id="p-btn-ngn"
+class="active"
+type="button"
+>
+₦ NGN
+</button>
+
+<button
+id="p-btn-usd"
+type="button"
+>
+$ USD
+</button>
+
+</div>
+
+</div>
+
+<div class="field">
+
+<label id="milestones-label">Milestones (₦)</label>
 
 <div id="milestone-rows"></div>
 
@@ -1226,13 +1251,42 @@ document.getElementById(id)
 }
 
 
+const CURRENCY_SYMBOLS = {
+NGN: '₦',
+USD: '$'
+};
+
+
+function formatMoney(amountInSmallestUnit, currency) {
+
+const symbol =
+CURRENCY_SYMBOLS[currency] ||
+(currency ? currency + ' ' : '₦');
+
+return symbol +
+(
+Number(amountInSmallestUnit || 0) / 100
+)
+.toLocaleString(
+currency === 'NGN' || !currency
+? 'en-NG'
+: 'en-US',
+currency === 'USD'
+? { minimumFractionDigits: 2, maximumFractionDigits: 2 }
+: {}
+);
+
+}
+
+
+/*
+ * Kept as a thin wrapper so any code that still calls the old
+ * NGN-only name keeps working, but everything new should call
+ * formatMoney(amount, currency) directly.
+ */
 function nairaFromKobo(k) {
 
-return '₦' +
-(
-Number(k || 0) / 100
-)
-.toLocaleString('en-NG');
+return formatMoney(k, 'NGN');
 
 }
 
@@ -1524,7 +1578,7 @@ class="ms-name"
 
 <input
 type="number"
-placeholder="Amount ₦"
+placeholder="Amount"
 class="ms-amount"
 min="0"
 />
@@ -1622,6 +1676,13 @@ s + m.amount,
 0
 );
 
+const symbol =
+projectCurrency === 'NGN'
+?
+'₦'
+:
+'$';
+
 document
 .getElementById(
 'milestone-total'
@@ -1629,7 +1690,9 @@ document
 .textContent =
 total > 0
 ?
-`Milestone total: ₦${total.toLocaleString('en-NG')}`
+`Milestone total: ${symbol}${total.toLocaleString(
+projectCurrency === 'NGN' ? 'en-NG' : 'en-US'
+)}`
 :
 '';
 
@@ -1649,7 +1712,7 @@ error
 await supabaseClient
 .from('projects')
 .select(
-'id, client_id, title, status, total_price, amount_paid, created_at, clients(name)'
+'id, client_id, title, status, total_price, amount_paid, quote_currency, created_at, clients(name)'
 )
 .order(
 'created_at',
@@ -1744,14 +1807,16 @@ String(p.status || '')
 </td>
 
 <td>
-${nairaFromKobo(
-p.total_price
+${formatMoney(
+p.total_price,
+p.quote_currency || 'NGN'
 )}
 </td>
 
 <td>
-${nairaFromKobo(
-p.amount_paid
+${formatMoney(
+p.amount_paid,
+p.quote_currency || 'NGN'
 )}
 </td>
 
@@ -1764,6 +1829,99 @@ p.amount_paid
 </table>
 
 `;
+
+}
+
+
+/* ============================================================
+   PROJECT CURRENCY TOGGLE
+============================================================ */
+
+let projectCurrency =
+'NGN';
+
+document
+.getElementById(
+'p-btn-ngn'
+)
+.addEventListener(
+'click',
+() =>
+setProjectCurrency('NGN')
+);
+
+document
+.getElementById(
+'p-btn-usd'
+)
+.addEventListener(
+'click',
+() =>
+setProjectCurrency('USD')
+);
+
+
+function setProjectCurrency(c) {
+
+projectCurrency =
+c;
+
+document
+.getElementById(
+'p-btn-ngn'
+)
+.classList.toggle(
+'active',
+c === 'NGN'
+);
+
+document
+.getElementById(
+'p-btn-usd'
+)
+.classList.toggle(
+'active',
+c === 'USD'
+);
+
+const symbol =
+c === 'NGN'
+?
+'₦'
+:
+'$';
+
+document
+.getElementById(
+'p-price-label'
+)
+.textContent =
+c === 'NGN'
+?
+'Total Price (₦, whole naira)'
+:
+'Total Price ($)';
+
+document
+.getElementById(
+'milestones-label'
+)
+.textContent =
+`Milestones (${symbol})`;
+
+const priceInput =
+document.getElementById(
+'p-price'
+);
+
+priceInput.placeholder =
+c === 'NGN'
+?
+'450000'
+:
+'2500';
+
+updateMilestoneTotal();
 
 }
 
@@ -1837,15 +1995,27 @@ return showStatus(
 
 }
 
+const minPrice =
+projectCurrency === 'NGN'
+?
+1000
+:
+1;
+
 if (
 !Number.isFinite(priceNaira) ||
-priceNaira <= 0
+priceNaira < minPrice
 ) {
 
 return showStatus(
 'project-status',
 'error',
-'Enter a valid total price.'
+
+projectCurrency === 'NGN'
+?
+'Enter a valid total price (minimum ₦1,000).'
+:
+'Enter a valid total price (minimum $1).'
 );
 
 }
@@ -1923,7 +2093,7 @@ status:
 'pending',
 
 quote_currency:
-'NGN'
+projectCurrency
 
 })
 .select()
@@ -2011,7 +2181,7 @@ document.getElementById(
 
 addMilestoneRow();
 
-updateMilestoneTotal();
+setProjectCurrency('NGN');
 
 await loadProjects();
 await loadPayments();
@@ -2033,7 +2203,7 @@ error
 await supabaseClient
 .from('milestones')
 .select(
-'id, name, amount, status, paid_at, projects(title, clients(name))'
+'id, name, amount, status, paid_at, projects(title, quote_currency, clients(name))'
 )
 .eq(
 'status',
@@ -2120,7 +2290,10 @@ m.projects?.clients?.name || '—'
 </td>
 
 <td>
-${nairaFromKobo(m.amount)}
+${formatMoney(
+m.amount,
+m.projects?.quote_currency || 'NGN'
+)}
 </td>
 
 <td>

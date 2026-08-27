@@ -15,749 +15,749 @@
 <script src="https://js.paystack.co/v2/inline.js"></script>
 
 <style>
-  :root {
-    --paper: #F4EEDF;
-    --paper-deep: #EAE0C5;
-    --ink: #1B1814;
-    --ink-soft: #564E42;
-    --ink-faint: #8C8270;
-    --oxblood: #6E1B26;
-    --oxblood-deep: #4F1219;
-    --brass: #9C7B2E;
-    --line: rgba(27,24,20,0.16);
-    --success: #3C5E45;
-    --display: 'Cormorant Garamond', serif;
-    --body: 'Spectral', Georgia, serif;
-    --maxw: 1180px;
-    --contentw: 860px;
-  }
+:root {
+  --paper: #F4EEDF;
+  --paper-deep: #EAE0C5;
+  --ink: #1B1814;
+  --ink-soft: #564E42;
+  --ink-faint: #8C8270;
+  --oxblood: #6E1B26;
+  --oxblood-deep: #4F1219;
+  --brass: #9C7B2E;
+  --line: rgba(27,24,20,0.16);
+  --success: #3C5E45;
+  --display: 'Cormorant Garamond', serif;
+  --body: 'Spectral', Georgia, serif;
+  --maxw: 1180px;
+  --contentw: 860px;
+}
 
-  * {
-    box-sizing: border-box;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--body);
-    font-size: 16px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
 
-  a {
-    color: inherit;
-    text-decoration: none;
-  }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-  h1, h2, h3, h4 {
-    font-family: var(--display);
-    font-weight: 600;
-    margin: 0;
-  }
+h1, h2, h3, h4 {
+  font-family: var(--display);
+  font-weight: 600;
+  margin: 0;
+}
 
-  header.site-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: var(--ink);
-    border-bottom: 1px solid rgba(244,238,223,0.1);
-  }
+header.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--ink);
+  border-bottom: 1px solid rgba(244,238,223,0.1);
+}
 
+.nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  gap: 12px;
+}
+
+.brandmark {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--paper);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.brandmark em {
+  font-style: italic;
+  color: var(--brass);
+  font-weight: 600;
+}
+
+nav.main-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+nav.main-links a {
+  font-size: 13.5px;
+  letter-spacing: 0.03em;
+  color: rgba(244,238,223,0.75);
+  position: relative;
+  padding-bottom: 4px;
+  white-space: nowrap;
+}
+
+nav.main-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--brass);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s ease;
+}
+
+nav.main-links a:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-cta {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  filter: invert(1);
+}
+
+.menu-toggle span {
+  display: block;
+  width: 24px;
+  height: 1.5px;
+  background: var(--ink);
+  margin: 5px 0;
+}
+
+.signout-btn {
+  background: none;
+  border: 1px solid rgba(244,238,223,0.3);
+  color: var(--paper);
+  padding: 8px 16px;
+  border-radius: 3px;
+  font-family: var(--body);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.signout-btn:hover {
+  background: rgba(244,238,223,0.1);
+}
+
+@media (max-width: 1650px) {
   .nav-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 32px;
-    max-width: var(--maxw);
-    margin: 0 auto;
+    padding-left: 22px;
+    padding-right: 22px;
     gap: 12px;
-  }
-
-  .brandmark {
-    font-family: var(--display);
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--paper);
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    white-space: nowrap;
-    flex: 0 0 auto;
-  }
-
-  .brandmark em {
-    font-style: italic;
-    color: var(--brass);
-    font-weight: 600;
   }
 
   nav.main-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    flex-direction: column;
+    gap: 0;
+    padding: 10px 22px 18px;
+  }
+
+  nav.main-links.open {
     display: flex;
-    gap: 20px;
-    align-items: center;
   }
 
   nav.main-links a {
-    font-size: 13.5px;
-    letter-spacing: 0.03em;
-    color: rgba(244,238,223,0.75);
-    position: relative;
-    padding-bottom: 4px;
-    white-space: nowrap;
-  }
-
-  nav.main-links a::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 1px;
-    background: var(--brass);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform .25s ease;
-  }
-
-  nav.main-links a:hover::after {
-    transform: scaleX(1);
-  }
-
-  .nav-cta {
-    display: flex;
-    gap: 14px;
-    align-items: center;
-    flex: 0 0 auto;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+    white-space: normal;
+    color: var(--ink-soft);
   }
 
   .menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 6px;
-    filter: invert(1);
-  }
-
-  .menu-toggle span {
     display: block;
-    width: 24px;
-    height: 1.5px;
-    background: var(--ink);
-    margin: 5px 0;
+    flex: 0 0 auto;
   }
+}
 
-  .signout-btn {
-    background: none;
-    border: 1px solid rgba(244,238,223,0.3);
-    color: var(--paper);
-    padding: 8px 16px;
-    border-radius: 3px;
-    font-family: var(--body);
-    font-size: 13px;
-    cursor: pointer;
+@media (max-width: 400px) {
+  .brandmark {
+    font-size: 17px;
   }
+}
 
-  .signout-btn:hover {
-    background: rgba(244,238,223,0.1);
-  }
+.wrap {
+  max-width: var(--contentw);
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
 
-  @media (max-width: 1650px) {
-    .nav-row {
-      padding-left: 22px;
-      padding-right: 22px;
-      gap: 12px;
-    }
+#loading,
+#no-projects {
+  text-align: center;
+  padding: 80px 0;
+  color: var(--ink-soft);
+}
 
-    nav.main-links {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: var(--paper);
-      border-bottom: 1px solid var(--line);
-      flex-direction: column;
-      gap: 0;
-      padding: 10px 22px 18px;
-    }
+#no-projects {
+  display: none;
+}
 
-    nav.main-links.open {
-      display: flex;
-    }
+.greeting {
+  font-family: var(--display);
+  font-size: 30px;
+  margin-bottom: 32px;
+}
 
-    nav.main-links a {
-      padding: 12px 0;
-      border-bottom: 1px solid var(--line);
-      width: 100%;
-      white-space: normal;
-      color: var(--ink-soft);
-    }
+.greeting em {
+  font-style: italic;
+  color: var(--oxblood);
+}
 
-    .menu-toggle {
-      display: block;
-      flex: 0 0 auto;
-    }
-  }
+.project-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 32px;
+  margin-bottom: 28px;
+}
 
-  @media (max-width: 400px) {
-    .brandmark {
-      font-size: 17px;
-    }
-  }
+.project-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 8px;
+}
 
-  .wrap {
-    max-width: var(--contentw);
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
+.project-title {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
 
-  #loading,
-  #no-projects {
-    text-align: center;
-    padding: 80px 0;
-    color: var(--ink-soft);
-  }
+.project-meta {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
 
-  #no-projects {
-    display: none;
-  }
+.stat-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
 
-  .greeting {
-    font-family: var(--display);
-    font-size: 30px;
-    margin-bottom: 32px;
-  }
+.stat {
+  flex: 1;
+  min-width: 120px;
+}
 
-  .greeting em {
-    font-style: italic;
-    color: var(--oxblood);
-  }
+.stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  margin-bottom: 4px;
+}
 
+.stat-value {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.stat-value.status {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.stat-value.status.in_progress {
+  color: var(--brass);
+}
+
+.stat-value.status.review {
+  color: #2980b9;
+}
+
+.stat-value.status.completed {
+  color: var(--success);
+}
+
+.progress-track {
+  height: 6px;
+  background: var(--paper-deep);
+  border-radius: 3px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--oxblood);
+  transition: width 0.4s ease;
+}
+
+.section-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 14px;
+  margin-top: 28px;
+}
+
+.milestone {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+
+.milestone:first-of-type {
+  border-top: none;
+}
+
+.ms-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ms-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.ms-icon.paid {
+  background: var(--success);
+  color: #fff;
+}
+
+.ms-icon.pending {
+  border: 2px solid var(--brass);
+  color: transparent;
+}
+
+.ms-icon.locked {
+  border: 2px solid var(--line);
+  color: transparent;
+}
+
+.ms-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ms-amount {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+
+.ms-right {
+  text-align: right;
+}
+
+.ms-badge {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.ms-badge.paid {
+  background: rgba(60,94,69,0.12);
+  color: var(--success);
+}
+
+.ms-badge.locked {
+  background: rgba(140,59,46,0.06);
+  color: var(--ink-faint);
+}
+
+.pay-btn {
+  background: var(--oxblood);
+  color: var(--paper);
+  border: none;
+  padding: 9px 20px;
+  border-radius: 3px;
+  font-family: var(--body);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+.pay-btn:hover:not(:disabled) {
+  background: var(--oxblood-deep);
+}
+
+.pay-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.updates-section {
+  margin-top: 8px;
+}
+
+.update-item {
+  font-size: 14px;
+  color: var(--ink-soft);
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.update-date {
+  font-size: 12px;
+  color: var(--ink-faint);
+  margin-bottom: 2px;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  gap: 15px;
+}
+
+.file-row:first-of-type {
+  border-top: none;
+}
+
+.file-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.file-meta {
+  font-size: 12px;
+  color: var(--ink-faint);
+}
+
+.file-badge {
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 2px 9px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+.file-badge.deliverable {
+  background: rgba(60,94,69,0.12);
+  color: var(--success);
+}
+
+.file-badge.manuscript {
+  background: rgba(156,123,46,0.12);
+  color: var(--brass);
+}
+
+.download-btn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 6px 14px;
+  border-radius: 3px;
+  font-size: 12.5px;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.download-btn:hover {
+  border-color: var(--oxblood);
+  color: var(--oxblood);
+}
+
+.upload-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.upload-row input[type="file"] {
+  font-size: 13px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.upload-btn {
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 3px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.upload-btn:disabled {
+  opacity: 0.6;
+}
+
+.no-files {
+  font-size: 13.5px;
+  color: var(--ink-faint);
+  padding: 8px 0;
+}
+
+/* ============================================================
+   IN-HOUSE CHAT
+   ============================================================ */
+
+.chat-box {
+  border: 1px solid var(--line);
+  background: #fbfaf6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chat-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-header-title {
+  font-family: var(--display);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.chat-status {
+  font-size: 11px;
+  color: rgba(244,238,223,0.65);
+  letter-spacing: 0.04em;
+}
+
+.chat-status.connected {
+  color: #b9d4bf;
+}
+
+.chat-messages {
+  height: 360px;
+  overflow-y: auto;
+  padding: 18px;
+  background: #f8f5ed;
+}
+
+.chat-empty {
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 14px;
+  padding: 30px;
+}
+
+.chat-message {
+  display: flex;
+  margin-bottom: 14px;
+}
+
+.chat-message.client {
+  justify-content: flex-end;
+}
+
+.chat-message.admin {
+  justify-content: flex-start;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat-message.client .chat-bubble {
+  background: var(--oxblood);
+  color: var(--paper);
+  border-bottom-right-radius: 2px;
+}
+
+.chat-message.admin .chat-bubble {
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 2px;
+}
+
+.chat-sender {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  opacity: 0.65;
+}
+
+.chat-time {
+  font-size: 10px;
+  margin-top: 4px;
+  opacity: 0.6;
+  text-align: right;
+}
+
+.chat-compose {
+  border-top: 1px solid var(--line);
+  padding: 12px;
+  background: #fff;
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.chat-input {
+  flex: 1;
+  min-height: 42px;
+  max-height: 130px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+}
+
+.chat-input:focus {
+  border-color: var(--brass);
+}
+
+.chat-send {
+  background: var(--oxblood);
+  color: var(--paper);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 3px;
+  font-family: var(--body);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chat-send:hover:not(:disabled) {
+  background: var(--oxblood-deep);
+}
+
+.chat-send:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+@media (max-width: 600px) {
   .project-card {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 32px;
-    margin-bottom: 28px;
-  }
-
-  .project-eyebrow {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--brass);
-    margin-bottom: 8px;
-  }
-
-  .project-title {
-    font-size: 26px;
-    margin-bottom: 4px;
-  }
-
-  .project-meta {
-    font-size: 14px;
-    color: var(--ink-soft);
-    margin-bottom: 24px;
-  }
-
-  .stat-row {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 28px;
-    flex-wrap: wrap;
-  }
-
-  .stat {
-    flex: 1;
-    min-width: 120px;
-  }
-
-  .stat-label {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--ink-faint);
-    margin-bottom: 4px;
-  }
-
-  .stat-value {
-    font-family: var(--display);
-    font-size: 24px;
-    font-weight: 700;
-  }
-
-  .stat-value.status {
-    font-size: 16px;
-    font-weight: 600;
-    text-transform: capitalize;
-  }
-
-  .stat-value.status.in_progress {
-    color: var(--brass);
-  }
-
-  .stat-value.status.review {
-    color: #2980b9;
-  }
-
-  .stat-value.status.completed {
-    color: var(--success);
-  }
-
-  .progress-track {
-    height: 6px;
-    background: var(--paper-deep);
-    border-radius: 3px;
-    margin-bottom: 28px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--oxblood);
-    transition: width 0.4s ease;
-  }
-
-  .section-label {
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--ink-faint);
-    margin-bottom: 14px;
-    margin-top: 28px;
-  }
-
-  .milestone {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .milestone:first-of-type {
-    border-top: none;
-  }
-
-  .ms-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .ms-icon {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-  }
-
-  .ms-icon.paid {
-    background: var(--success);
-    color: #fff;
-  }
-
-  .ms-icon.pending {
-    border: 2px solid var(--brass);
-    color: transparent;
-  }
-
-  .ms-icon.locked {
-    border: 2px solid var(--line);
-    color: transparent;
-  }
-
-  .ms-name {
-    font-size: 15px;
-    font-weight: 600;
-  }
-
-  .ms-amount {
-    font-size: 13px;
-    color: var(--ink-soft);
-  }
-
-  .ms-right {
-    text-align: right;
-  }
-
-  .ms-badge {
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 3px 10px;
-    border-radius: 10px;
-    display: inline-block;
-  }
-
-  .ms-badge.paid {
-    background: rgba(60,94,69,0.12);
-    color: var(--success);
-  }
-
-  .ms-badge.locked {
-    background: rgba(140,59,46,0.06);
-    color: var(--ink-faint);
-  }
-
-  .pay-btn {
-    background: var(--oxblood);
-    color: var(--paper);
-    border: none;
-    padding: 9px 20px;
-    border-radius: 3px;
-    font-family: var(--body);
-    font-size: 13.5px;
-    cursor: pointer;
-  }
-
-  .pay-btn:hover:not(:disabled) {
-    background: var(--oxblood-deep);
-  }
-
-  .pay-btn:disabled {
-    opacity: 0.6;
-    cursor: default;
-  }
-
-  .updates-section {
-    margin-top: 8px;
-  }
-
-  .update-item {
-    font-size: 14px;
-    color: var(--ink-soft);
-    padding: 10px 0;
-    border-top: 1px solid var(--line);
-  }
-
-  .update-date {
-    font-size: 12px;
-    color: var(--ink-faint);
-    margin-bottom: 2px;
-  }
-
-  .file-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-top: 1px solid var(--line);
-    font-size: 14px;
-    gap: 15px;
-  }
-
-  .file-row:first-of-type {
-    border-top: none;
-  }
-
-  .file-name {
-    font-weight: 600;
-    overflow-wrap: anywhere;
-  }
-
-  .file-meta {
-    font-size: 12px;
-    color: var(--ink-faint);
-  }
-
-  .file-badge {
-    font-size: 10.5px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 2px 9px;
-    border-radius: 10px;
-    margin-left: 8px;
-  }
-
-  .file-badge.deliverable {
-    background: rgba(60,94,69,0.12);
-    color: var(--success);
-  }
-
-  .file-badge.manuscript {
-    background: rgba(156,123,46,0.12);
-    color: var(--brass);
-  }
-
-  .download-btn {
-    background: none;
-    border: 1px solid var(--line);
-    color: var(--ink-soft);
-    padding: 6px 14px;
-    border-radius: 3px;
-    font-size: 12.5px;
-    cursor: pointer;
-    flex: 0 0 auto;
-  }
-
-  .download-btn:hover {
-    border-color: var(--oxblood);
-    color: var(--oxblood);
-  }
-
-  .upload-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: 14px;
-    flex-wrap: wrap;
-  }
-
-  .upload-row input[type="file"] {
-    font-size: 13px;
-    flex: 1;
-    min-width: 180px;
-  }
-
-  .upload-btn {
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    padding: 8px 16px;
-    border-radius: 3px;
-    font-size: 13px;
-    cursor: pointer;
-  }
-
-  .upload-btn:disabled {
-    opacity: 0.6;
-  }
-
-  .no-files {
-    font-size: 13.5px;
-    color: var(--ink-faint);
-    padding: 8px 0;
-  }
-
-  /* ============================================================
-     IN-HOUSE CHAT
-     ============================================================ */
-
-  .chat-box {
-    border: 1px solid var(--line);
-    background: #fbfaf6;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  .chat-header {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 14px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .chat-header-title {
-    font-family: var(--display);
-    font-size: 19px;
-    font-weight: 600;
-  }
-
-  .chat-status {
-    font-size: 11px;
-    color: rgba(244,238,223,0.65);
-    letter-spacing: 0.04em;
-  }
-
-  .chat-status.connected {
-    color: #b9d4bf;
+    padding: 22px;
   }
 
   .chat-messages {
-    height: 360px;
-    overflow-y: auto;
-    padding: 18px;
-    background: #f8f5ed;
-  }
-
-  .chat-empty {
-    height: 100%;
-    min-height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: var(--ink-faint);
-    font-size: 14px;
-    padding: 30px;
-  }
-
-  .chat-message {
-    display: flex;
-    margin-bottom: 14px;
-  }
-
-  .chat-message.client {
-    justify-content: flex-end;
-  }
-
-  .chat-message.admin {
-    justify-content: flex-start;
+    height: 320px;
   }
 
   .chat-bubble {
-    max-width: 78%;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 14px;
-    white-space: pre-wrap;
-    overflow-wrap: anywhere;
-  }
-
-  .chat-message.client .chat-bubble {
-    background: var(--oxblood);
-    color: var(--paper);
-    border-bottom-right-radius: 2px;
-  }
-
-  .chat-message.admin .chat-bubble {
-    background: #fff;
-    color: var(--ink);
-    border: 1px solid var(--line);
-    border-bottom-left-radius: 2px;
-  }
-
-  .chat-sender {
-    font-size: 10px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-    opacity: 0.65;
-  }
-
-  .chat-time {
-    font-size: 10px;
-    margin-top: 4px;
-    opacity: 0.6;
-    text-align: right;
+    max-width: 88%;
   }
 
   .chat-compose {
-    border-top: 1px solid var(--line);
-    padding: 12px;
-    background: #fff;
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-  }
-
-  .chat-input {
-    flex: 1;
-    min-height: 42px;
-    max-height: 130px;
-    resize: vertical;
-    border: 1px solid var(--line);
-    border-radius: 3px;
-    padding: 10px 12px;
-    font-family: var(--body);
-    font-size: 14px;
-    color: var(--ink);
-    background: #fff;
-    outline: none;
-  }
-
-  .chat-input:focus {
-    border-color: var(--brass);
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .chat-send {
-    background: var(--oxblood);
-    color: var(--paper);
-    border: none;
-    padding: 10px 18px;
-    border-radius: 3px;
-    font-family: var(--body);
-    font-size: 13px;
-    cursor: pointer;
-    white-space: nowrap;
+    width: 100%;
   }
+}
 
-  .chat-send:hover:not(:disabled) {
-    background: var(--oxblood-deep);
-  }
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 12px 22px;
+  border-radius: 4px;
+  font-size: 14px;
+  display: none;
+  z-index: 200;
+  max-width: calc(100vw - 30px);
+  text-align: center;
+}
 
-  .chat-send:disabled {
-    opacity: 0.55;
-    cursor: default;
-  }
+.toast.error {
+  background: var(--oxblood);
+}
 
-  @media (max-width: 600px) {
-    .project-card {
-      padding: 22px;
-    }
+.toast.visible {
+  display: block;
+}
 
-    .chat-messages {
-      height: 320px;
-    }
+footer {
+  background: var(--ink);
+  color: rgba(244,238,223,0.78);
+  padding: 40px 0;
+  border-top: 1px solid rgba(244,238,223,0.12);
+}
 
-    .chat-bubble {
-      max-width: 88%;
-    }
-
-    .chat-compose {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .chat-send {
-      width: 100%;
-    }
-  }
-
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--ink);
-    color: var(--paper);
-    padding: 12px 22px;
-    border-radius: 4px;
-    font-size: 14px;
-    display: none;
-    z-index: 200;
-    max-width: calc(100vw - 30px);
-    text-align: center;
-  }
-
-  .toast.error {
-    background: var(--oxblood);
-  }
-
-  .toast.visible {
-    display: block;
-  }
-
-  footer {
-    background: var(--ink);
-    color: rgba(244,238,223,0.78);
-    padding: 40px 0;
-    border-top: 1px solid rgba(244,238,223,0.12);
-  }
-
-  .footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    color: rgba(244,238,223,0.5);
-    flex-wrap: wrap;
-    gap: 10px;
-    max-width: var(--maxw);
-    margin: 0 auto;
-    padding: 0 32px;
-  }
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: rgba(244,238,223,0.5);
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 32px;
+}
 </style>
 </head>
 
@@ -784,15 +784,23 @@
     </nav>
 
     <div class="nav-cta">
-      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Toggle menu"
+        aria-expanded="false">
+
         <span></span>
         <span></span>
         <span></span>
+
       </button>
 
       <button class="signout-btn" id="signOutBtn">
         Sign Out
       </button>
+
     </div>
 
   </div>
@@ -819,6 +827,7 @@
 
 <footer>
   <div class="footer-bottom">
+
     <span>
       © 2026 Greywright Publishing House Limited. All rights reserved.
     </span>
@@ -826,110 +835,156 @@
     <span>
       Crafted in Abuja, Nigeria.
     </span>
+
   </div>
 </footer>
 
 <script>
 
-  /* ============================================================
-     SUPABASE
-     ============================================================ */
+/* ============================================================
+   SUPABASE
+   ============================================================ */
 
-  const SUPABASE_URL =
-    'https://dusfpsafuhopdiyjrhyh.supabase.co';
+const SUPABASE_URL =
+  'https://dusfpsafuhopdiyjrhyh.supabase.co';
 
-  const SUPABASE_ANON_KEY =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwiaWF0IjoxNzgyMTYwODA0LCJleHAiOjIwOTc3MzY4MDB9.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
-  const supabase =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-
-  const CURRENCY_SYMBOLS = {
-    USD: '$',
-    NGN: '₦'
-  };
+const supabase =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
 
-  /* ============================================================
-     GLOBAL CHAT STATE
-     ============================================================ */
-
-  let currentUserId = null;
-  const chatChannels = {};
+const CURRENCY_SYMBOLS = {
+  USD: '$',
+  NGN: '₦'
+};
 
 
-  /* ============================================================
-     MONEY
-     ============================================================ */
+/* ============================================================
+   GLOBAL STATE
+   ============================================================ */
 
-  function formatMoney(cents, currency) {
+let currentUserId = null;
 
-    const symbol =
-      CURRENCY_SYMBOLS[currency] || currency + ' ';
+/*
+ * One Realtime channel per project.
+ *
+ * IMPORTANT:
+ * We deliberately keep these channels alive when the
+ * dashboard is refreshed/re-rendered.
+ */
+const chatChannels = {};
 
-    return symbol +
-      (cents / 100).toLocaleString('en-US', {
+
+/*
+ * Prevent multiple dashboard refreshes from happening
+ * simultaneously.
+ */
+let dashboardLoading = false;
+
+
+/* ============================================================
+   MONEY
+   ============================================================ */
+
+function formatMoney(cents, currency) {
+
+  const numericCents =
+    Number(cents || 0);
+
+  const symbol =
+    CURRENCY_SYMBOLS[currency] ||
+    currency + ' ';
+
+  return symbol +
+    (numericCents / 100).toLocaleString(
+      'en-US',
+      {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
+      }
+    );
+
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+function showToast(msg, isError = false) {
+
+  const el =
+    document.getElementById('toast');
+
+  el.textContent = msg;
+
+  el.className =
+    'toast visible' +
+    (isError ? ' error' : '');
+
+  setTimeout(() => {
+
+    el.className = 'toast';
+
+  }, 5000);
+
+}
+
+
+/* ============================================================
+   SIGN OUT
+   ============================================================ */
+
+document
+  .getElementById('signOutBtn')
+  .addEventListener('click', async () => {
+
+    Object.keys(chatChannels)
+      .forEach(projectId => {
+
+        const channel =
+          chatChannels[projectId];
+
+        if (channel) {
+          supabase.removeChannel(channel);
+        }
+
+        delete chatChannels[projectId];
+
       });
 
+    await supabase.auth.signOut();
+
+    window.location.href =
+      'login.html';
+
+  });
+
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+
+async function loadDashboard() {
+
+  if (dashboardLoading) {
+    return;
   }
 
+  dashboardLoading = true;
 
-  /* ============================================================
-     TOAST
-     ============================================================ */
-
-  function showToast(msg, isError) {
-
-    const el =
-      document.getElementById('toast');
-
-    el.textContent = msg;
-
-    el.className =
-      'toast visible' +
-      (isError ? ' error' : '');
-
-    setTimeout(() => {
-      el.className = 'toast';
-    }, 5000);
-
-  }
-
-
-  /* ============================================================
-     SIGN OUT
-     ============================================================ */
-
-  document
-    .getElementById('signOutBtn')
-    .addEventListener('click', async () => {
-
-      Object.values(chatChannels)
-        .forEach(channel => {
-          supabase.removeChannel(channel);
-        });
-
-      await supabase.auth.signOut();
-
-      window.location.href = 'login.html';
-
-    });
-
-
-  /* ============================================================
-     DASHBOARD
-     ============================================================ */
-
-  async function loadDashboard() {
+  try {
 
     const {
       data: { session }
-    } = await supabase.auth.getSession();
+    } =
+      await supabase.auth.getSession();
+
 
     if (!session) {
 
@@ -940,15 +995,41 @@
 
     }
 
+
     currentUserId =
       session.user.id;
 
-    const { data: clientRow } =
+
+    const {
+      data: clientRow,
+      error: clientError
+    } =
       await supabase
         .from('clients')
         .select('id, name')
-        .eq('profile_id', currentUserId)
+        .eq(
+          'profile_id',
+          currentUserId
+        )
         .maybeSingle();
+
+
+    if (clientError) {
+
+      console.error(
+        '[dashboard] Client lookup error:',
+        clientError
+      );
+
+      showToast(
+        'Could not load your account.',
+        true
+      );
+
+      return;
+
+    }
+
 
     if (!clientRow) {
 
@@ -964,8 +1045,12 @@
 
     }
 
+
     const firstName =
-      clientRow.name.split(' ')[0];
+      (clientRow.name || 'Client')
+        .trim()
+        .split(/\s+/)[0];
+
 
     document
       .getElementById('greeting')
@@ -973,7 +1058,10 @@
         `Welcome back, <em>${escapeHtml(firstName)}</em>`;
 
 
-    const { data: projects, error } =
+    const {
+      data: projects,
+      error
+    } =
       await supabase
         .from('projects')
         .select(`
@@ -1007,10 +1095,16 @@
             created_at
           )
         `)
-        .eq('client_id', clientRow.id)
-        .order('created_at', {
-          ascending: false
-        });
+        .eq(
+          'client_id',
+          clientRow.id
+        )
+        .order(
+          'created_at',
+          {
+            ascending: false
+          }
+        );
 
 
     document
@@ -1041,891 +1135,1017 @@
         .getElementById('no-projects')
         .style.display = 'block';
 
+      document
+        .getElementById('greeting')
+        .style.display = 'none';
+
       return;
 
     }
 
 
     document
+      .getElementById('no-projects')
+      .style.display = 'none';
+
+    document
       .getElementById('greeting')
       .style.display = 'block';
 
+
     renderProjects(projects);
+
+  } finally {
+
+    dashboardLoading = false;
 
   }
 
+}
 
-  /* ============================================================
-     RENDER PROJECTS
-     ============================================================ */
 
-  function renderProjects(projects) {
+/* ============================================================
+   RENDER PROJECTS
+   ============================================================ */
 
-    const container =
-      document.getElementById(
-        'projects-container'
+function renderProjects(projects) {
+
+  const container =
+    document.getElementById(
+      'projects-container'
+    );
+
+
+  container.innerHTML = '';
+
+
+  projects.forEach(project => {
+
+    const currency =
+      project.quote_currency || 'NGN';
+
+
+    const totalPrice =
+      Number(project.total_price || 0);
+
+    const amountPaid =
+      Number(project.amount_paid || 0);
+
+
+    const balance =
+      Math.max(
+        0,
+        totalPrice - amountPaid
       );
 
-    container.innerHTML = '';
 
-
-    projects.forEach(project => {
-
-      const currency =
-        project.quote_currency || 'NGN';
-
-      const balance =
-        project.total_price -
-        project.amount_paid;
-
-      const pct =
-        project.total_price > 0
-          ? Math.min(
-              100,
-              Math.round(
-                (project.amount_paid /
-                  project.total_price) *
-                100
-              )
+    const pct =
+      totalPrice > 0
+        ? Math.min(
+            100,
+            Math.round(
+              (amountPaid /
+                totalPrice) *
+              100
             )
-          : 0;
+          )
+        : 0;
 
 
-      const milestones =
-        (project.milestones || [])
-          .sort(
-            (a, b) =>
-              a.order_index -
-              b.order_index
-          );
-
-
-      const firstUnpaidIndex =
-        milestones.findIndex(
-          m => m.status !== 'paid'
+    const milestones =
+      (project.milestones || [])
+        .slice()
+        .sort(
+          (a, b) =>
+            Number(a.order_index || 0) -
+            Number(b.order_index || 0)
         );
 
 
-      const files =
-        (project.project_files || [])
-          .sort(
-            (a, b) =>
-              new Date(b.created_at) -
-              new Date(a.created_at)
-          );
+    const firstUnpaidIndex =
+      milestones.findIndex(
+        m => m.status !== 'paid'
+      );
 
 
-      const card =
-        document.createElement('div');
-
-      card.className =
-        'project-card';
-
-
-      card.innerHTML = `
-
-        <div class="project-eyebrow">
-          ${escapeHtml(
-            project.service_type ||
-            'Editorial Project'
-          )}
-        </div>
-
-        <div class="project-title">
-          ${escapeHtml(project.title)}
-        </div>
-
-        <div class="project-meta">
-          ${
-            project.word_count
-              ? project.word_count.toLocaleString() +
-                ' words'
-              : ''
-          }
-        </div>
+    const files =
+      (project.project_files || [])
+        .slice()
+        .sort(
+          (a, b) =>
+            new Date(b.created_at) -
+            new Date(a.created_at)
+        );
 
 
-        <div class="stat-row">
+    const updates =
+      (project.project_updates || [])
+        .slice()
+        .sort(
+          (a, b) =>
+            new Date(b.created_at) -
+            new Date(a.created_at)
+        );
 
-          <div class="stat">
-            <div class="stat-label">
-              Total
-            </div>
-            <div class="stat-value">
-              ${formatMoney(
-                project.total_price,
-                currency
-              )}
-            </div>
+
+    const card =
+      document.createElement('div');
+
+    card.className =
+      'project-card';
+
+
+    card.innerHTML = `
+
+      <div class="project-eyebrow">
+        ${escapeHtml(
+          project.service_type ||
+          'Editorial Project'
+        )}
+      </div>
+
+      <div class="project-title">
+        ${escapeHtml(
+          project.title ||
+          'Untitled Project'
+        )}
+      </div>
+
+      <div class="project-meta">
+
+        ${
+          project.word_count
+            ? Number(
+                project.word_count
+              ).toLocaleString() +
+              ' words'
+            : ''
+        }
+
+      </div>
+
+
+      <div class="stat-row">
+
+        <div class="stat">
+
+          <div class="stat-label">
+            Total
           </div>
 
-          <div class="stat">
-            <div class="stat-label">
-              Paid
-            </div>
-            <div class="stat-value">
-              ${formatMoney(
-                project.amount_paid,
-                currency
-              )}
-            </div>
-          </div>
-
-          <div class="stat">
-            <div class="stat-label">
-              Balance
-            </div>
-            <div class="stat-value">
-              ${formatMoney(
-                balance,
-                currency
-              )}
-            </div>
-          </div>
-
-          <div class="stat">
-            <div class="stat-label">
-              Status
-            </div>
-            <div class="stat-value status ${escapeHtml(project.status || '')}">
-              ${escapeHtml(
-                (project.status || '')
-                  .replace('_', ' ')
-              )}
-            </div>
+          <div class="stat-value">
+            ${formatMoney(
+              totalPrice,
+              currency
+            )}
           </div>
 
         </div>
 
 
-        <div class="progress-track">
+        <div class="stat">
+
+          <div class="stat-label">
+            Paid
+          </div>
+
+          <div class="stat-value">
+            ${formatMoney(
+              amountPaid,
+              currency
+            )}
+          </div>
+
+        </div>
+
+
+        <div class="stat">
+
+          <div class="stat-label">
+            Balance
+          </div>
+
+          <div class="stat-value">
+            ${formatMoney(
+              balance,
+              currency
+            )}
+          </div>
+
+        </div>
+
+
+        <div class="stat">
+
+          <div class="stat-label">
+            Status
+          </div>
+
+          <div class="stat-value status ${escapeHtml(
+            project.status || ''
+          )}">
+
+            ${escapeHtml(
+              (project.status || 'pending')
+                .replace(/_/g, ' ')
+            )}
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="progress-track">
+
+        <div
+          class="progress-fill"
+          style="width:${pct}%;">
+        </div>
+
+      </div>
+
+
+      <div class="section-label">
+        Milestones
+      </div>
+
+      <div
+        class="milestones-list"
+        data-project-id="${escapeHtml(project.id)}">
+      </div>
+
+
+      <div class="section-label">
+        Files
+      </div>
+
+      <div
+        class="files-list"
+        data-project-id="${escapeHtml(project.id)}">
+      </div>
+
+
+      <div class="upload-row">
+
+        <input
+          type="file"
+          class="manuscript-file-input"
+          data-project-id="${escapeHtml(project.id)}"
+        />
+
+        <button
+          type="button"
+          class="upload-btn upload-manuscript-btn"
+          data-project-id="${escapeHtml(project.id)}">
+
+          Upload Manuscript
+
+        </button>
+
+      </div>
+
+
+      <div class="section-label">
+        In-House Messages
+      </div>
+
+
+      <div
+        class="chat-box"
+        data-chat-project="${escapeHtml(project.id)}">
+
+        <div class="chat-header">
+
+          <div class="chat-header-title">
+            Greywright Team
+          </div>
+
           <div
-            class="progress-fill"
-            style="width:${pct}%;">
+            class="chat-status"
+            data-chat-status="${escapeHtml(project.id)}">
+
+            Connecting…
+
           </div>
+
         </div>
 
-
-        <div class="section-label">
-          Milestones
-        </div>
 
         <div
-          class="milestones-list"
-          data-project-id="${project.id}">
+          class="chat-messages"
+          id="chat-messages-${escapeHtml(project.id)}">
+
+          <div class="chat-empty">
+            Loading conversation…
+          </div>
+
         </div>
 
 
-        <div class="section-label">
-          Files
-        </div>
+        <div class="chat-compose">
 
-        <div
-          class="files-list"
-          data-project-id="${project.id}">
-        </div>
+          <textarea
+            class="chat-input"
+            id="chat-input-${escapeHtml(project.id)}"
+            data-project-id="${escapeHtml(project.id)}"
+            placeholder="Write a message to the Greywright team…"
+            rows="2">
+          </textarea>
 
-
-        <div class="upload-row">
-
-          <input
-            type="file"
-            class="manuscript-file-input"
-            data-project-id="${project.id}"
-          />
 
           <button
             type="button"
-            class="upload-btn upload-manuscript-btn"
-            data-project-id="${project.id}">
-            Upload Manuscript
+            class="chat-send"
+            data-project-id="${escapeHtml(project.id)}">
+
+            Send
+
           </button>
 
         </div>
 
+      </div>
 
-        <div class="section-label">
-          In-House Messages
-        </div>
 
-        <div
-          class="chat-box"
-          data-chat-project="${project.id}">
+      ${
+        updates.length > 0
+          ? `
 
-          <div class="chat-header">
-
-            <div class="chat-header-title">
-              Greywright Team
+            <div class="section-label">
+              Project Updates
             </div>
 
-            <div
-              class="chat-status"
-              data-chat-status="${project.id}">
-              Connecting…
+            <div class="updates-section">
+
+              ${updates
+                .map(update => `
+
+                  <div class="update-item">
+
+                    <div class="update-date">
+
+                      ${formatDate(
+                        update.created_at
+                      )}
+
+                    </div>
+
+                    <div>
+                      ${escapeHtml(
+                        update.message
+                      )}
+                    </div>
+
+                  </div>
+
+                `)
+                .join('')}
+
             </div>
 
-          </div>
+          `
+          : ''
+      }
+
+    `;
+
+
+    container.appendChild(card);
+
+
+    /* ========================================================
+       MILESTONES
+       ======================================================== */
+
+    const listEl =
+      card.querySelector(
+        '.milestones-list'
+      );
+
+
+    if (milestones.length === 0) {
+
+      listEl.innerHTML =
+        '<p class="no-files">No milestones available yet.</p>';
+
+    }
+
+
+    milestones.forEach((ms, i) => {
+
+      const isPaid =
+        ms.status === 'paid';
+
+
+      const isPayable =
+        !isPaid &&
+        i === firstUnpaidIndex;
+
+
+      const isLocked =
+        !isPaid &&
+        !isPayable;
+
+
+      const row =
+        document.createElement('div');
+
+      row.className =
+        'milestone';
+
+
+      row.innerHTML = `
+
+        <div class="ms-left">
 
           <div
-            class="chat-messages"
-            id="chat-messages-${project.id}">
-            <div class="chat-empty">
-              Loading conversation…
-            </div>
+            class="ms-icon ${
+              isPaid
+                ? 'paid'
+                : isLocked
+                  ? 'locked'
+                  : 'pending'
+            }">
+
+            ${isPaid ? '✓' : ''}
+
           </div>
 
-          <div class="chat-compose">
 
-            <textarea
-              class="chat-input"
-              id="chat-input-${project.id}"
-              data-project-id="${project.id}"
-              placeholder="Write a message to the Greywright team…"
-              rows="2">
-            </textarea>
+          <div>
 
-            <button
-              type="button"
-              class="chat-send"
-              data-project-id="${project.id}">
-              Send
-            </button>
+            <div class="ms-name">
+              ${escapeHtml(
+                ms.name
+              )}
+            </div>
+
+            <div class="ms-amount">
+              ${formatMoney(
+                ms.amount,
+                currency
+              )}
+            </div>
 
           </div>
 
         </div>
 
 
-        ${
-          project.project_updates &&
-          project.project_updates.length > 0
-            ? `
-
-          <div class="section-label">
-            Project Updates
-          </div>
-
-          <div class="updates-section">
-
-            ${project.project_updates
-              .sort(
-                (a, b) =>
-                  new Date(b.created_at) -
-                  new Date(a.created_at)
-              )
-              .map(u => `
-
-                <div class="update-item">
-
-                  <div class="update-date">
-                    ${new Date(
-                      u.created_at
-                    ).toLocaleDateString(
-                      'en-GB',
-                      {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                      }
-                    )}
-                  </div>
-
-                  <div>
-                    ${escapeHtml(u.message)}
-                  </div>
-
-                </div>
-
-              `)
-              .join('')}
-
-          </div>
-
-        `
-            : ''
-        }
+        <div class="ms-right"></div>
 
       `;
 
 
-      container.appendChild(card);
-
-
-      /* ========================================================
-         MILESTONES
-         ======================================================== */
-
-      const listEl =
-        card.querySelector(
-          '.milestones-list'
+      const rightEl =
+        row.querySelector(
+          '.ms-right'
         );
 
 
-      milestones.forEach((ms, i) => {
+      if (isPaid) {
 
-        const isPaid =
-          ms.status === 'paid';
+        rightEl.innerHTML =
+          `<span class="ms-badge paid">
+            Paid
+          </span>`;
 
-        const isPayable =
-          !isPaid &&
-          i === firstUnpaidIndex;
+      } else if (isPayable) {
 
-        const isLocked =
-          !isPaid &&
-          !isPayable;
+        const btn =
+          document.createElement(
+            'button'
+          );
 
+        btn.className =
+          'pay-btn';
+
+        btn.textContent =
+          `Pay ${formatMoney(
+            ms.amount,
+            currency
+          )}`;
+
+
+        btn.addEventListener(
+          'click',
+          () =>
+            payMilestone(
+              ms.id,
+              btn
+            )
+        );
+
+
+        rightEl.appendChild(btn);
+
+      } else {
+
+        rightEl.innerHTML =
+          `<span class="ms-badge locked">
+            Locked
+          </span>`;
+
+      }
+
+
+      listEl.appendChild(row);
+
+    });
+
+
+    /* ========================================================
+       FILES
+       ======================================================== */
+
+    const filesEl =
+      card.querySelector(
+        '.files-list'
+      );
+
+
+    if (files.length === 0) {
+
+      filesEl.innerHTML =
+        '<p class="no-files">No files yet.</p>';
+
+    } else {
+
+      files.forEach(file => {
 
         const row =
           document.createElement('div');
 
         row.className =
-          'milestone';
+          'file-row';
 
 
         row.innerHTML = `
 
-          <div class="ms-left">
+          <div>
 
-            <div
-              class="ms-icon ${
-                isPaid
-                  ? 'paid'
-                  : isLocked
-                    ? 'locked'
-                    : 'pending'
+            <span class="file-name">
+              ${escapeHtml(
+                file.file_name
+              )}
+            </span>
+
+            <span
+              class="file-badge ${
+                file.file_type === 'deliverable'
+                  ? 'deliverable'
+                  : 'manuscript'
               }">
-              ${isPaid ? '✓' : ''}
-            </div>
 
-            <div>
+              ${escapeHtml(
+                file.file_type ||
+                'file'
+              )}
 
-              <div class="ms-name">
-                ${escapeHtml(ms.name)}
-              </div>
+            </span>
 
-              <div class="ms-amount">
-                ${formatMoney(
-                  ms.amount,
-                  currency
-                )}
-              </div>
+
+            <div class="file-meta">
+
+              ${formatDate(
+                file.created_at
+              )}
 
             </div>
 
           </div>
 
-          <div class="ms-right"></div>
-
         `;
 
 
-        const rightEl =
-          row.querySelector(
-            '.ms-right'
+        const btn =
+          document.createElement(
+            'button'
           );
 
 
-        if (isPaid) {
+        btn.className =
+          'download-btn';
 
-          rightEl.innerHTML =
-            `<span class="ms-badge paid">
-              Paid
-            </span>`;
-
-        } else if (isPayable) {
-
-          const btn =
-            document.createElement(
-              'button'
-            );
-
-          btn.className =
-            'pay-btn';
-
-          btn.textContent =
-            `Pay ${formatMoney(
-              ms.amount,
-              currency
-            )}`;
-
-          btn.addEventListener(
-            'click',
-            () =>
-              payMilestone(
-                ms.id,
-                btn
-              )
-          );
-
-          rightEl.appendChild(btn);
-
-        } else {
-
-          rightEl.innerHTML =
-            `<span class="ms-badge locked">
-              Locked
-            </span>`;
-
-        }
+        btn.textContent =
+          'Download';
 
 
-        listEl.appendChild(row);
-
-      });
-
-
-      /* ========================================================
-         FILES
-         ======================================================== */
-
-      const filesEl =
-        card.querySelector(
-          '.files-list'
+        btn.addEventListener(
+          'click',
+          () =>
+            downloadFile(
+              file.storage_path
+            )
         );
 
 
-      if (files.length === 0) {
+        row.appendChild(btn);
 
-        filesEl.innerHTML =
-          '<p class="no-files">No files yet.</p>';
+        filesEl.appendChild(row);
 
-      } else {
+      });
 
-        files.forEach(f => {
-
-          const row =
-            document.createElement(
-              'div'
-            );
-
-          row.className =
-            'file-row';
+    }
 
 
-          row.innerHTML = `
+    /*
+     * IMPORTANT:
+     * This only creates a Realtime channel if one doesn't
+     * already exist for this project.
+     */
+    setupProjectChat(
+      project.id
+    );
 
-            <div>
-
-              <span class="file-name">
-                ${escapeHtml(
-                  f.file_name
-                )}
-              </span>
-
-              <span
-                class="file-badge ${
-                  f.file_type
-                }">
-                ${escapeHtml(
-                  f.file_type
-                )}
-              </span>
-
-              <div class="file-meta">
-                ${new Date(
-                  f.created_at
-                ).toLocaleDateString(
-                  'en-GB',
-                  {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                  }
-                )}
-              </div>
-
-            </div>
-
-          `;
+  });
 
 
-          const btn =
-            document.createElement(
-              'button'
-            );
+  /* ============================================================
+     UPLOAD BUTTONS
+     ============================================================ */
 
-          btn.className =
-            'download-btn';
+  container
+    .querySelectorAll(
+      '.upload-manuscript-btn'
+    )
+    .forEach(btn => {
 
-          btn.textContent =
-            'Download';
-
-          btn.addEventListener(
-            'click',
-            () =>
-              downloadFile(
-                f.storage_path
-              )
-          );
-
-
-          row.appendChild(btn);
-
-          filesEl.appendChild(row);
-
-        });
-
-      }
-
-
-      /* ========================================================
-         START CHAT FOR THIS PROJECT
-         ======================================================== */
-
-      setupProjectChat(
-        project.id
+      btn.addEventListener(
+        'click',
+        () =>
+          uploadManuscript(
+            btn.dataset.projectId,
+            btn
+          )
       );
 
     });
 
 
-    /* ============================================================
-       UPLOAD BUTTONS
-       ============================================================ */
+  /* ============================================================
+     CHAT SEND BUTTONS
+     ============================================================ */
 
-    container
-      .querySelectorAll(
-        '.upload-manuscript-btn'
-      )
-      .forEach(btn => {
+  container
+    .querySelectorAll(
+      '.chat-send'
+    )
+    .forEach(btn => {
 
-        btn.addEventListener(
-          'click',
-          () =>
-            uploadManuscript(
-              btn.dataset.projectId,
-              btn
-            )
-        );
+      btn.addEventListener(
+        'click',
+        () =>
+          sendMessage(
+            btn.dataset.projectId,
+            btn
+          )
+      );
 
-      });
-
-
-    /* ============================================================
-       CHAT SEND BUTTONS
-       ============================================================ */
-
-    container
-      .querySelectorAll(
-        '.chat-send'
-      )
-      .forEach(btn => {
-
-        btn.addEventListener(
-          'click',
-          () =>
-            sendMessage(
-              btn.dataset.projectId,
-              btn
-            )
-        );
-
-      });
+    });
 
 
-    /* ============================================================
-       ENTER TO SEND
-       ============================================================ */
+  /* ============================================================
+     ENTER TO SEND
+     ============================================================ */
 
-    container
-      .querySelectorAll(
-        '.chat-input'
-      )
-      .forEach(input => {
+  container
+    .querySelectorAll(
+      '.chat-input'
+    )
+    .forEach(input => {
 
-        input.addEventListener(
-          'keydown',
-          event => {
+      input.addEventListener(
+        'keydown',
+        event => {
 
-            if (
-              event.key === 'Enter' &&
-              !event.shiftKey
-            ) {
+          if (
+            event.key === 'Enter' &&
+            !event.shiftKey
+          ) {
 
-              event.preventDefault();
+            event.preventDefault();
 
-              const btn =
-                container.querySelector(
-                  `.chat-send[data-project-id="${input.dataset.projectId}"]`
-                );
 
-              if (btn) {
-                sendMessage(
-                  input.dataset.projectId,
-                  btn
-                );
-              }
+            const btn =
+              container.querySelector(
+                `.chat-send[data-project-id="${CSS.escape(
+                  input.dataset.projectId
+                )}"]`
+              );
+
+
+            if (btn) {
+
+              sendMessage(
+                input.dataset.projectId,
+                btn
+              );
 
             }
 
           }
-        );
 
-      });
-
-  }
-
-
-  /* ============================================================
-     CHAT — LOAD MESSAGES
-     ============================================================ */
-
-  async function loadMessages(projectId) {
-
-    const messagesEl =
-      document.getElementById(
-        `chat-messages-${projectId}`
+        }
       );
 
-    if (!messagesEl) {
-      return;
-    }
+    });
+
+}
 
 
-    const { data, error } =
-      await supabase
-        .from('messages')
-        .select(`
-          id,
-          project_id,
-          sender_id,
-          message,
-          read_at,
-          created_at
-        `)
-        .eq(
-          'project_id',
-          projectId
-        )
-        .order(
-          'created_at',
-          { ascending: true }
-        );
+/* ============================================================
+   CHAT — LOAD MESSAGES
+   ============================================================ */
 
+async function loadMessages(projectId) {
 
-    if (error) {
-
-      console.error(
-        '[chat] Could not load messages:',
-        error
-      );
-
-      messagesEl.innerHTML =
-        `<div class="chat-empty">
-          Could not load messages.
-        </div>`;
-
-      return;
-
-    }
-
-
-    renderMessages(
-      projectId,
-      data || []
+  const messagesEl =
+    document.getElementById(
+      `chat-messages-${projectId}`
     );
 
+
+  if (!messagesEl) {
+    return;
   }
 
 
-  /* ============================================================
-     CHAT — RENDER
-     ============================================================ */
-
-  function renderMessages(
-    projectId,
-    messages
-  ) {
-
-    const messagesEl =
-      document.getElementById(
-        `chat-messages-${projectId}`
+  const {
+    data,
+    error
+  } =
+    await supabase
+      .from('messages')
+      .select(`
+        id,
+        project_id,
+        sender_id,
+        message,
+        read_at,
+        created_at
+      `)
+      .eq(
+        'project_id',
+        projectId
+      )
+      .order(
+        'created_at',
+        {
+          ascending: true
+        }
       );
 
-    if (!messagesEl) {
-      return;
-    }
 
+  if (error) {
 
-    if (!messages.length) {
-
-      messagesEl.innerHTML =
-        `<div class="chat-empty">
-          <div>
-            <strong>No messages yet.</strong>
-            <br>
-            Send a message to the Greywright team.
-          </div>
-        </div>`;
-
-      return;
-
-    }
+    console.error(
+      '[chat] Could not load messages:',
+      error
+    );
 
 
     messagesEl.innerHTML =
-      messages
-        .map(message => {
-
-          const isClient =
-            message.sender_id ===
-            currentUserId;
-
-          const sender =
-            isClient
-              ? 'You'
-              : 'Greywright Team';
+      `<div class="chat-empty">
+        Could not load messages.
+      </div>`;
 
 
-          const date =
-            new Date(
-              message.created_at
-            );
+    return;
+
+  }
 
 
-          return `
+  renderMessages(
+    projectId,
+    data || []
+  );
 
-            <div
-              class="chat-message ${
-                isClient
-                  ? 'client'
-                  : 'admin'
-              }">
+}
 
-              <div class="chat-bubble">
 
-                <div class="chat-sender">
-                  ${sender}
-                </div>
+/* ============================================================
+   CHAT — RENDER
+   ============================================================ */
 
-                <div>
-                  ${escapeHtml(
-                    message.message
-                  )}
-                </div>
+function renderMessages(
+  projectId,
+  messages
+) {
 
-                <div class="chat-time">
-                  ${date.toLocaleString(
-                    'en-GB',
-                    {
-                      day: 'numeric',
-                      month: 'short',
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    }
-                  )}
-                </div>
+  const messagesEl =
+    document.getElementById(
+      `chat-messages-${projectId}`
+    );
+
+
+  if (!messagesEl) {
+    return;
+  }
+
+
+  if (!messages.length) {
+
+    messagesEl.innerHTML =
+      `<div class="chat-empty">
+
+        <div>
+
+          <strong>No messages yet.</strong>
+
+          <br>
+
+          Send a message to the Greywright team.
+
+        </div>
+
+      </div>`;
+
+
+    return;
+
+  }
+
+
+  messagesEl.innerHTML =
+    messages
+      .map(message => {
+
+        const isClient =
+          message.sender_id ===
+          currentUserId;
+
+
+        const sender =
+          isClient
+            ? 'You'
+            : 'Greywright Team';
+
+
+        const date =
+          new Date(
+            message.created_at
+          );
+
+
+        return `
+
+          <div
+            class="chat-message ${
+              isClient
+                ? 'client'
+                : 'admin'
+            }">
+
+            <div class="chat-bubble">
+
+              <div class="chat-sender">
+                ${sender}
+              </div>
+
+
+              <div>
+                ${escapeHtml(
+                  message.message
+                )}
+              </div>
+
+
+              <div class="chat-time">
+
+                ${date.toLocaleString(
+                  'en-GB',
+                  {
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  }
+                )}
 
               </div>
 
             </div>
 
-          `;
+          </div>
 
-        })
-        .join('');
+        `;
 
-
-    messagesEl.scrollTop =
-      messagesEl.scrollHeight;
+      })
+      .join('');
 
 
-    markMessagesRead(
-      projectId,
-      messages
+  messagesEl.scrollTop =
+    messagesEl.scrollHeight;
+
+
+  markMessagesRead(
+    projectId,
+    messages
+  );
+
+}
+
+
+/* ============================================================
+   CHAT — MARK MESSAGES READ
+   ============================================================ */
+
+async function markMessagesRead(
+  projectId,
+  messages
+) {
+
+  const unreadIds =
+    messages
+      .filter(message =>
+        message.sender_id !==
+          currentUserId &&
+        !message.read_at
+      )
+      .map(message => message.id);
+
+
+  if (!unreadIds.length) {
+    return;
+  }
+
+
+  const {
+    error
+  } =
+    await supabase
+      .from('messages')
+      .update({
+        read_at:
+          new Date().toISOString()
+      })
+      .in(
+        'id',
+        unreadIds
+      );
+
+
+  if (error) {
+
+    console.warn(
+      '[chat] Could not mark messages read:',
+      error
     );
 
   }
 
-
-  /* ============================================================
-     CHAT — MARK MESSAGES READ
-     ============================================================ */
-
-  async function markMessagesRead(
-    projectId,
-    messages
-  ) {
-
-    const unreadIds =
-      messages
-        .filter(message =>
-          message.sender_id !==
-            currentUserId &&
-          !message.read_at
-        )
-        .map(message => message.id);
+}
 
 
-    if (!unreadIds.length) {
-      return;
-    }
+/* ============================================================
+   CHAT — SEND MESSAGE
+   ============================================================ */
+
+async function sendMessage(
+  projectId,
+  btn
+) {
+
+  const input =
+    document.getElementById(
+      `chat-input-${projectId}`
+    );
 
 
-    const { error } =
-      await supabase
-        .from('messages')
-        .update({
-          read_at:
-            new Date().toISOString()
-        })
-        .in(
-          'id',
-          unreadIds
-        );
-
-
-    if (error) {
-
-      console.warn(
-        '[chat] Could not mark messages read:',
-        error
-      );
-
-    }
-
+  if (!input) {
+    return;
   }
 
 
-  /* ============================================================
-     CHAT — SEND MESSAGE
-     ============================================================ */
-
-  async function sendMessage(
-    projectId,
-    btn
-  ) {
-
-    const input =
-      document.getElementById(
-        `chat-input-${projectId}`
-      );
-
-    if (!input) {
-      return;
-    }
+  const message =
+    input.value.trim();
 
 
-    const message =
-      input.value.trim();
+  if (!message) {
+    return;
+  }
 
 
-    if (!message) {
-      return;
-    }
+  btn.disabled = true;
 
 
-    btn.disabled = true;
+  const originalText =
+    btn.textContent;
 
-    const originalText =
-      btn.textContent;
 
-    btn.textContent =
-      'Sending…';
+  btn.textContent =
+    'Sending…';
 
+
+  try {
 
     const {
-      data: { session }
+      data: {
+        session
+      }
     } =
       await supabase.auth.getSession();
 
@@ -1940,13 +2160,35 @@
     }
 
 
-    const { error } =
+    /*
+     * Re-confirm the user is still authenticated
+     * before inserting the message.
+     */
+    if (
+      session.user.id !==
+      currentUserId
+    ) {
+
+      currentUserId =
+        session.user.id;
+
+    }
+
+
+    const {
+      error
+    } =
       await supabase
         .from('messages')
         .insert({
-          project_id: projectId,
-          sender_id: session.user.id,
-          message: message
+          project_id:
+            projectId,
+
+          sender_id:
+            session.user.id,
+
+          message:
+            message
         });
 
 
@@ -1957,18 +2199,34 @@
         error
       );
 
+
       showToast(
         'Could not send message: ' +
         error.message,
         true
       );
 
-    } else {
 
-      input.value = '';
+      return;
 
     }
 
+
+    input.value = '';
+
+
+    /*
+     * Realtime should normally add the message
+     * automatically. We also load immediately so
+     * the sender sees it without waiting for the
+     * realtime callback.
+     */
+    await loadMessages(
+      projectId
+    );
+
+
+  } finally {
 
     btn.disabled = false;
 
@@ -1977,213 +2235,336 @@
 
   }
 
+}
 
-  /* ============================================================
-     CHAT — REALTIME
-     ============================================================ */
 
-  async function setupProjectChat(
+/* ============================================================
+   CHAT — REALTIME
+   ============================================================ */
+
+async function setupProjectChat(
+  projectId
+) {
+
+  /*
+   * Load existing conversation.
+   */
+  await loadMessages(
     projectId
+  );
+
+
+  /*
+   * DO NOT create another channel if one already
+   * exists for this project.
+   */
+  if (
+    chatChannels[projectId]
   ) {
-
-    await loadMessages(
-      projectId
-    );
-
 
     const statusEl =
       document.querySelector(
-        `[data-chat-status="${projectId}"]`
+        `[data-chat-status="${CSS.escape(projectId)}"]`
       );
 
 
-    if (
-      chatChannels[projectId]
-    ) {
+    if (statusEl) {
 
-      return;
+      statusEl.textContent =
+        'Live';
+
+      statusEl.classList.add(
+        'connected'
+      );
 
     }
 
 
-    const channel =
-      supabase
-        .channel(
-          `project-messages-${projectId}`
-        )
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'messages',
-            filter:
-              `project_id=eq.${projectId}`
-          },
-          async payload => {
-
-            console.log(
-              '[chat] New message:',
-              payload.new
-            );
-
-            await loadMessages(
-              projectId
-            );
-
-          }
-        )
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'messages',
-            filter:
-              `project_id=eq.${projectId}`
-          },
-          async () => {
-
-            await loadMessages(
-              projectId
-            );
-
-          }
-        )
-        .subscribe(
-          status => {
-
-            console.log(
-              `[chat] ${projectId}:`,
-              status
-            );
-
-
-            if (!statusEl) {
-              return;
-            }
-
-
-            if (
-              status === 'SUBSCRIBED'
-            ) {
-
-              statusEl.textContent =
-                'Live';
-
-              statusEl.classList.add(
-                'connected'
-              );
-
-            } else if (
-              status === 'CHANNEL_ERROR'
-            ) {
-
-              statusEl.textContent =
-                'Connection error';
-
-              statusEl.classList.remove(
-                'connected'
-              );
-
-            } else {
-
-              statusEl.textContent =
-                'Connecting…';
-
-            }
-
-          }
-        );
-
-
-    chatChannels[projectId] =
-      channel;
+    return;
 
   }
 
 
-  /* ============================================================
-     FILE DOWNLOAD
-     ============================================================ */
-
-  async function downloadFile(path) {
-
-    const { data, error } =
-      await supabase.storage
-        .from('project-files')
-        .createSignedUrl(
-          path,
-          60 * 5
-        );
-
-
-    if (
-      error ||
-      !data?.signedUrl
-    ) {
-
-      showToast(
-        'Could not generate download link.',
-        true
-      );
-
-      return;
-
-    }
-
-
-    window.open(
-      data.signedUrl,
-      '_blank'
+  const statusEl =
+    document.querySelector(
+      `[data-chat-status="${CSS.escape(projectId)}"]`
     );
 
+
+  const channel =
+    supabase
+      .channel(
+        `project-messages-${projectId}`
+      )
+
+
+      /* ========================================================
+         NEW MESSAGE
+         ======================================================== */
+
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter:
+            `project_id=eq.${projectId}`
+        },
+
+        async payload => {
+
+          console.log(
+            '[chat] New message:',
+            payload.new
+          );
+
+
+          /*
+           * Reload conversation so both the sender
+           * and receiver see the same ordered thread.
+           */
+          await loadMessages(
+            projectId
+          );
+
+        }
+      )
+
+
+      /* ========================================================
+         MESSAGE UPDATED
+         ======================================================== */
+
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter:
+            `project_id=eq.${projectId}`
+        },
+
+        async payload => {
+
+          console.log(
+            '[chat] Message updated:',
+            payload.new
+          );
+
+
+          await loadMessages(
+            projectId
+          );
+
+        }
+      )
+
+
+      /* ========================================================
+         SUBSCRIBE
+         ======================================================== */
+
+      .subscribe(
+        status => {
+
+          console.log(
+            `[chat] ${projectId}:`,
+            status
+          );
+
+
+          if (!statusEl) {
+            return;
+          }
+
+
+          if (
+            status ===
+            'SUBSCRIBED'
+          ) {
+
+            statusEl.textContent =
+              'Live';
+
+            statusEl.classList.add(
+              'connected'
+            );
+
+          } else if (
+            status ===
+            'CHANNEL_ERROR'
+          ) {
+
+            statusEl.textContent =
+              'Connection error';
+
+            statusEl.classList.remove(
+              'connected'
+            );
+
+          } else if (
+            status ===
+            'TIMED_OUT'
+          ) {
+
+            statusEl.textContent =
+              'Connection timed out';
+
+            statusEl.classList.remove(
+              'connected'
+            );
+
+          } else {
+
+            statusEl.textContent =
+              'Connecting…';
+
+            statusEl.classList.remove(
+              'connected'
+            );
+
+          }
+
+        }
+      );
+
+
+  chatChannels[projectId] =
+    channel;
+
+}
+
+
+/* ============================================================
+   FILE DOWNLOAD
+   ============================================================ */
+
+async function downloadFile(path) {
+
+  if (!path) {
+
+    showToast(
+      'This file has no storage path.',
+      true
+    );
+
+    return;
+
   }
 
 
-  /* ============================================================
-     MANUSCRIPT UPLOAD
-     ============================================================ */
+  const {
+    data,
+    error
+  } =
+    await supabase.storage
+      .from('project-files')
+      .createSignedUrl(
+        path,
+        60 * 5
+      );
 
-  async function uploadManuscript(
-    projectId,
-    btn
+
+  if (
+    error ||
+    !data?.signedUrl
   ) {
 
-    const input =
-      document.querySelector(
-        `.manuscript-file-input[data-project-id="${projectId}"]`
-      );
+    console.error(
+      '[files] Download error:',
+      error
+    );
 
 
-    if (!input) {
+    showToast(
+      'Could not generate download link.',
+      true
+    );
+
+
+    return;
+
+  }
+
+
+  window.open(
+    data.signedUrl,
+    '_blank',
+    'noopener'
+  );
+
+}
+
+
+/* ============================================================
+   MANUSCRIPT UPLOAD
+   ============================================================ */
+
+async function uploadManuscript(
+  projectId,
+  btn
+) {
+
+  const input =
+    document.querySelector(
+      `.manuscript-file-input[data-project-id="${CSS.escape(
+        projectId
+      )}"]`
+    );
+
+
+  if (!input) {
+    return;
+  }
+
+
+  const file =
+    input.files[0];
+
+
+  if (!file) {
+
+    showToast(
+      'Choose a file first.',
+      true
+    );
+
+    return;
+
+  }
+
+
+  btn.disabled = true;
+
+
+  const originalText =
+    btn.textContent;
+
+
+  btn.textContent =
+    'Uploading…';
+
+
+  try {
+
+    const {
+      data: {
+        session
+      }
+    } =
+      await supabase.auth.getSession();
+
+
+    if (!session) {
+
+      window.location.href =
+        'login.html';
+
       return;
-    }
-
-
-    const file =
-      input.files[0];
-
-
-    if (!file) {
-
-      showToast(
-        'Choose a file first.',
-        true
-      );
-
-      return;
 
     }
-
-
-    btn.disabled = true;
-
-    const originalText =
-      btn.textContent;
-
-    btn.textContent =
-      'Uploading…';
 
 
     const safeName =
@@ -2215,28 +2596,16 @@
         uploadErr
       );
 
+
       showToast(
         uploadErr.message,
         true
       );
 
-      btn.disabled = false;
-
-      btn.textContent =
-        originalText;
 
       return;
 
     }
-
-
-    const {
-      data: {
-        session
-      }
-    } =
-      await supabase.auth
-        .getSession();
 
 
     const {
@@ -2245,20 +2614,21 @@
       await supabase
         .from('project_files')
         .insert({
-          project_id: projectId,
-          file_name: file.name,
-          storage_path: storagePath,
-          file_type: 'manuscript',
-          uploaded_by: 'client'
+          project_id:
+            projectId,
+
+          file_name:
+            file.name,
+
+          storage_path:
+            storagePath,
+
+          file_type:
+            'manuscript',
+
+          uploaded_by:
+            'client'
         });
-
-
-    btn.disabled = false;
-
-    btn.textContent =
-      originalText;
-
-    input.value = '';
 
 
     if (dbErr) {
@@ -2268,50 +2638,78 @@
         dbErr
       );
 
+
+      /*
+       * The file has already been uploaded.
+       * We don't pretend that the database record
+       * succeeded.
+       */
       showToast(
-        'Uploaded, but could not record it: ' +
+        'The file uploaded, but its record could not be created: ' +
         dbErr.message,
         true
       );
 
-    } else {
 
-      showToast(
-        'Manuscript uploaded.'
-      );
-
-      loadDashboard();
+      return;
 
     }
 
-  }
+
+    showToast(
+      'Manuscript uploaded.'
+    );
 
 
-  /* ============================================================
-     PAYSTACK MILESTONE PAYMENT
-     ============================================================ */
+    input.value = '';
 
-  async function payMilestone(
-    milestoneId,
-    btn
-  ) {
 
-    btn.disabled = true;
+    /*
+     * Refresh project data without destroying
+     * existing Realtime channels.
+     */
+    await loadDashboard();
 
-    const originalText =
-      btn.textContent;
+  } finally {
+
+    btn.disabled = false;
 
     btn.textContent =
-      'Starting checkout…';
+      originalText;
 
+  }
+
+}
+
+
+/* ============================================================
+   PAYSTACK MILESTONE PAYMENT
+   ============================================================ */
+
+async function payMilestone(
+  milestoneId,
+  btn
+) {
+
+  btn.disabled = true;
+
+
+  const originalText =
+    btn.textContent;
+
+
+  btn.textContent =
+    'Starting checkout…';
+
+
+  try {
 
     const {
       data: {
         session
       }
     } =
-      await supabase.auth
-        .getSession();
+      await supabase.auth.getSession();
 
 
     if (!session) {
@@ -2324,234 +2722,316 @@
     }
 
 
-    try {
-
-      const res =
-        await fetch(
-          '/api/initialize-milestone-payment',
-          {
-            method: 'POST',
-
-            headers: {
-              'Content-Type':
-                'application/json',
-
-              'Authorization':
-                `Bearer ${session.access_token}`
-            },
-
-            body:
-              JSON.stringify({
-                milestone_id:
-                  milestoneId
-              })
-          }
-        );
-
-
-      const data =
-        await res.json();
-
-
-      if (
-        !res.ok ||
-        !data.access_code
-      ) {
-
-        throw new Error(
-          data.error ||
-          'Could not start checkout.'
-        );
-
-      }
-
-
-      btn.textContent =
-        originalText;
-
-      btn.disabled = false;
-
-
-      const paystackPop =
-        new PaystackPop();
-
-
-      paystackPop.resumeTransaction(
-        data.access_code,
+    const res =
+      await fetch(
+        '/api/initialize-milestone-payment',
         {
+          method: 'POST',
 
-          onSuccess: () => {
+          headers: {
+            'Content-Type':
+              'application/json',
 
-            showToast(
-              'Payment received — confirming with our records…'
-            );
-
-            waitForConfirmation();
-
+            'Authorization':
+              `Bearer ${session.access_token}`
           },
 
-          onCancel: () => {
-
-            showToast(
-              'Checkout closed. You can try again anytime.'
-            );
-
-          },
-
-          onError: err => {
-
-            console.error(
-              '[dashboard] Paystack error:',
-              err
-            );
-
-            showToast(
-              'Something went wrong during checkout. Please try again.',
-              true
-            );
-
-          }
-
+          body:
+            JSON.stringify({
+              milestone_id:
+                milestoneId
+            })
         }
       );
 
 
-    } catch (err) {
-
-      console.error(
-        '[dashboard] Payment error:',
-        err
-      );
-
-      btn.disabled = false;
-
-      btn.textContent =
-        originalText;
-
-      showToast(
-        err.message ||
-        'Something went wrong. Please try again.',
-        true
-      );
-
-    }
-
-  }
+    const data =
+      await res.json();
 
 
-  /* ============================================================
-     PAYMENT CONFIRMATION
-     ============================================================ */
-
-  async function waitForConfirmation() {
-
-    for (
-      let i = 0;
-      i < 6;
-      i++
+    if (
+      !res.ok ||
+      !data.access_code
     ) {
 
-      await new Promise(
-        r =>
-          setTimeout(
-            r,
-            1500
-          )
+      throw new Error(
+        data.error ||
+        'Could not start checkout.'
       );
-
-      await loadDashboard();
 
     }
 
+
+    btn.textContent =
+      originalText;
+
+    btn.disabled = false;
+
+
+    const paystackPop =
+      new PaystackPop();
+
+
+    paystackPop.resumeTransaction(
+      data.access_code,
+      {
+
+        onSuccess: () => {
+
+          showToast(
+            'Payment received — confirming with our records…'
+          );
+
+
+          waitForConfirmation();
+
+        },
+
+
+        onCancel: () => {
+
+          showToast(
+            'Checkout closed. You can try again anytime.'
+          );
+
+        },
+
+
+        onError: err => {
+
+          console.error(
+            '[dashboard] Paystack error:',
+            err
+          );
+
+
+          showToast(
+            'Something went wrong during checkout. Please try again.',
+            true
+          );
+
+        }
+
+      }
+    );
+
+
+  } catch (err) {
+
+    console.error(
+      '[dashboard] Payment error:',
+      err
+    );
+
+
+    showToast(
+      err.message ||
+      'Something went wrong. Please try again.',
+      true
+    );
+
+  } finally {
+
+    btn.disabled = false;
+
+    btn.textContent =
+      originalText;
+
+  }
+
+}
+
+
+/* ============================================================
+   PAYMENT CONFIRMATION
+   ============================================================ */
+
+async function waitForConfirmation() {
+
+  /*
+   * Give the Paystack webhook/server time to update
+   * the database.
+   */
+
+  for (
+    let i = 0;
+    i < 6;
+    i++
+  ) {
+
+    await new Promise(
+      resolve =>
+        setTimeout(
+          resolve,
+          1500
+        )
+    );
+
+
+    await loadDashboard();
+
+  }
+
+}
+
+
+/* ============================================================
+   DATE FORMAT
+   ============================================================ */
+
+function formatDate(dateValue) {
+
+  if (!dateValue) {
+    return '';
   }
 
 
-  /* ============================================================
-     ESCAPE HTML
-     ============================================================ */
+  const date =
+    new Date(dateValue);
 
-  function escapeHtml(str) {
 
-    const div =
-      document.createElement(
-        'div'
-      );
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
 
-    div.textContent =
-      str || '';
-
-    return div.innerHTML;
+    return '';
 
   }
 
 
-  /* ============================================================
-     START
-     ============================================================ */
+  return date.toLocaleDateString(
+    'en-GB',
+    {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }
+  );
 
-  loadDashboard();
+}
+
+
+/* ============================================================
+   ESCAPE HTML
+   ============================================================ */
+
+function escapeHtml(str) {
+
+  const div =
+    document.createElement(
+      'div'
+    );
+
+
+  div.textContent =
+    String(str ?? '');
+
+
+  return div.innerHTML;
+
+}
+
+
+/* ============================================================
+   CLEANUP REALTIME CHANNELS
+   ============================================================ */
+
+window.addEventListener(
+  'beforeunload',
+  () => {
+
+    Object.keys(chatChannels)
+      .forEach(projectId => {
+
+        const channel =
+          chatChannels[projectId];
+
+        if (channel) {
+
+          supabase.removeChannel(
+            channel
+          );
+
+        }
+
+      });
+
+  }
+);
+
+
+/* ============================================================
+   START DASHBOARD
+   ============================================================ */
+
+loadDashboard();
 
 </script>
 
 
 <script>
 
-  /* ============================================================
-     MOBILE MENU
-     ============================================================ */
+/* ============================================================
+   MOBILE MENU
+   ============================================================ */
 
-  const menuToggle =
-    document.getElementById(
-      'menuToggle'
-    );
-
-  const mainNav =
-    document.getElementById(
-      'mainNav'
-    );
-
-
-  menuToggle.addEventListener(
-    'click',
-    () => {
-
-      const open =
-        mainNav.classList.toggle(
-          'open'
-        );
-
-      menuToggle.setAttribute(
-        'aria-expanded',
-        open
-          ? 'true'
-          : 'false'
-      );
-
-    }
+const menuToggle =
+  document.getElementById(
+    'menuToggle'
   );
 
 
-  mainNav
-    .querySelectorAll('a')
-    .forEach(link => {
+const mainNav =
+  document.getElementById(
+    'mainNav'
+  );
 
-      link.addEventListener(
-        'click',
-        () => {
 
-          mainNav.classList.remove(
-            'open'
-          );
+menuToggle.addEventListener(
+  'click',
+  () => {
 
-          menuToggle.setAttribute(
-            'aria-expanded',
-            'false'
-          );
-
-        }
+    const open =
+      mainNav.classList.toggle(
+        'open'
       );
 
-    });
+
+    menuToggle.setAttribute(
+      'aria-expanded',
+      open
+        ? 'true'
+        : 'false'
+    );
+
+  }
+);
+
+
+mainNav
+  .querySelectorAll('a')
+  .forEach(link => {
+
+    link.addEventListener(
+      'click',
+      () => {
+
+        mainNav.classList.remove(
+          'open'
+        );
+
+
+        menuToggle.setAttribute(
+          'aria-expanded',
+          'false'
+        );
+
+      }
+    );
+
+  });
 
 </script>
 

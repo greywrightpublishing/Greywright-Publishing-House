@@ -160,6 +160,48 @@
     });
   });
 
+  /*
+   * FIX: linkClient() previously fired without any Authorization
+   * header, so /api/link-client (which requires a Bearer token)
+   * always returned 401 and every signup showed "linking your
+   * project failed." It's now a shared helper that:
+   *   1. Requires an active session (access token) to call at all.
+   *   2. Sends that token as a Bearer header, as the API expects.
+   *   3. Is safe to call on every sign-in, not just signup — the
+   *      API is idempotent (it no-ops if already linked), so this
+   *      also covers accounts where Supabase requires email
+   *      confirmation and therefore has NO session yet at signup
+   *      time. For those, linking simply happens the first time
+   *      they successfully sign in instead.
+   */
+  async function linkClient(session, email, name) {
+    if (!session?.access_token) {
+      return { ok: false, error: 'No active session.' };
+    }
+
+    try {
+      const linkRes = await fetch('/api/link-client', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ email, name }),
+      });
+
+      const data = await linkRes.json().catch(() => ({}));
+
+      if (!linkRes.ok) {
+        return { ok: false, error: data.error || 'Could not link your client account.' };
+      }
+
+      return { ok: true, data };
+    } catch (err) {
+      console.error('[login] linkClient network error:', err);
+      return { ok: false, error: 'Network error while linking your account.' };
+    }
+  }
+
   document.getElementById('form-signin').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('signinBtn');
@@ -167,12 +209,31 @@
     const email = document.getElementById('si-email').value.trim();
     const password = document.getElementById('si-pass').value;
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       showStatus(error.message, 'error');
       btn.disabled = false;
       return;
     }
+
+    /*
+     * Make sure this account is linked to a client record before
+     * moving on. This is a no-op (fast, returns immediately) if
+     * it was already linked at signup — it only does real work
+     * the first time a confirmed-by-email account signs in.
+     */
+    const name =
+      data.user?.user_metadata?.full_name ||
+      (data.user?.email || '').split('@')[0];
+
+    const linkResult = await linkClient(data.session, email, name);
+
+    if (!linkResult.ok) {
+      // Don't block sign-in over this — but do surface it, since an
+      // unlinked account will land on an empty "no projects" screen.
+      console.error('[login] Sign-in linking failed:', linkResult.error);
+    }
+
     window.location.href = 'dashboard.html';
   });
 
@@ -184,26 +245,48 @@
     const email = document.getElementById('su-email').value.trim();
     const password = document.getElementById('su-pass').value;
 
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    /*
+     * Store the name in the auth user's metadata at signup time so
+     * it's still available later (e.g. at first sign-in, if email
+     * confirmation delays when a session first exists) without
+     * needing a separate lookup.
+     */
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: name },
+      },
+    });
+
     if (error) {
       showStatus(error.message, 'error');
       btn.disabled = false;
       return;
     }
 
-    try {
-      const linkRes = await fetch('/api/link-client', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: data.user.id, email, name }),
-      });
-      if (!linkRes.ok) throw new Error('Account created, but linking your project failed. Contact us.');
-    } catch (err) {
-      showStatus(err.message, 'error');
-      btn.disabled = false;
+    if (data.session) {
+      // Email confirmation is off (or already satisfied) — we have
+      // a session immediately, so link the client record right now.
+      const linkResult = await linkClient(data.session, email, name);
+
+      if (!linkResult.ok) {
+        showStatus(
+          `Account created, but linking your project failed: ${linkResult.error} Please contact us.`,
+          'error'
+        );
+        btn.disabled = false;
+        return;
+      }
+
+      showStatus('Account created and linked. Redirecting…', 'success');
+      window.location.href = 'dashboard.html';
       return;
     }
 
+    // No session yet — Supabase is waiting on email confirmation.
+    // There's no access token to call /api/link-client with yet, so
+    // linking is deferred to the first successful sign-in above.
     showStatus('Account created. Check your email to confirm, then sign in.', 'success');
     btn.disabled = false;
   });

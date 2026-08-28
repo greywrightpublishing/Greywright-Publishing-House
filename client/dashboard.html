@@ -848,23 +848,10 @@ footer {
 const SUPABASE_URL =
   'https://dusfpsafuhopdiyjrhyh.supabase.co';
 
-/*
- * FIX: This key was previously malformed — its JWT payload was
- * missing the required "role":"anon" claim entirely (and had a
- * different "exp" than the project's real anon key), so it did
- * not match the signature and Supabase rejected every request
- * from this page as an invalid API key. That silently broke
- * auth.getSession(), the client lookup, the projects query,
- * milestone payments, chat, and file downloads — i.e. the whole
- * dashboard.
- *
- * Replaced with the same, correctly-formed anon key used in
- * client/login.html and admin/login.html.
- */
 const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
-const supabase =
+const supabaseClient =
   window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
@@ -877,32 +864,13 @@ const CURRENCY_SYMBOLS = {
 };
 
 
-/* ============================================================
-   GLOBAL STATE
-   ============================================================ */
-
 let currentUserId = null;
 
-/*
- * One Realtime channel per project.
- *
- * IMPORTANT:
- * We deliberately keep these channels alive when the
- * dashboard is refreshed/re-rendered.
- */
 const chatChannels = {};
 
 
-/*
- * Prevent multiple dashboard refreshes from happening
- * simultaneously.
- */
 let dashboardLoading = false;
 
-
-/* ============================================================
-   MONEY
-   ============================================================ */
 
 function formatMoney(cents, currency) {
 
@@ -925,10 +893,6 @@ function formatMoney(cents, currency) {
 }
 
 
-/* ============================================================
-   TOAST
-   ============================================================ */
-
 function showToast(msg, isError = false) {
 
   const el =
@@ -949,10 +913,6 @@ function showToast(msg, isError = false) {
 }
 
 
-/* ============================================================
-   SIGN OUT
-   ============================================================ */
-
 document
   .getElementById('signOutBtn')
   .addEventListener('click', async () => {
@@ -964,24 +924,20 @@ document
           chatChannels[projectId];
 
         if (channel) {
-          supabase.removeChannel(channel);
+          supabaseClient.removeChannel(channel);
         }
 
         delete chatChannels[projectId];
 
       });
 
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
 
     window.location.href =
       'login.html';
 
   });
 
-
-/* ============================================================
-   DASHBOARD
-   ============================================================ */
 
 async function loadDashboard() {
 
@@ -996,7 +952,7 @@ async function loadDashboard() {
     const {
       data: { session }
     } =
-      await supabase.auth.getSession();
+      await supabaseClient.auth.getSession();
 
 
     if (!session) {
@@ -1017,7 +973,7 @@ async function loadDashboard() {
       data: clientRow,
       error: clientError
     } =
-      await supabase
+      await supabaseClient
         .from('clients')
         .select('id, name')
         .eq(
@@ -1075,7 +1031,7 @@ async function loadDashboard() {
       data: projects,
       error
     } =
-      await supabase
+      await supabaseClient
         .from('projects')
         .select(`
           id,
@@ -1176,10 +1132,6 @@ async function loadDashboard() {
 
 }
 
-
-/* ============================================================
-   RENDER PROJECTS
-   ============================================================ */
 
 function renderProjects(projects) {
 
@@ -1528,10 +1480,6 @@ function renderProjects(projects) {
     container.appendChild(card);
 
 
-    /* ========================================================
-       MILESTONES
-       ======================================================== */
-
     const listEl =
       card.querySelector(
         '.milestones-list'
@@ -1669,10 +1617,6 @@ function renderProjects(projects) {
     });
 
 
-    /* ========================================================
-       FILES
-       ======================================================== */
-
     const filesEl =
       card.querySelector(
         '.files-list'
@@ -1764,21 +1708,12 @@ function renderProjects(projects) {
     }
 
 
-    /*
-     * IMPORTANT:
-     * This only creates a Realtime channel if one doesn't
-     * already exist for this project.
-     */
     setupProjectChat(
       project.id
     );
 
   });
 
-
-  /* ============================================================
-     UPLOAD BUTTONS
-     ============================================================ */
 
   container
     .querySelectorAll(
@@ -1798,10 +1733,6 @@ function renderProjects(projects) {
     });
 
 
-  /* ============================================================
-     CHAT SEND BUTTONS
-     ============================================================ */
-
   container
     .querySelectorAll(
       '.chat-send'
@@ -1819,10 +1750,6 @@ function renderProjects(projects) {
 
     });
 
-
-  /* ============================================================
-     ENTER TO SEND
-     ============================================================ */
 
   container
     .querySelectorAll(
@@ -1869,10 +1796,6 @@ function renderProjects(projects) {
 }
 
 
-/* ============================================================
-   CHAT — LOAD MESSAGES
-   ============================================================ */
-
 async function loadMessages(projectId) {
 
   const messagesEl =
@@ -1890,7 +1813,7 @@ async function loadMessages(projectId) {
     data,
     error
   } =
-    await supabase
+    await supabaseClient
       .from('messages')
       .select(`
         id,
@@ -1938,10 +1861,6 @@ async function loadMessages(projectId) {
 
 }
 
-
-/* ============================================================
-   CHAT — RENDER
-   ============================================================ */
 
 function renderMessages(
   projectId,
@@ -2062,10 +1981,6 @@ function renderMessages(
 }
 
 
-/* ============================================================
-   CHAT — MARK MESSAGES READ
-   ============================================================ */
-
 async function markMessagesRead(
   projectId,
   messages
@@ -2089,7 +2004,7 @@ async function markMessagesRead(
   const {
     error
   } =
-    await supabase
+    await supabaseClient
       .from('messages')
       .update({
         read_at:
@@ -2112,10 +2027,6 @@ async function markMessagesRead(
 
 }
 
-
-/* ============================================================
-   CHAT — SEND MESSAGE
-   ============================================================ */
 
 async function sendMessage(
   projectId,
@@ -2160,7 +2071,7 @@ async function sendMessage(
         session
       }
     } =
-      await supabase.auth.getSession();
+      await supabaseClient.auth.getSession();
 
 
     if (!session) {
@@ -2173,10 +2084,6 @@ async function sendMessage(
     }
 
 
-    /*
-     * Re-confirm the user is still authenticated
-     * before inserting the message.
-     */
     if (
       session.user.id !==
       currentUserId
@@ -2191,7 +2098,7 @@ async function sendMessage(
     const {
       error
     } =
-      await supabase
+      await supabaseClient
         .from('messages')
         .insert({
           project_id:
@@ -2228,12 +2135,6 @@ async function sendMessage(
     input.value = '';
 
 
-    /*
-     * Realtime should normally add the message
-     * automatically. We also load immediately so
-     * the sender sees it without waiting for the
-     * realtime callback.
-     */
     await loadMessages(
       projectId
     );
@@ -2251,26 +2152,15 @@ async function sendMessage(
 }
 
 
-/* ============================================================
-   CHAT — REALTIME
-   ============================================================ */
-
 async function setupProjectChat(
   projectId
 ) {
 
-  /*
-   * Load existing conversation.
-   */
   await loadMessages(
     projectId
   );
 
 
-  /*
-   * DO NOT create another channel if one already
-   * exists for this project.
-   */
   if (
     chatChannels[projectId]
   ) {
@@ -2305,15 +2195,11 @@ async function setupProjectChat(
 
 
   const channel =
-    supabase
+    supabaseClient
       .channel(
         `project-messages-${projectId}`
       )
 
-
-      /* ========================================================
-         NEW MESSAGE
-         ======================================================== */
 
       .on(
         'postgres_changes',
@@ -2333,10 +2219,6 @@ async function setupProjectChat(
           );
 
 
-          /*
-           * Reload conversation so both the sender
-           * and receiver see the same ordered thread.
-           */
           await loadMessages(
             projectId
           );
@@ -2344,10 +2226,6 @@ async function setupProjectChat(
         }
       )
 
-
-      /* ========================================================
-         MESSAGE UPDATED
-         ======================================================== */
 
       .on(
         'postgres_changes',
@@ -2374,10 +2252,6 @@ async function setupProjectChat(
         }
       )
 
-
-      /* ========================================================
-         SUBSCRIBE
-         ======================================================== */
 
       .subscribe(
         status => {
@@ -2450,10 +2324,6 @@ async function setupProjectChat(
 }
 
 
-/* ============================================================
-   FILE DOWNLOAD
-   ============================================================ */
-
 async function downloadFile(path) {
 
   if (!path) {
@@ -2472,7 +2342,7 @@ async function downloadFile(path) {
     data,
     error
   } =
-    await supabase.storage
+    await supabaseClient.storage
       .from('project-files')
       .createSignedUrl(
         path,
@@ -2510,10 +2380,6 @@ async function downloadFile(path) {
 
 }
 
-
-/* ============================================================
-   MANUSCRIPT UPLOAD
-   ============================================================ */
 
 async function uploadManuscript(
   projectId,
@@ -2567,7 +2433,7 @@ async function uploadManuscript(
         session
       }
     } =
-      await supabase.auth.getSession();
+      await supabaseClient.auth.getSession();
 
 
     if (!session) {
@@ -2594,7 +2460,7 @@ async function uploadManuscript(
     const {
       error: uploadErr
     } =
-      await supabase.storage
+      await supabaseClient.storage
         .from('project-files')
         .upload(
           storagePath,
@@ -2624,7 +2490,7 @@ async function uploadManuscript(
     const {
       error: dbErr
     } =
-      await supabase
+      await supabaseClient
         .from('project_files')
         .insert({
           project_id:
@@ -2652,11 +2518,6 @@ async function uploadManuscript(
       );
 
 
-      /*
-       * The file has already been uploaded.
-       * We don't pretend that the database record
-       * succeeded.
-       */
       showToast(
         'The file uploaded, but its record could not be created: ' +
         dbErr.message,
@@ -2677,10 +2538,6 @@ async function uploadManuscript(
     input.value = '';
 
 
-    /*
-     * Refresh project data without destroying
-     * existing Realtime channels.
-     */
     await loadDashboard();
 
   } finally {
@@ -2694,10 +2551,6 @@ async function uploadManuscript(
 
 }
 
-
-/* ============================================================
-   PAYSTACK MILESTONE PAYMENT
-   ============================================================ */
 
 async function payMilestone(
   milestoneId,
@@ -2722,7 +2575,7 @@ async function payMilestone(
         session
       }
     } =
-      await supabase.auth.getSession();
+      await supabaseClient.auth.getSession();
 
 
     if (!session) {
@@ -2855,16 +2708,7 @@ async function payMilestone(
 }
 
 
-/* ============================================================
-   PAYMENT CONFIRMATION
-   ============================================================ */
-
 async function waitForConfirmation() {
-
-  /*
-   * Give the Paystack webhook/server time to update
-   * the database.
-   */
 
   for (
     let i = 0;
@@ -2887,10 +2731,6 @@ async function waitForConfirmation() {
 
 }
 
-
-/* ============================================================
-   DATE FORMAT
-   ============================================================ */
 
 function formatDate(dateValue) {
 
@@ -2926,10 +2766,6 @@ function formatDate(dateValue) {
 }
 
 
-/* ============================================================
-   ESCAPE HTML
-   ============================================================ */
-
 function escapeHtml(str) {
 
   const div =
@@ -2947,10 +2783,6 @@ function escapeHtml(str) {
 }
 
 
-/* ============================================================
-   CLEANUP REALTIME CHANNELS
-   ============================================================ */
-
 window.addEventListener(
   'beforeunload',
   () => {
@@ -2963,7 +2795,7 @@ window.addEventListener(
 
         if (channel) {
 
-          supabase.removeChannel(
+          supabaseClient.removeChannel(
             channel
           );
 
@@ -2975,20 +2807,12 @@ window.addEventListener(
 );
 
 
-/* ============================================================
-   START DASHBOARD
-   ============================================================ */
-
 loadDashboard();
 
 </script>
 
 
 <script>
-
-/* ============================================================
-   MOBILE MENU
-   ============================================================ */
 
 const menuToggle =
   document.getElementById(

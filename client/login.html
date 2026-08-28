@@ -292,6 +292,38 @@
     cursor: default;
   }
 
+
+  .password-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .password-wrap input {
+    margin-bottom: 0;
+    padding-right: 82px;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: auto;
+    padding: 4px 6px;
+    background: transparent;
+    color: var(--ink-soft);
+    border: none;
+    font-family: var(--body);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+  }
+
+  .password-toggle:hover {
+    background: transparent;
+    color: var(--oxblood);
+  }
+
   .status {
     font-size: 13px;
     padding: 10px 12px;
@@ -350,7 +382,7 @@
 <header class="site-header">
   <div class="nav-row">
 
-```
+
 <a href="../index.html#top" class="brandmark">
   Greywright <em>Publishing House</em>
 </a>
@@ -384,7 +416,7 @@
   </button>
 
 </div>
-```
+
 
   </div>
 </header>
@@ -393,7 +425,7 @@
 
   <div class="card">
 
-```
+
 <div class="eyebrow">
   Greywright Publishing House
 </div>
@@ -456,12 +488,22 @@
     Password
   </label>
 
-  <input
-    type="password"
-    id="si-pass"
-    required
-    autocomplete="current-password"
-  />
+  <div class="password-wrap">
+    <input
+      type="password"
+      id="si-pass"
+      required
+      autocomplete="current-password"
+    />
+    <button
+      type="button"
+      class="password-toggle"
+      data-target="si-pass"
+      aria-label="Show password"
+      aria-pressed="false">
+      Show
+    </button>
+  </div>
 
 
   <button
@@ -510,13 +552,23 @@
     Password
   </label>
 
-  <input
-    type="password"
-    id="su-pass"
-    required
-    minlength="8"
-    autocomplete="new-password"
-  />
+  <div class="password-wrap">
+    <input
+      type="password"
+      id="su-pass"
+      required
+      minlength="8"
+      autocomplete="new-password"
+    />
+    <button
+      type="button"
+      class="password-toggle"
+      data-target="su-pass"
+      aria-label="Show password"
+      aria-pressed="false">
+      Show
+    </button>
+  </div>
 
 
   <button
@@ -529,7 +581,7 @@
   </button>
 
 </form>
-```
+
 
   </div>
 
@@ -539,7 +591,7 @@
 
   <div class="footer-bottom">
 
-```
+
 <span>
   © 2026 Greywright Publishing House Limited.
   All rights reserved.
@@ -548,7 +600,7 @@
 <span>
   Crafted in Abuja, Nigeria.
 </span>
-```
+
 
   </div>
 
@@ -1079,6 +1131,49 @@ document
     }
   );
 
+
+
+/* ============================================================
+   PASSWORD VISIBILITY TOGGLES
+   ============================================================ */
+
+document
+  .querySelectorAll('.password-toggle')
+  .forEach(toggle => {
+
+    toggle.addEventListener('click', () => {
+
+      const input =
+        document.getElementById(
+          toggle.dataset.target
+        );
+
+      if (!input) {
+        return;
+      }
+
+      const showing =
+        input.type === 'text';
+
+      input.type =
+        showing ? 'password' : 'text';
+
+      toggle.textContent =
+        showing ? 'Show' : 'Hide';
+
+      toggle.setAttribute(
+        'aria-label',
+        showing ? 'Show password' : 'Hide password'
+      );
+
+      toggle.setAttribute(
+        'aria-pressed',
+        showing ? 'false' : 'true'
+      );
+
+    });
+
+  });
 
 /* ============================================================
    MOBILE MENU

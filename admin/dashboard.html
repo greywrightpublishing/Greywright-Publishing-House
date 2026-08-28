@@ -476,6 +476,161 @@ td:first-child {
   margin-top: 3px;
 }
 
+/* ============================================================
+   ADMIN CHAT (Messages tab)
+   ============================================================ */
+
+.chat-box {
+  border: 1px solid var(--line);
+  background: #fbfaf6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chat-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 14px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-header-title {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.chat-status {
+  font-size: 11px;
+  color: rgba(244,238,223,0.65);
+  letter-spacing: 0.04em;
+}
+
+.chat-status.connected {
+  color: #b9d4bf;
+}
+
+.chat-messages {
+  height: 400px;
+  overflow-y: auto;
+  padding: 18px;
+  background: #f8f5ed;
+}
+
+.chat-empty {
+  height: 100%;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--ink-faint);
+  font-size: 14px;
+  padding: 30px;
+}
+
+.chat-message {
+  display: flex;
+  margin-bottom: 14px;
+}
+
+.chat-message.mine {
+  justify-content: flex-end;
+}
+
+.chat-message.theirs {
+  justify-content: flex-start;
+}
+
+.chat-bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.chat-message.mine .chat-bubble {
+  background: var(--oxblood);
+  color: var(--paper);
+  border-bottom-right-radius: 2px;
+}
+
+.chat-message.theirs .chat-bubble {
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-bottom-left-radius: 2px;
+}
+
+.chat-sender {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+  opacity: 0.65;
+}
+
+.chat-time {
+  font-size: 10px;
+  margin-top: 4px;
+  opacity: 0.6;
+  text-align: right;
+}
+
+.chat-compose {
+  border-top: 1px solid var(--line);
+  padding: 12px;
+  background: #fff;
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.chat-input {
+  flex: 1;
+  min-height: 42px;
+  max-height: 130px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-family: var(--body);
+  font-size: 14px;
+  color: var(--ink);
+  background: #fff;
+  outline: none;
+}
+
+.chat-input:focus {
+  border-color: var(--brass);
+}
+
+.chat-send {
+  background: var(--oxblood);
+  color: var(--paper);
+  border: none;
+  padding: 10px 18px;
+  border-radius: 3px;
+  font-family: var(--body);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.chat-send:hover:not(:disabled) {
+  background: var(--oxblood-deep);
+}
+
+.chat-send:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
 @media (max-width: 640px) {
   .row2,
   .row3 {
@@ -494,6 +649,23 @@ td:first-child {
     display: block;
     overflow-x: auto;
     white-space: nowrap;
+  }
+
+  .chat-messages {
+    height: 340px;
+  }
+
+  .chat-bubble {
+    max-width: 88%;
+  }
+
+  .chat-compose {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chat-send {
+    width: 100%;
   }
 }
 </style>
@@ -520,6 +692,7 @@ td:first-child {
   <div class="tab" data-panel="panel-payments">Payments</div>
   <div class="tab" data-panel="panel-quotes">Quote Generator</div>
   <div class="tab" data-panel="panel-files">Files</div>
+  <div class="tab" data-panel="panel-messages">Messages</div>
 </div>
 
 <!-- =========================================================
@@ -1029,6 +1202,83 @@ Upload Deliverable
 
 </div>
 
+<!-- =========================================================
+     MESSAGES
+========================================================= -->
+
+<div class="panel" id="panel-messages">
+
+<div class="card">
+
+<h3>Client Messages</h3>
+
+<div class="field">
+
+<label>Select Project</label>
+
+<select id="m-project">
+
+<option value="">
+Select project…
+</option>
+
+</select>
+
+</div>
+
+<div id="messages-status" class="status-bar"></div>
+
+<p class="empty" id="messages-empty-note">
+Select a project to view and send messages.
+</p>
+
+<div class="chat-box" id="admin-chat-box" style="display:none;">
+
+<div class="chat-header">
+
+<div class="chat-header-title" id="admin-chat-title">
+Conversation
+</div>
+
+<div class="chat-status" id="admin-chat-status">
+Connecting…
+</div>
+
+</div>
+
+<div class="chat-messages" id="admin-chat-messages">
+
+<div class="chat-empty">
+Loading conversation…
+</div>
+
+</div>
+
+<div class="chat-compose">
+
+<textarea
+class="chat-input"
+id="admin-chat-input"
+placeholder="Write a message to this client…"
+rows="2"
+></textarea>
+
+<button
+type="button"
+class="chat-send"
+id="admin-chat-send"
+>
+Send
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -1041,18 +1291,6 @@ Upload Deliverable
 const SUPABASE_URL =
 'https://dusfpsafuhopdiyjrhyh.supabase.co';
 
-/*
- * FIX: This key was previously split across four concatenated
- * string chunks and one chunk contained a typo — the JWT
- * payload segment was corrupted ("supabas" + stray "I" instead
- * of "supabase"), producing an invalid anon key that did not
- * match the project. Every Supabase call in this file
- * (auth.getSession, the admin role check, and every subsequent
- * table query) would have silently failed as a result.
- *
- * Replaced with the same, correctly-formed anon key used in
- * admin/login.html and the client-facing pages.
- */
 const SUPABASE_ANON_KEY =
 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
@@ -1173,6 +1411,8 @@ document
 .addEventListener(
 'click',
 async () => {
+
+unsubscribeAdminChat();
 
 await supabaseClient.auth.signOut();
 
@@ -1746,6 +1986,7 @@ projectsCache =
 data || [];
 
 populateFileProjectDropdown();
+populateMessagesProjectDropdown();
 
 if (
 !data ||
@@ -3485,6 +3726,646 @@ false;
 }
 
 });
+
+
+/* ============================================================
+   MESSAGES (ADMIN CHAT)
+============================================================
+   Mirrors the client-side chat in client/dashboard.html:
+   same `messages` table (project_id, sender_id, message,
+   read_at, created_at), same Realtime pattern. The admin
+   picks a project from a dropdown, sees the thread, and can
+   reply. Only one project's channel is subscribed at a time
+   here — switching projects tears down the previous
+   subscription before opening the next one.
+============================================================ */
+
+let currentMessagesProjectId = null;
+let adminChatChannel = null;
+
+
+function populateMessagesProjectDropdown() {
+
+const sel =
+document.getElementById(
+'m-project'
+);
+
+const currentVal =
+sel.value;
+
+sel.innerHTML =
+'<option value="">Select project…</option>' +
+
+projectsCache
+.map(p =>
+`<option value="${p.id}">
+${escapeHtml(p.title)}
+—
+${escapeHtml(
+p.clients?.name || ''
+)}
+</option>`
+)
+.join('');
+
+if (
+currentVal &&
+projectsCache.some(p => p.id === currentVal)
+) {
+
+sel.value =
+currentVal;
+
+}
+
+}
+
+
+document
+.getElementById('m-project')
+.addEventListener(
+'change',
+onMessagesProjectChange
+);
+
+
+async function onMessagesProjectChange() {
+
+clearStatus('messages-status');
+
+const projectId =
+document
+.getElementById('m-project')
+.value;
+
+const chatBox =
+document.getElementById(
+'admin-chat-box'
+);
+
+const emptyNote =
+document.getElementById(
+'messages-empty-note'
+);
+
+/*
+ * Always tear down the previous project's
+ * Realtime subscription before switching —
+ * unlike the client dashboard (which keeps a
+ * channel per visible project), the admin view
+ * only shows one conversation at a time.
+ */
+unsubscribeAdminChat();
+
+if (!projectId) {
+
+currentMessagesProjectId = null;
+
+chatBox.style.display = 'none';
+
+emptyNote.style.display = 'block';
+
+return;
+
+}
+
+currentMessagesProjectId =
+projectId;
+
+emptyNote.style.display = 'none';
+
+chatBox.style.display = 'block';
+
+const selectedOption =
+document
+.getElementById('m-project')
+.selectedOptions[0];
+
+document.getElementById(
+'admin-chat-title'
+).textContent =
+selectedOption
+? selectedOption.textContent.trim()
+: 'Conversation';
+
+document.getElementById(
+'admin-chat-messages'
+).innerHTML =
+`<div class="chat-empty">Loading conversation…</div>`;
+
+await loadAdminMessages(projectId);
+
+subscribeAdminChat(projectId);
+
+}
+
+
+async function loadAdminMessages(projectId) {
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from('messages')
+.select(`
+id,
+project_id,
+sender_id,
+message,
+read_at,
+created_at
+`)
+.eq(
+'project_id',
+projectId
+)
+.order(
+'created_at',
+{
+ascending: true
+}
+);
+
+if (error) {
+
+console.error(
+'[admin-chat] Could not load messages:',
+error
+);
+
+document.getElementById(
+'admin-chat-messages'
+).innerHTML =
+`<div class="chat-empty">Could not load messages.</div>`;
+
+showStatus(
+'messages-status',
+'error',
+error.message
+);
+
+return;
+
+}
+
+renderAdminMessages(
+data || []
+);
+
+}
+
+
+function renderAdminMessages(messages) {
+
+const messagesEl =
+document.getElementById(
+'admin-chat-messages'
+);
+
+if (!messagesEl) {
+return;
+}
+
+if (!messages.length) {
+
+messagesEl.innerHTML =
+`<div class="chat-empty">
+
+<div>
+
+<strong>No messages yet.</strong>
+
+<br>
+
+Send a message to this client.
+
+</div>
+
+</div>`;
+
+return;
+
+}
+
+messagesEl.innerHTML =
+messages
+.map(message => {
+
+const isMine =
+message.sender_id ===
+currentUser?.id;
+
+const sender =
+isMine
+?
+'You'
+:
+'Client';
+
+const date =
+new Date(
+message.created_at
+);
+
+return `
+
+<div
+class="chat-message ${
+isMine
+?
+'mine'
+:
+'theirs'
+}">
+
+<div class="chat-bubble">
+
+<div class="chat-sender">
+${sender}
+</div>
+
+<div>
+${escapeHtml(
+message.message
+)}
+</div>
+
+<div class="chat-time">
+
+${date.toLocaleString(
+'en-GB',
+{
+day: 'numeric',
+month: 'short',
+hour: '2-digit',
+minute: '2-digit'
+}
+)}
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+})
+.join('');
+
+messagesEl.scrollTop =
+messagesEl.scrollHeight;
+
+markAdminMessagesRead(messages);
+
+}
+
+
+async function markAdminMessagesRead(messages) {
+
+const unreadIds =
+messages
+.filter(message =>
+message.sender_id !==
+currentUser?.id &&
+!message.read_at
+)
+.map(message => message.id);
+
+if (!unreadIds.length) {
+return;
+}
+
+const {
+error
+} =
+await supabaseClient
+.from('messages')
+.update({
+read_at:
+new Date().toISOString()
+})
+.in(
+'id',
+unreadIds
+);
+
+if (error) {
+
+console.warn(
+'[admin-chat] Could not mark messages read:',
+error
+);
+
+}
+
+}
+
+
+async function sendAdminMessage() {
+
+const projectId =
+currentMessagesProjectId;
+
+if (!projectId) {
+return;
+}
+
+const input =
+document.getElementById(
+'admin-chat-input'
+);
+
+const btn =
+document.getElementById(
+'admin-chat-send'
+);
+
+const message =
+input.value.trim();
+
+if (!message) {
+return;
+}
+
+btn.disabled = true;
+
+const originalText =
+btn.textContent;
+
+btn.textContent =
+'Sending…';
+
+try {
+
+const {
+data: {
+session
+}
+} =
+await supabaseClient.auth.getSession();
+
+if (!session) {
+
+redirectToLogin();
+
+return;
+
+}
+
+const {
+error
+} =
+await supabaseClient
+.from('messages')
+.insert({
+
+project_id:
+projectId,
+
+sender_id:
+session.user.id,
+
+message:
+message
+
+});
+
+if (error) {
+
+console.error(
+'[admin-chat] Send error:',
+error
+);
+
+showStatus(
+'messages-status',
+'error',
+'Could not send message: ' + error.message
+);
+
+return;
+
+}
+
+input.value = '';
+
+/*
+ * Realtime should add the message
+ * automatically. We also reload immediately
+ * so the admin sees it without waiting.
+ */
+await loadAdminMessages(projectId);
+
+}
+finally {
+
+btn.disabled = false;
+
+btn.textContent =
+originalText;
+
+}
+
+}
+
+
+document
+.getElementById('admin-chat-send')
+.addEventListener(
+'click',
+sendAdminMessage
+);
+
+
+document
+.getElementById('admin-chat-input')
+.addEventListener(
+'keydown',
+event => {
+
+if (
+event.key === 'Enter' &&
+!event.shiftKey
+) {
+
+event.preventDefault();
+
+sendAdminMessage();
+
+}
+
+}
+);
+
+
+function subscribeAdminChat(projectId) {
+
+const statusEl =
+document.getElementById(
+'admin-chat-status'
+);
+
+statusEl.textContent =
+'Connecting…';
+
+statusEl.classList.remove(
+'connected'
+);
+
+adminChatChannel =
+supabaseClient
+.channel(
+`admin-project-messages-${projectId}`
+)
+
+.on(
+'postgres_changes',
+{
+event: 'INSERT',
+schema: 'public',
+table: 'messages',
+filter:
+`project_id=eq.${projectId}`
+},
+
+async payload => {
+
+console.log(
+'[admin-chat] New message:',
+payload.new
+);
+
+/*
+ * Guard against a stale callback firing
+ * after the admin has switched projects.
+ */
+if (
+currentMessagesProjectId !==
+projectId
+) {
+
+return;
+
+}
+
+await loadAdminMessages(
+projectId
+);
+
+}
+)
+
+.on(
+'postgres_changes',
+{
+event: 'UPDATE',
+schema: 'public',
+table: 'messages',
+filter:
+`project_id=eq.${projectId}`
+},
+
+async payload => {
+
+if (
+currentMessagesProjectId !==
+projectId
+) {
+
+return;
+
+}
+
+await loadAdminMessages(
+projectId
+);
+
+}
+)
+
+.subscribe(
+status => {
+
+console.log(
+`[admin-chat] ${projectId}:`,
+status
+);
+
+if (
+currentMessagesProjectId !==
+projectId
+) {
+
+return;
+
+}
+
+if (status === 'SUBSCRIBED') {
+
+statusEl.textContent =
+'Live';
+
+statusEl.classList.add(
+'connected'
+);
+
+} else if (status === 'CHANNEL_ERROR') {
+
+statusEl.textContent =
+'Connection error';
+
+statusEl.classList.remove(
+'connected'
+);
+
+} else if (status === 'TIMED_OUT') {
+
+statusEl.textContent =
+'Connection timed out';
+
+statusEl.classList.remove(
+'connected'
+);
+
+} else {
+
+statusEl.textContent =
+'Connecting…';
+
+statusEl.classList.remove(
+'connected'
+);
+
+}
+
+}
+);
+
+}
+
+
+function unsubscribeAdminChat() {
+
+if (adminChatChannel) {
+
+supabaseClient.removeChannel(
+adminChatChannel
+);
+
+adminChatChannel = null;
+
+}
+
+}
+
+
+window.addEventListener(
+'beforeunload',
+unsubscribeAdminChat
+);
 
 
 /* ============================================================

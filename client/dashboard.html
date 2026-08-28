@@ -16,23 +16,23 @@
 
 <style>
 :root{
-  --paper:#f5efe2;
-  --paper-2:#eee5d1;
-  --paper-3:#e4dac2;
-  --white:#fffdf8;
-  --ink:#211d18;
-  --ink-soft:#62594d;
-  --ink-faint:#948875;
-  --oxblood:#6e1b26;
-  --oxblood-deep:#4e1119;
-  --brass:#a38338;
-  --brass-soft:rgba(163,131,56,.14);
-  --success:#46654f;
-  --line:rgba(33,29,24,.14);
-  --shadow:0 18px 55px rgba(55,43,27,.07);
+  --paper:#F4EEDF;
+  --paper-deep:#EAE0C5;
+  --white:#FFFDF8;
+  --ink:#1B1814;
+  --ink-soft:#564E42;
+  --ink-faint:#8C8270;
+  --oxblood:#6E1B26;
+  --oxblood-deep:#4F1219;
+  --brass:#9C7B2E;
+  --brass-soft:rgba(156,123,46,.12);
+  --line:rgba(27,24,20,.14);
+  --success:#3C5E45;
+  --info:#2980b9;
   --display:'Cormorant Garamond',Georgia,serif;
   --body:'Spectral',Georgia,serif;
-  --maxw:1160px;
+  --sidebar-w:264px;
+  --topbar-h:72px;
 }
 
 *{box-sizing:border-box}
@@ -40,566 +40,646 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   min-height:100vh;
-  background:
-    radial-gradient(circle at 85% 5%,rgba(163,131,56,.08),transparent 28rem),
-    var(--paper);
+  background:var(--paper);
   color:var(--ink);
   font-family:var(--body);
-  font-size:16px;
-  line-height:1.65;
-}
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:.22;
-  background-image:radial-gradient(rgba(33,29,24,.08) .5px,transparent .5px);
-  background-size:5px 5px;
-  mix-blend-mode:multiply;
+  font-size:15.5px;
+  line-height:1.6;
 }
 a{color:inherit;text-decoration:none}
-button,input,textarea{font:inherit}
+button,input,textarea,select{font:inherit}
 button{cursor:pointer}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--paper-deep);border-radius:4px}
 
-.site-header{
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:rgba(245,239,226,.94);
-  backdrop-filter:blur(14px);
-  border-top:3px solid var(--oxblood);
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+
+.topbar{
+  position:sticky;top:0;z-index:200;
+  height:var(--topbar-h);
+  background:rgba(244,238,223,.94);
+  backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
-}
-.nav-row{
-  height:86px;
-  max-width:var(--maxw);
-  margin:auto;
+  display:flex;align-items:center;justify-content:space-between;
   padding:0 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
 }
 .brandmark{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  white-space:nowrap;
-  font-family:var(--display);
-  font-size:24px;
-  font-weight:700;
+  font-family:var(--display);font-size:21px;font-weight:700;
+  display:flex;align-items:baseline;gap:8px;white-space:nowrap;
 }
-.brandmark-crest{
-  width:38px;
-  height:38px;
-  flex:0 0 auto;
-  object-fit:contain;
-}
-.brandmark-text{display:flex;align-items:baseline;gap:9px}
-.brandmark em{font-weight:500;color:var(--oxblood)}
-.nav-right{display:flex;align-items:center;gap:13px}
-.portal-status{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  color:var(--ink-faint);
-  font-size:11px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-}
-.portal-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--success);
-  box-shadow:0 0 0 4px rgba(70,101,79,.1);
-}
-.menu-toggle{
-  width:42px;height:42px;
+.brandmark em{font-style:italic;font-weight:600;color:var(--oxblood)}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.sidebar-toggle{
   display:none;
-  align-items:center;
-  justify-content:center;
-  background:none;
-  border:1px solid var(--line);
+  width:38px;height:38px;align-items:center;justify-content:center;
+  background:none;border:1px solid var(--line);border-radius:2px;
 }
-.menu-toggle span{
-  display:block;width:20px;height:1px;
-  background:var(--ink);margin:4px 0;
+.sidebar-toggle svg{width:18px;height:18px}
+.bell-btn{
+  position:relative;
+  width:38px;height:38px;
+  display:flex;align-items:center;justify-content:center;
+  background:none;border:1px solid var(--line);border-radius:2px;
+  color:var(--ink-soft);
 }
+.bell-btn:hover{border-color:var(--oxblood);color:var(--oxblood)}
+.bell-btn svg{width:17px;height:17px}
+.badge-dot{
+  position:absolute;top:-6px;right:-6px;
+  min-width:18px;height:18px;padding:0 4px;border-radius:9px;
+  background:var(--oxblood);color:var(--paper);
+  font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--paper);
+}
+.badge-dot.hidden{display:none}
 .signout-btn{
-  background:transparent;
-  border:1px solid rgba(33,29,24,.35);
-  color:var(--ink);
-  padding:10px 19px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  font-size:11px;
+  border:1px solid var(--ink);background:transparent;color:var(--ink);
+  padding:9px 18px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;
+  border-radius:2px;transition:background .2s ease,color .2s ease;
 }
 .signout-btn:hover{background:var(--ink);color:var(--paper)}
 
-.main{max-width:var(--maxw);margin:0 auto;padding:66px 28px 100px}
-.hero{max-width:900px;margin-bottom:52px}
-.kicker{
-  display:flex;align-items:center;gap:14px;
-  color:var(--oxblood);
-  font-size:11px;
-  letter-spacing:.24em;
-  text-transform:uppercase;
-  font-style:italic;
-  margin-bottom:17px;
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+
+.app-shell{display:flex;align-items:flex-start;min-height:calc(100vh - var(--topbar-h))}
+
+/* ── sidebar ── */
+.sidebar{
+  width:var(--sidebar-w);flex:0 0 auto;
+  position:sticky;top:var(--topbar-h);
+  height:calc(100vh - var(--topbar-h));
+  overflow-y:auto;
+  border-right:1px solid var(--line);
+  padding:30px 22px;
+  display:flex;flex-direction:column;
 }
-.kicker:before{content:"";width:38px;height:1px;background:var(--brass)}
-.greeting{
-  font-family:var(--display);
-  font-size:clamp(46px,6vw,72px);
-  line-height:.98;
-  font-weight:500;
-  letter-spacing:-.025em;
+.sidebar-crest{
+  width:88px;height:88px;margin:0 auto 12px;
+  border-radius:50%;border:1px solid var(--brass);
+  padding:6px;display:flex;align-items:center;justify-content:center;
 }
-.greeting em{color:var(--oxblood);font-style:italic}
-.hero-note{
-  max-width:620px;
-  margin:22px 0 0 3px;
-  color:var(--ink-soft);
-  font-size:16px;
+.sidebar-crest img{width:100%;height:100%;object-fit:contain;border-radius:50%}
+.sidebar-caption{
+  text-align:center;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--brass);margin-bottom:30px;
 }
-.hero-rule{
-  width:100%;height:1px;background:var(--line);margin-top:40px;
+.side-nav{display:flex;flex-direction:column;gap:2px;margin-bottom:26px}
+.side-link{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 12px;border-radius:2px;
+  border-left:2px solid transparent;
+  color:var(--ink-soft);font-size:14.5px;
+  transition:background .15s ease,color .15s ease;
+}
+.side-link svg{width:17px;height:17px;flex:0 0 auto}
+.side-link:hover{background:var(--paper-deep);color:var(--ink)}
+.side-link.active{
+  background:var(--paper-deep);color:var(--oxblood);
+  border-left-color:var(--oxblood);font-weight:600;
+}
+.side-link .lbl{flex:1;min-width:0}
+.side-badge{
+  min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+  background:var(--oxblood);color:var(--paper);
+  font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+.side-badge.hidden{display:none}
+
+.sidebar-support{
+  margin-top:auto;
+  border:1px solid var(--line);padding:20px;
+  background:var(--paper-deep);
+}
+.sidebar-support svg{width:20px;height:20px;color:var(--brass);margin-bottom:10px}
+.sidebar-support h4{
+  font-family:var(--display);font-size:17px;margin:0 0 6px;
+}
+.sidebar-support p{font-size:12.5px;color:var(--ink-soft);margin:0 0 12px;line-height:1.55}
+.sidebar-support button{
+  background:none;border:none;padding:0;color:var(--oxblood);
+  font-size:12.5px;font-weight:600;letter-spacing:.03em;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.sidebar-support button svg{width:12px;height:12px;margin:0}
+
+.sidebar-backdrop{
+  display:none;position:fixed;inset:0;z-index:150;
+  background:rgba(27,24,20,.45);
 }
 
-.loading-state{text-align:center;padding:90px 0;color:var(--ink-soft)}
-.loading-mark{
-  width:30px;height:30px;border:1px solid var(--paper-3);
-  border-top-color:var(--oxblood);border-radius:50%;
-  animation:spin 1s linear infinite;margin:0 auto 18px;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ── main content ── */
+.content{flex:1;min-width:0;padding:40px 44px 90px}
+.content-inner{max-width:1180px;margin:0 auto}
 
-#no-projects{
-  display:none;
-  max-width:650px;
-  padding:35px;
-  border:1px solid var(--line);
-  background:rgba(255,253,248,.55);
+#loading,#no-projects{text-align:center;padding:90px 24px;color:var(--ink-soft)}
+.spin{
+  width:28px;height:28px;margin:0 auto 16px;
+  border:2px solid var(--paper-deep);border-top-color:var(--oxblood);
+  border-radius:50%;animation:sp 0.85s linear infinite;
+}
+@keyframes sp{to{transform:rotate(360deg)}}
+#no-projects{display:none}
+
+.eyebrow{
+  font-family:var(--display);font-style:italic;font-weight:600;
+  font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);
+  margin-bottom:10px;
 }
 
-.project-shell{display:none}
-.project-hero{
-  position:relative;
-  overflow:hidden;
-  background:var(--white);
-  border:1px solid var(--line);
-  box-shadow:var(--shadow);
-  padding:48px 50px 44px;
+/* ── dashboard hero ── */
+.dash-hero{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:30px;
+  margin-bottom:36px;flex-wrap:wrap;
 }
-.project-hero:after{
-  content:"";
-  position:absolute;
-  top:0;right:0;
-  width:150px;height:150px;
-  border-left:1px solid rgba(163,131,56,.35);
-  border-bottom:1px solid rgba(163,131,56,.35);
-  transform:translate(42px,-42px) rotate(45deg);
+.dash-hero h1{
+  font-family:var(--display);font-size:clamp(30px,4vw,42px);margin:0;line-height:1.1;
 }
-.project-eyebrow{
-  color:var(--brass);
-  font-size:11px;
-  letter-spacing:.2em;
-  text-transform:uppercase;
-  font-style:italic;
+.dash-hero h1 em{font-style:italic;color:var(--oxblood)}
+.dash-hero .sub{color:var(--ink-soft);font-size:15px;margin-top:8px}
+.quote-card{
+  flex:0 0 auto;max-width:300px;border:1px solid var(--line);
+  background:var(--white);padding:20px 22px;position:relative;
 }
-.project-title{
-  font-family:var(--display);
-  font-size:42px;
-  line-height:1.05;
-  margin:9px 0 4px;
+.quote-card svg{width:22px;height:16px;color:var(--brass);margin-bottom:10px}
+.quote-card p{font-family:var(--display);font-style:italic;font-size:16px;margin:0;line-height:1.4}
+.quote-card cite{display:block;margin-top:10px;font-size:11.5px;color:var(--ink-faint);font-style:normal}
+
+/* ── project selector (multi-project tabs) ── */
+.project-select-row{margin-bottom:24px}
+.project-select-row select{
+  border:1px solid var(--line);background:var(--white);color:var(--ink);
+  padding:9px 12px;font-size:13.5px;border-radius:2px;
 }
-.project-meta{color:var(--ink-soft);font-size:14px}
+
+/* ── current project card ── */
+.current-card{
+  position:relative;overflow:hidden;
+  background:var(--white);border:1px solid var(--line);
+  padding:36px 40px;margin-bottom:28px;
+}
+.cc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.cc-title{font-family:var(--display);font-size:28px;letter-spacing:.02em;text-transform:uppercase;margin:0 0 10px}
+.cc-word-pill{
+  display:inline-block;font-size:12px;color:var(--ink-soft);
+  background:var(--paper-deep);padding:4px 12px;border-radius:20px;
+}
 .status-pill{
-  position:absolute;right:48px;top:47px;
-  border:1px solid rgba(70,101,79,.28);
-  color:var(--success);
-  background:rgba(70,101,79,.06);
-  padding:7px 14px;
-  font-size:10px;
-  letter-spacing:.13em;
-  text-transform:uppercase;
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:6px 14px;border-radius:20px;white-space:nowrap;
+  display:inline-flex;align-items:center;gap:6px;
 }
-.progress-area{margin-top:38px}
-.progress-labels{
-  display:flex;justify-content:space-between;align-items:end;
-  margin-bottom:9px;
-}
-.progress-label{
-  color:var(--ink-faint);
-  font-size:10px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-}
-.progress-percent{
-  font-family:var(--display);
-  font-size:25px;
-  font-weight:700;
-}
-.progress-track{height:5px;background:var(--paper-2);overflow:hidden}
-.progress-fill{
-  height:100%;width:0;
-  background:var(--oxblood);
-  transition:width .7s ease;
-}
-.progress-message{margin-top:12px;color:var(--ink-soft);font-size:13.5px}
+.status-pill.completed{background:rgba(60,94,69,.1);color:var(--success);border:1px solid rgba(60,94,69,.25)}
+.status-pill.in_progress{background:var(--brass-soft);color:var(--brass);border:1px solid rgba(156,123,46,.3)}
+.status-pill.review{background:rgba(41,128,185,.1);color:var(--info);border:1px solid rgba(41,128,185,.25)}
+.status-pill.pending{background:var(--paper-deep);color:var(--ink-faint);border:1px solid var(--line)}
 
-.two-column{
-  display:grid;
-  grid-template-columns:1.15fr .85fr;
-  gap:22px;
-  margin-top:22px;
-}
-.lux-card{
-  background:rgba(255,253,248,.72);
-  border:1px solid var(--line);
-  padding:32px;
-}
-.card-kicker{
-  color:var(--brass);
-  font-size:10px;
-  letter-spacing:.19em;
-  text-transform:uppercase;
-  margin-bottom:13px;
-}
-.next-card{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.next-card .card-kicker{color:#c5a965}
-.next-title{font-family:var(--display);font-size:29px;line-height:1.1;margin-bottom:8px}
-.next-text{color:rgba(245,239,226,.7);font-size:14px;max-width:520px}
-.action-btn{
-  display:inline-flex;align-items:center;gap:12px;
-  margin-top:22px;
-  border:1px solid var(--brass);
-  background:var(--brass);
-  color:#fffdf8;
-  padding:11px 18px;
-  font-size:11px;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-}
-.action-btn:hover{background:#b39348}
-.investment{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:18px;
-  margin-top:18px;
-}
-.money-main{grid-column:1/-1}
-.money-label{
-  color:var(--ink-faint);
-  font-size:10px;
-  letter-spacing:.15em;
-  text-transform:uppercase;
-}
-.money-value{font-family:var(--display);font-size:35px;font-weight:700;line-height:1.1;margin-top:4px}
-.money-small{font-family:var(--display);font-size:24px;font-weight:700;margin-top:4px}
-.balance-positive{color:var(--oxblood)}
-.paid-note{color:var(--success);font-size:12px;margin-top:8px;font-style:italic}
+.cc-stats{display:flex;gap:44px;margin:26px 0;flex-wrap:wrap}
+.cc-stat-label{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:4px}
+.cc-stat-value{font-family:var(--display);font-size:22px;font-weight:700}
 
-.section{margin-top:58px}
-.section-head{
-  display:flex;align-items:end;justify-content:space-between;
-  gap:20px;margin-bottom:22px;
-}
-.section-kicker{
-  color:var(--brass);
-  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-}
-.section-title{font-family:var(--display);font-size:34px;line-height:1.05;margin-top:3px}
-.section-intro{color:var(--ink-soft);font-size:13px;margin:0;max-width:500px;text-align:right}
+.cc-progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.cc-progress-pct{font-family:var(--display);font-weight:700;font-size:15px;color:var(--oxblood)}
+.progress-track{height:5px;background:var(--paper-deep);overflow:hidden}
+.progress-fill{height:100%;background:var(--oxblood);transition:width .5s ease}
 
-.journey{
-  position:relative;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);
-  background:rgba(255,253,248,.38);
+.cc-message{
+  margin-top:22px;padding:16px 18px;border:1px solid var(--line);
+  background:var(--paper-deep);display:flex;gap:12px;align-items:flex-start;
 }
-.journey:before{
-  content:"";
-  position:absolute;left:10%;right:10%;top:36px;
-  height:1px;background:var(--paper-3);
-}
-.journey-step{
-  position:relative;padding:22px 18px 26px;
-  min-height:145px;
-}
-.journey-node{
-  position:relative;z-index:2;
-  width:29px;height:29px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  background:var(--paper);
-  border:1px solid var(--paper-3);
-  color:var(--ink-faint);
-  font-family:var(--display);font-size:13px;
-  margin-bottom:18px;
-}
-.journey-step.paid .journey-node{
-  background:var(--oxblood);border-color:var(--oxblood);color:white;
-}
-.journey-step.current .journey-node{
-  background:var(--brass);border-color:var(--brass);color:white;
-  box-shadow:0 0 0 5px rgba(163,131,56,.12);
-}
-.journey-name{font-family:var(--display);font-size:20px;line-height:1.1}
-.journey-status{
-  color:var(--ink-faint);font-size:11px;
-  margin-top:6px;text-transform:uppercase;letter-spacing:.08em;
-}
-.journey-step.paid .journey-status{color:var(--success)}
-.journey-step.current .journey-status{color:var(--brass)}
+.cc-message svg{width:18px;height:18px;color:var(--brass);flex:0 0 auto;margin-top:2px}
+.cc-message p{margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.55}
+.cc-message strong{color:var(--ink);font-weight:600}
 
-.milestones-list{border-top:1px solid var(--line)}
-.milestone{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:20px;padding:20px 2px;border-bottom:1px solid var(--line);
+.cc-illustration{
+  position:absolute;right:-10px;bottom:-10px;width:150px;height:150px;
+  color:var(--paper-deep);opacity:.9;pointer-events:none;
 }
-.ms-left{display:flex;align-items:center;gap:15px}
+@media(max-width:760px){.cc-illustration{display:none}}
+
+/* ── two-col preview grid ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
+.panel{background:var(--white);border:1px solid var(--line);padding:26px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px}
+.panel-head h3{font-family:var(--display);font-size:21px;margin:0}
+.view-all{
+  font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--oxblood);
+  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+  background:none;border:none;
+}
+.view-all svg{width:11px;height:11px}
+.view-all:hover{color:var(--oxblood-deep)}
+.panel .empty-note{font-size:13px;color:var(--ink-faint);padding:10px 0;font-style:italic}
+
+/* ── milestone rows (preview + full) ── */
+.ms-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.ms-row:first-child{border-top:none}
+.ms-left{display:flex;align-items:center;gap:13px;min-width:0}
 .ms-icon{
-  width:28px;height:28px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  flex:0 0 auto;font-size:12px;
+  width:30px;height:30px;border-radius:50%;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;background:var(--paper)
 }
-.ms-icon.paid{background:var(--oxblood);color:white}
-.ms-icon.pending{border:1px solid var(--brass)}
-.ms-icon.locked{border:1px solid var(--paper-3)}
-.ms-name{font-family:var(--display);font-size:21px}
-.ms-amount{font-size:12px;color:var(--ink-faint)}
-.ms-right{text-align:right}
-.ms-badge{
-  display:inline-block;padding:4px 10px;border-radius:20px;
-  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-}
-.ms-badge.paid{background:rgba(70,101,79,.1);color:var(--success)}
-.ms-badge.locked{background:rgba(33,29,24,.04);color:var(--ink-faint)}
+.ms-icon svg{width:14px;height:14px}
+.ms-icon.paid{background:var(--oxblood);color:var(--paper)}
+.ms-icon.pending{border:1.5px solid var(--brass);color:var(--brass)}
+.ms-icon.locked{border:1.5px solid var(--line);color:var(--ink-faint)}
+.ms-name{font-weight:600;font-size:14.5px;text-transform:uppercase;letter-spacing:.03em}
+.ms-amount{font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+.ms-right{text-align:right;flex:0 0 auto}
+.ms-status-label{font-size:11px;color:var(--success);text-transform:uppercase;letter-spacing:.05em;display:block;margin-top:2px}
+.ms-status-label.locked{color:var(--ink-faint)}
 .pay-btn{
-  border:1px solid var(--oxblood);background:var(--oxblood);
-  color:white;padding:9px 16px;font-size:11px;letter-spacing:.08em;
+  border:1px solid var(--oxblood);background:var(--oxblood);color:var(--paper);
+  padding:9px 18px;font-size:12px;letter-spacing:.03em;border-radius:2px;
 }
-.pay-btn:hover{background:var(--oxblood-deep)}
+.pay-btn:hover:not(:disabled){background:var(--oxblood-deep)}
 .pay-btn:disabled{opacity:.55;cursor:default}
 
-.library{
-  display:grid;
-  gap:10px;
-}
-.file-row{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:20px;padding:18px 20px;
-  background:rgba(255,253,248,.7);
-  border:1px solid var(--line);
-  transition:transform .2s ease,box-shadow .2s ease;
-}
-.file-row:hover{transform:translateY(-2px);box-shadow:0 9px 25px rgba(55,43,27,.06)}
-.file-info{display:flex;align-items:center;gap:14px;min-width:0}
+/* ── files ── */
+.file-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.file-row:first-child{border-top:none}
+.file-info{display:flex;align-items:center;gap:13px;min-width:0}
 .file-icon{
-  width:39px;height:45px;border:1px solid var(--paper-3);
-  background:var(--paper);display:flex;align-items:center;justify-content:center;
-  color:var(--oxblood);font-family:var(--display);font-size:15px;flex:0 0 auto;
+  width:36px;height:42px;border:1px solid var(--line);background:var(--paper-deep);
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;color:var(--oxblood)
 }
-.file-name{font-family:var(--display);font-size:19px;overflow-wrap:anywhere}
-.file-meta{font-size:11px;color:var(--ink-faint);margin-top:1px}
+.file-icon svg{width:16px;height:16px}
+.file-name{font-weight:600;font-size:14px;overflow-wrap:anywhere}
+.file-meta{font-size:11.5px;color:var(--ink-faint);margin-top:2px}
 .file-badge{
-  font-size:9px;letter-spacing:.08em;text-transform:uppercase;
-  margin-left:7px;padding:3px 7px;border-radius:10px;
+  font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  margin-left:8px;padding:2px 8px;border-radius:10px;
 }
-.file-badge.deliverable{color:var(--success);background:rgba(70,101,79,.09)}
-.file-badge.manuscript{color:var(--brass);background:var(--brass-soft)}
-.download-btn{
-  border:1px solid var(--line);background:transparent;
-  padding:8px 14px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+.file-badge.deliverable{background:rgba(60,94,69,.1);color:var(--success)}
+.file-badge.manuscript{background:var(--brass-soft);color:var(--brass)}
+.icon-btn{
+  width:36px;height:36px;flex:0 0 auto;border:1px solid var(--line);background:none;
+  display:flex;align-items:center;justify-content:center;border-radius:2px;color:var(--ink-soft);
+}
+.icon-btn:hover{border-color:var(--oxblood);color:var(--oxblood)}
+.icon-btn svg{width:15px;height:15px}
+.upload-row-panel{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:14px 0;border-top:1px dashed rgba(156,123,46,.4);margin-top:6px;
+}
+.upload-row-panel .file-info{color:var(--ink-soft)}
+.upload-row-panel svg{width:16px;height:16px;color:var(--brass)}
+.upload-btn{
+  background:var(--oxblood);color:var(--paper);border:none;
+  padding:9px 16px;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;border-radius:2px;
   white-space:nowrap;
 }
-.download-btn:hover{border-color:var(--oxblood);color:var(--oxblood)}
-.no-files{color:var(--ink-faint);font-size:13px;padding:8px 0}
+.upload-btn:disabled{opacity:.6}
+.upload-hint{font-size:11px;color:var(--ink-faint);margin-top:1px}
+input[type=file].hidden-file-input{max-width:170px;font-size:11px}
 
-.upload-panel{
-  margin-top:12px;padding:22px;
-  border:1px dashed rgba(163,131,56,.5);
-  background:rgba(163,131,56,.035);
-}
-.upload-title{font-family:var(--display);font-size:21px}
-.upload-copy{font-size:12.5px;color:var(--ink-soft);margin:3px 0 13px}
-.upload-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.upload-row input[type=file]{font-size:12px;flex:1;min-width:220px}
-.upload-btn{
-  background:var(--ink);color:var(--paper);border:0;
-  padding:9px 16px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-}
-.upload-btn:disabled{opacity:.55}
+/* ── updates ── */
+.upd-row{padding:14px 0;border-top:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+.upd-row:first-child{border-top:none}
+.upd-dot{width:8px;height:8px;border-radius:50%;background:var(--oxblood);margin-top:6px;flex:0 0 auto}
+.upd-body{flex:1;min-width:0}
+.upd-title-row{display:flex;justify-content:space-between;gap:12px}
+.upd-msg{font-size:13.5px;color:var(--ink-soft);margin-top:2px}
+.upd-date{font-size:11px;color:var(--ink-faint);white-space:nowrap}
 
+/* ── messages preview (inbox-style rows) ── */
+.msg-prev-row{display:flex;gap:12px;padding:13px 0;border-top:1px solid var(--line)}
+.msg-prev-row:first-child{border-top:none}
+.msg-avatar{
+  width:34px;height:34px;border-radius:50%;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;color:var(--paper);
+}
+.msg-avatar.them{background:var(--oxblood)}
+.msg-avatar.me{background:var(--brass)}
+.msg-prev-body{flex:1;min-width:0}
+.msg-prev-top{display:flex;justify-content:space-between;gap:10px}
+.msg-prev-name{font-weight:600;font-size:13.5px}
+.msg-prev-date{font-size:11px;color:var(--ink-faint);white-space:nowrap}
+.msg-prev-snippet{font-size:13px;color:var(--ink-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.msg-prev-status{font-size:10.5px;color:var(--ink-faint);margin-top:3px}
+.open-msgs-btn{
+  display:block;width:100%;text-align:center;margin-top:14px;
+  border:1px solid var(--ink);background:transparent;color:var(--ink);
+  padding:10px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;
+}
+.open-msgs-btn:hover{background:var(--ink);color:var(--paper)}
+
+/* ── full chat (Messages tab) ── */
 .chat-box{border:1px solid var(--line);background:var(--white)}
-.chat-header{
-  background:var(--ink);color:var(--paper);
-  padding:18px 20px;display:flex;justify-content:space-between;align-items:center;
-}
-.chat-header-title{font-family:var(--display);font-size:23px}
-.chat-status{font-size:10px;color:rgba(245,239,226,.55);letter-spacing:.1em;text-transform:uppercase}
-.chat-status.connected{color:#b9d4bf}
-.chat-messages{height:340px;overflow-y:auto;padding:20px;background:#f8f4ea}
-.chat-empty{
-  height:100%;min-height:200px;display:flex;align-items:center;justify-content:center;
-  text-align:center;color:var(--ink-faint);font-size:13px;padding:30px;
-}
-.chat-message{display:flex;margin-bottom:15px}
+.chat-header{background:var(--ink);color:var(--paper);padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.chat-header-title{font-family:var(--display);font-style:italic;font-size:19px}
+.chat-status{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:rgba(244,238,223,.6)}
+.chat-status.connected{color:var(--brass)}
+.chat-messages{height:440px;overflow-y:auto;padding:22px;background:var(--paper-deep)}
+.chat-empty{height:100%;min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink-faint);font-style:italic;padding:30px}
+.chat-message{display:flex;margin-bottom:14px}
 .chat-message.client{justify-content:flex-end}
 .chat-message.admin{justify-content:flex-start}
-.chat-bubble{
-  max-width:72%;padding:11px 15px;border-radius:7px;
-  font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;
-}
-.chat-message.client .chat-bubble{
-  background:var(--oxblood);color:var(--paper);border-bottom-right-radius:2px;
-}
-.chat-message.admin .chat-bubble{
-  background:white;color:var(--ink);border:1px solid var(--line);border-bottom-left-radius:2px;
-}
-.chat-sender{font-size:9px;letter-spacing:.09em;text-transform:uppercase;margin-bottom:3px;opacity:.65}
-.chat-time{font-size:9px;margin-top:4px;opacity:.55;text-align:right}
-.chat-compose{
-  border-top:1px solid var(--line);padding:12px;display:flex;gap:10px;align-items:flex-end;
-}
-.chat-input{
-  flex:1;min-height:44px;max-height:130px;resize:vertical;
-  border:1px solid var(--line);padding:10px 12px;background:#fff;
-  color:var(--ink);outline:none;font-size:13px;
-}
+.chat-bubble{max-width:72%;padding:11px 15px;font-size:13.5px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.chat-message.client .chat-bubble{background:var(--oxblood);color:var(--paper)}
+.chat-message.admin .chat-bubble{background:var(--white);color:var(--ink);border:1px solid var(--line)}
+.chat-sender{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;opacity:.7}
+.chat-time{font-size:10px;margin-top:5px;opacity:.6;text-align:right}
+.chat-compose{border-top:1px solid var(--line);padding:14px;background:var(--white);display:flex;gap:10px;align-items:flex-end}
+.chat-input{flex:1;min-height:44px;max-height:130px;resize:vertical;border:1px solid var(--line);padding:11px 13px;background:var(--white);outline:none;font-size:13.5px}
 .chat-input:focus{border-color:var(--brass)}
-.chat-send{
-  background:var(--oxblood);color:white;border:0;
-  padding:11px 18px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
-}
+.chat-send{background:var(--oxblood);color:var(--paper);border:none;padding:11px 20px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;border-radius:2px}
 .chat-send:disabled{opacity:.55}
 
-.updates-section{border-top:1px solid var(--line)}
-.update-item{padding:20px 2px;border-bottom:1px solid var(--line)}
-.update-date{font-size:10px;color:var(--brass);letter-spacing:.13em;text-transform:uppercase;margin-bottom:3px}
-.update-item>div:last-child{font-family:var(--display);font-size:20px}
+/* ── profile / support ── */
+.simple-card{background:var(--white);border:1px solid var(--line);padding:32px;max-width:520px}
+.profile-row{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line)}
+.profile-row:first-child{border-top:none}
+.profile-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+.profile-value{font-family:var(--display);font-size:16px}
+.support-email{
+  display:inline-flex;align-items:center;gap:8px;margin-top:16px;
+  color:var(--oxblood);font-weight:600;font-size:14.5px;
+}
 
-.closing{
-  margin-top:78px;
-  padding:54px 30px;
-  text-align:center;
-  border-top:1px solid var(--line);
-}
-.closing-mark{color:var(--brass);font-size:22px;margin-bottom:12px}
-.closing h2{font-family:var(--display);font-size:37px;line-height:1.08;font-weight:500}
-.closing p{max-width:580px;margin:12px auto 0;color:var(--ink-soft);font-size:13.5px}
-.closing-signature{margin-top:20px;color:var(--oxblood);font-style:italic}
+/* ── projects tab grid ── */
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.proj-card{background:var(--white);border:1px solid var(--line);padding:24px;cursor:pointer;transition:border-color .15s ease}
+.proj-card:hover{border-color:var(--oxblood)}
+.proj-card .eyebrow{margin-bottom:8px}
+.proj-card h4{font-family:var(--display);font-size:19px;margin:0 0 10px;line-height:1.2}
+.proj-card .progress-track{margin-top:14px}
 
-footer{
-  background:var(--ink);color:rgba(245,239,226,.7);
-  padding:35px 28px;
-}
-.footer-inner{
-  max-width:var(--maxw);margin:auto;
-  display:flex;justify-content:space-between;align-items:center;gap:15px;
-  font-size:11px;letter-spacing:.03em;flex-wrap:wrap;
-}
-.footer-brand{display:flex;align-items:center;gap:10px}
-.footer-crest{width:26px;height:26px;object-fit:contain;opacity:.92}
-.footer-inner span:last-child{color:rgba(245,239,226,.42)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+.section-heading{margin-bottom:22px}
+.section-heading h2{font-family:var(--display);font-size:28px;margin:0}
+.section-heading p{color:var(--ink-soft);font-size:13.5px;margin:6px 0 0}
 
 .toast{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:var(--ink);color:var(--paper);
-  padding:12px 20px;border-radius:3px;font-size:13px;
-  display:none;z-index:200;max-width:calc(100vw - 30px);text-align:center;
-  box-shadow:0 12px 35px rgba(0,0,0,.16);
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:2px;
+  font-size:13.5px;display:none;z-index:300;max-width:calc(100vw - 30px);text-align:center;
 }
 .toast.error{background:var(--oxblood)}
 .toast.visible{display:block}
 
-@media(max-width:800px){
-  .nav-row{height:74px;padding:0 18px}
-  .brandmark{font-size:21px}
-  .brandmark-crest{width:32px;height:32px}
-  .portal-status{display:none}
-  .menu-toggle{display:flex}
-  .main{padding:45px 18px 70px}
-  .hero{margin-bottom:36px}
-  .greeting{font-size:49px}
-  .project-hero{padding:31px 24px}
-  .status-pill{position:static;display:inline-block;margin-top:18px}
-  .two-column{grid-template-columns:1fr}
-  .journey{grid-template-columns:1fr 1fr}
-  .journey:before{display:none}
-  .journey-step{min-height:130px}
-  .section{margin-top:45px}
-  .section-head{display:block}
-  .section-intro{text-align:left;margin-top:8px}
-  .chat-bubble{max-width:88%}
-}
-@media(max-width:560px){
-  .brandmark em{font-size:17px}
-  .signout-btn{padding:9px 11px;font-size:9px}
-  .project-title{font-size:35px}
-  .project-hero{padding:27px 19px}
-  .journey{grid-template-columns:1fr}
-  .journey-step{min-height:auto;border-bottom:1px solid var(--line)}
-  .journey-step:last-child{border-bottom:0}
-  .investment{grid-template-columns:1fr 1fr}
-  .money-main{grid-column:1/-1}
-  .file-row{align-items:flex-start}
-  .file-info{align-items:flex-start}
-  .download-btn{padding:8px 10px}
-  .chat-compose{flex-direction:column;align-items:stretch}
-  .chat-send{width:100%}
-  .closing{padding:40px 10px}
+footer{background:var(--ink);color:rgba(244,238,223,.7);padding:26px 28px}
+.footer-inner{max-width:1180px;margin:auto;display:flex;justify-content:space-between;gap:12px;font-size:11.5px;flex-wrap:wrap}
+.footer-inner span:last-child{color:rgba(244,238,223,.42)}
+
+@media(max-width:960px){
+  .sidebar-toggle{display:flex}
+  .sidebar{
+    position:fixed;top:0;left:0;height:100vh;z-index:200;
+    transform:translateX(-100%);transition:transform .25s ease;
+    background:var(--paper);padding-top:calc(var(--topbar-h) + 20px);
+  }
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-backdrop.open{display:block}
+  .content{padding:26px 20px 70px}
+  .grid2{grid-template-columns:1fr}
+  .dash-hero{flex-direction:column}
+  .quote-card{max-width:none}
+  .cc-stats{gap:28px}
 }
 </style>
 </head>
 
 <body>
-<header class="site-header">
-  <div class="nav-row">
-    <a href="../index.html#top" class="brandmark">
-      <img src="../images/img-04.png" alt="Greywright Publishing House crest" class="brandmark-crest">
-      <span class="brandmark-text">Greywright <em>Client Portal</em></span>
-    </a>
 
-    <div class="nav-right">
-      <div class="portal-status"><span class="portal-dot"></span>Private client area</div>
-      <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-      <button class="signout-btn" id="signOutBtn">Sign Out</button>
-    </div>
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <a href="../index.html#top" class="brandmark">Greywright <em>Client Portal</em></a>
+  </div>
+  <div class="topbar-right">
+    <button class="bell-btn" id="bellBtn" aria-label="Messages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="badge-dot hidden" id="bellBadge">0</span>
+    </button>
+    <button class="signout-btn" id="signOutBtn">Sign Out</button>
   </div>
 </header>
 
-<main class="main">
-  <section class="hero">
-    <div class="kicker">Greywright Publishing House · Private Client Area</div>
-    <div id="greeting" class="greeting" style="display:none;"></div>
-    <p class="hero-note">A private space for your manuscript, your editorial progress, your files, and your conversations with the Greywright team.</p>
-    <div class="hero-rule"></div>
-  </section>
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
-  <div id="loading" class="loading-state">
-    <div class="loading-mark"></div>
-    <div>Preparing your private publishing room…</div>
-  </div>
+<div class="app-shell">
 
-  <div id="no-projects">
-    <strong style="font-family:var(--display);font-size:27px;">Your publishing room is ready.</strong>
-    <p>No projects are currently connected to this account. If you believe this is an error, please contact the Greywright team.</p>
-  </div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-crest">
+      <img src="../images/img-04.png" alt="Greywright Publishing House crest">
+    </div>
+    <div class="sidebar-caption">Private Client Portal</div>
 
-  <div id="projects-container"></div>
-</main>
+    <nav class="side-nav" id="sideNav">
+      <a href="#" class="side-link" data-tab="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        <span class="lbl">Dashboard</span>
+      </a>
+      <a href="#" class="side-link" data-tab="projects">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>
+        <span class="lbl">Projects</span>
+      </a>
+      <a href="#" class="side-link" data-tab="payments">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        <span class="lbl">Payments</span>
+      </a>
+      <a href="#" class="side-link" data-tab="messages">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="lbl">Messages</span>
+        <span class="side-badge hidden" id="sideBadgeMessages">0</span>
+      </a>
+      <a href="#" class="side-link" data-tab="files">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
+        <span class="lbl">Files</span>
+      </a>
+      <a href="#" class="side-link" data-tab="updates">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
+        <span class="lbl">Updates</span>
+      </a>
+      <a href="#" class="side-link" data-tab="profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6.5 8-6.5s6.5 2 8 6.5"/></svg>
+        <span class="lbl">Profile</span>
+      </a>
+      <a href="#" class="side-link" data-tab="support">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4"/><line x1="12" y1="17.5" x2="12" y2="17.5"/></svg>
+        <span class="lbl">Support</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 9 9l-7 1 5 5-1.5 7L12 18l6.5 4L17 15l5-5-7-1-3-7Z"/></svg>
+      <h4>Need Something?</h4>
+      <p>We're here to help you bring your story to life.</p>
+      <button type="button" id="sidebarSupportBtn">
+        Contact Support
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="content-inner">
+
+      <div id="loading"><div class="spin"></div>Preparing your private publishing room…</div>
+      <div id="no-projects">
+        <strong style="font-family:var(--display);font-size:24px;">Your publishing room is ready.</strong>
+        <p>No projects are currently connected to this account. If you believe this is an error, please contact the Greywright team.</p>
+      </div>
+
+      <div id="app-body" style="display:none;">
+
+        <!-- DASHBOARD -->
+        <section class="tab-panel active" id="tab-dashboard">
+          <div class="dash-hero">
+            <div>
+              <div class="eyebrow">Greywright Publishing House · Client Portal</div>
+              <h1 id="greetingText">Welcome back</h1>
+              <p class="sub">Here's what's happening with your project.</p>
+            </div>
+            <div class="quote-card">
+              <svg viewBox="0 0 32 24" fill="currentColor"><path d="M2 24V14.6C2 8.2 5.6 3.2 12 0L13.6 3.4C9.6 5.6 7.6 8.4 7.4 12H12V24H2ZM18 24V14.6C18 8.2 21.6 3.2 28 0L29.6 3.4C25.6 5.6 23.6 8.4 23.4 12H28V24H18Z"/></svg>
+              <p>Great stories deserve extraordinary care.</p>
+              <cite>— The Greywright Team</cite>
+            </div>
+          </div>
+
+          <div class="project-select-row" id="dashProjectSelectRow" style="display:none;">
+            <select id="dashProjectSelect"></select>
+          </div>
+
+          <div id="dashCurrentCard"></div>
+
+          <div class="grid2">
+            <div class="panel">
+              <div class="panel-head">
+                <h3>Milestones</h3>
+                <button class="view-all" data-goto="payments">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+              </div>
+              <div id="dashMilestonePreview"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h3>Project Files</h3>
+                <button class="view-all" data-goto="files">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+              </div>
+              <div id="dashFilesPreview"></div>
+            </div>
+          </div>
+
+          <div class="grid2">
+            <div class="panel">
+              <div class="panel-head">
+                <h3>Recent Updates</h3>
+                <button class="view-all" data-goto="updates">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+              </div>
+              <div id="dashUpdatesPreview"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <h3>Messages</h3>
+                <button class="view-all" data-goto="messages">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+              </div>
+              <div id="dashMessagesPreview"></div>
+              <button class="open-msgs-btn" data-goto="messages">Open Messages →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- PROJECTS -->
+        <section class="tab-panel" id="tab-projects">
+          <div class="section-heading">
+            <h2>Your Projects</h2>
+            <p>Every manuscript Greywright is currently looking after, or has completed, for this account.</p>
+          </div>
+          <div class="proj-grid" id="projGrid"></div>
+        </section>
+
+        <!-- PAYMENTS -->
+        <section class="tab-panel" id="tab-payments">
+          <div class="section-heading">
+            <h2>Payments &amp; Milestones</h2>
+            <p>The full payment ledger for this project, staged by milestone.</p>
+          </div>
+          <div class="project-select-row" id="paymentsProjectSelectRow" style="display:none;">
+            <select id="paymentsProjectSelect"></select>
+          </div>
+          <div class="panel" id="paymentsPanel"></div>
+        </section>
+
+        <!-- MESSAGES -->
+        <section class="tab-panel" id="tab-messages">
+          <div class="section-heading">
+            <h2>Your Editorial Desk</h2>
+            <p>A private line to the Greywright team for this project.</p>
+          </div>
+          <div class="project-select-row" id="messagesProjectSelectRow" style="display:none;">
+            <select id="messagesProjectSelect"></select>
+          </div>
+          <div class="chat-box" id="messagesChatBox"></div>
+        </section>
+
+        <!-- FILES -->
+        <section class="tab-panel" id="tab-files">
+          <div class="section-heading">
+            <h2>Manuscript Library</h2>
+            <p>Your submitted manuscripts and Greywright deliverables for this project.</p>
+          </div>
+          <div class="project-select-row" id="filesProjectSelectRow" style="display:none;">
+            <select id="filesProjectSelect"></select>
+          </div>
+          <div class="panel" id="filesPanel"></div>
+        </section>
+
+        <!-- UPDATES -->
+        <section class="tab-panel" id="tab-updates">
+          <div class="section-heading">
+            <h2>The Editor's Journal</h2>
+            <p>Important moments and updates from the life of this manuscript.</p>
+          </div>
+          <div class="project-select-row" id="updatesProjectSelectRow" style="display:none;">
+            <select id="updatesProjectSelect"></select>
+          </div>
+          <div class="panel" id="updatesPanel"></div>
+        </section>
+
+        <!-- PROFILE -->
+        <section class="tab-panel" id="tab-profile">
+          <div class="section-heading">
+            <h2>Your Profile</h2>
+            <p>Account details on file with Greywright Publishing House.</p>
+          </div>
+          <div class="simple-card" id="profileCard"></div>
+        </section>
+
+        <!-- SUPPORT -->
+        <section class="tab-panel" id="tab-support">
+          <div class="section-heading">
+            <h2>Support</h2>
+            <p>Reach the Greywright team directly with any question about your project.</p>
+          </div>
+          <div class="simple-card">
+            <p style="margin:0 0 4px;color:var(--ink-soft);font-size:14px;">Email us any time — we typically respond within 24–48 hours.</p>
+            <a class="support-email" href="mailto:greywrightpublishing@gmail.com">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
+              greywrightpublishing@gmail.com
+            </a>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+</div>
 
 <footer>
   <div class="footer-inner">
-    <div class="footer-brand">
-      <img src="../images/img-16.png" alt="Greywright Publishing House crest" class="footer-crest">
-      <span>© 2026 Greywright Publishing House Limited. All rights reserved.</span>
-    </div>
+    <span>© 2026 Greywright Publishing House Limited. All rights reserved.</span>
     <span>Crafted in Abuja, Nigeria.</span>
   </div>
 </footer>
@@ -607,409 +687,675 @@ footer{
 <div class="toast" id="toast"></div>
 
 <script>
+/* ============================================================
+   SUPABASE / CONFIG
+   ============================================================ */
 const SUPABASE_URL='https://dusfpsafuhopdiyjrhyh.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
 const CURRENCY_SYMBOLS={USD:'$',NGN:'₦'};
-let currentUserId=null;
-const chatChannels={};
-let dashboardLoading=false;
 
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentUserId=null;
+let currentUserFirstName='Client';
+let clientRow=null;
+let allProjects=[];
+let activeProjectId=null;
+let activeTab='dashboard';
+const chatChannels={};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function escapeHtml(str){
+  const div=document.createElement('div');
+  div.textContent=String(str??'');
+  return div.innerHTML;
+}
 function formatMoney(cents,currency){
   const n=Number(cents||0);
   const symbol=CURRENCY_SYMBOLS[currency]||currency+' ';
   return symbol+(n/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
-
+function formatDate(v){
+  if(!v)return '';
+  const d=new Date(v);
+  if(Number.isNaN(d.getTime()))return '';
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
 function showToast(msg,isError=false){
   const el=document.getElementById('toast');
   el.textContent=msg;
   el.className='toast visible'+(isError?' error':'');
-  setTimeout(()=>el.className='toast',5000);
+  setTimeout(()=>{el.className='toast';},5000);
+}
+function getActiveProject(){
+  return allProjects.find(p=>p.id===activeProjectId)||null;
+}
+function pickDefaultProject(list){
+  if(!list.length)return null;
+  const priority={in_progress:0,review:0,pending:1,completed:2};
+  const sorted=list.slice().sort((a,b)=>{
+    const pa=priority[a.status]??1, pb=priority[b.status]??1;
+    if(pa!==pb)return pa-pb;
+    return new Date(b.created_at)-new Date(a.created_at);
+  });
+  return sorted[0].id;
 }
 
+const ICONS={
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 9 9l-7 1 5 5-1.5 7L12 18l6.5 4L17 15l5-5-7-1-3-7Z"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
+  file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>',
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v12"/><path d="m6 12 6 6 6-6"/><path d="M4 20h16"/></svg>'
+};
+
+/* ============================================================
+   SIGN OUT
+   ============================================================ */
 document.getElementById('signOutBtn').addEventListener('click',async()=>{
-  Object.keys(chatChannels).forEach(projectId=>{
-    if(chatChannels[projectId]) supabaseClient.removeChannel(chatChannels[projectId]);
-    delete chatChannels[projectId];
+  Object.keys(chatChannels).forEach(pid=>{
+    if(chatChannels[pid])supabaseClient.removeChannel(chatChannels[pid]);
+    delete chatChannels[pid];
   });
   await supabaseClient.auth.signOut();
   window.location.href='login.html';
 });
 
-async function loadDashboard(){
-  if(dashboardLoading)return;
-  dashboardLoading=true;
+/* ============================================================
+   MOBILE SIDEBAR TOGGLE
+   ============================================================ */
+const sidebarEl=document.getElementById('sidebar');
+const sidebarBackdrop=document.getElementById('sidebarBackdrop');
+function closeSidebar(){
+  sidebarEl.classList.remove('open');
+  sidebarBackdrop.classList.remove('open');
+}
+document.getElementById('sidebarToggle').addEventListener('click',()=>{
+  sidebarEl.classList.add('open');
+  sidebarBackdrop.classList.add('open');
+});
+sidebarBackdrop.addEventListener('click',closeSidebar);
 
-  try{
-    const {data:{session}}=await supabaseClient.auth.getSession();
-
-    if(!session){
-      window.location.href='login.html';
-      return;
-    }
-
-    currentUserId=session.user.id;
-
-    const {data:clientRow,error:clientError}=await supabaseClient
-      .from('clients')
-      .select('id,name')
-      .eq('profile_id',currentUserId)
-      .maybeSingle();
-
-    if(clientError){
-      console.error('[dashboard] Client lookup error:',clientError);
-      showToast('Could not load your account.',true);
-      return;
-    }
-
-    if(!clientRow){
-      document.getElementById('loading').style.display='none';
-      document.getElementById('no-projects').style.display='block';
-      return;
-    }
-
-    const firstName=(clientRow.name||'Client').trim().split(/\s+/)[0];
-    document.getElementById('greeting').innerHTML=`Welcome back, <em>${escapeHtml(firstName)}</em>.`;
-    document.getElementById('greeting').style.display='block';
-
-    const {data:projects,error}=await supabaseClient
-      .from('projects')
-      .select(`
-        id,
-        title,
-        service_type,
-        word_count,
-        total_price,
-        amount_paid,
-        quote_currency,
-        status,
-        created_at,
-        milestones(
-          id,
-          name,
-          amount,
-          order_index,
-          status
-        ),
-        project_updates(
-          id,
-          message,
-          created_at
-        ),
-        project_files(
-          id,
-          file_name,
-          storage_path,
-          file_type,
-          uploaded_by,
-          created_at
-        )
-      `)
-      .eq('client_id',clientRow.id)
-      .order('created_at',{ascending:false});
-
-    document.getElementById('loading').style.display='none';
-
-    if(error){
-      console.error('[dashboard] Project error:',error);
-      showToast('Could not load your projects.',true);
-      return;
-    }
-
-    if(!projects||projects.length===0){
-      document.getElementById('no-projects').style.display='block';
-      document.getElementById('greeting').style.display='none';
-      return;
-    }
-
-    document.getElementById('no-projects').style.display='none';
-    renderProjects(projects);
-  }finally{
-    dashboardLoading=false;
-  }
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+function setActiveTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  document.querySelectorAll('.side-link').forEach(a=>a.classList.toggle('active',a.dataset.tab===tab));
+  closeSidebar();
+  renderActiveTab();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function renderProjects(projects){
-  const container=document.getElementById('projects-container');
-  container.innerHTML='';
+document.querySelectorAll('.side-link').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    setActiveTab(a.dataset.tab);
+  });
+});
+document.querySelectorAll('[data-goto]').forEach(el=>{
+  el.addEventListener('click',()=>setActiveTab(el.dataset.goto));
+});
+document.getElementById('bellBtn').addEventListener('click',()=>setActiveTab('messages'));
+document.getElementById('sidebarSupportBtn').addEventListener('click',()=>setActiveTab('support'));
 
-  projects.forEach(project=>{
-    const currency=project.quote_currency||'NGN';
-    const totalPrice=Number(project.total_price||0);
-    const amountPaid=Number(project.amount_paid||0);
-    const balance=Math.max(0,totalPrice-amountPaid);
-    const pct=totalPrice>0?Math.min(100,Math.round((amountPaid/totalPrice)*100)):0;
+/* ============================================================
+   LOAD DASHBOARD DATA
+   ============================================================ */
+async function loadDashboard(){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){
+    window.location.href='login.html';
+    return;
+  }
+  currentUserId=session.user.id;
 
-    const milestones=(project.milestones||[]).slice().sort((a,b)=>Number(a.order_index||0)-Number(b.order_index||0));
-    const firstUnpaidIndex=milestones.findIndex(m=>m.status!=='paid');
-    const files=(project.project_files||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
-    const updates=(project.project_updates||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  const {data:cRow,error:cErr}=await supabaseClient
+    .from('clients')
+    .select('id,name,email,created_at')
+    .eq('profile_id',currentUserId)
+    .maybeSingle();
 
-    const completed=String(project.status||'').toLowerCase()==='completed'||pct>=100;
-    const statusText=(project.status||'pending').replace(/_/g,' ');
+  if(cErr){
+    console.error('[dashboard] client lookup error:',cErr);
+    showToast('Could not load your account.',true);
+    return;
+  }
 
-    const shell=document.createElement('section');
-    shell.className='project-shell';
-    shell.style.display='block';
+  if(!cRow){
+    document.getElementById('loading').style.display='none';
+    document.getElementById('no-projects').style.display='block';
+    return;
+  }
 
-    shell.innerHTML=`
-      <div class="project-hero">
-        <div class="project-eyebrow">${escapeHtml(project.service_type||'Editorial Project')}</div>
-        <div class="project-title">${escapeHtml(project.title||'Untitled Project')}</div>
-        <div class="project-meta">${project.word_count?Number(project.word_count).toLocaleString()+' words · ':''}Your Greywright editorial project</div>
-        <div class="status-pill">${escapeHtml(statusText)}</div>
+  clientRow=cRow;
+  currentUserFirstName=(cRow.name||'Client').trim().split(/\s+/)[0];
 
-        <div class="progress-area">
-          <div class="progress-labels">
-            <span class="progress-label">Project progress</span>
-            <span class="progress-percent">${pct}%</span>
-          </div>
-          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-          <div class="progress-message">${
-            completed
-              ? 'Your project has reached completion. Your final materials are available in your manuscript library.'
-              : 'Your project is moving through the Greywright editorial process. We will keep you informed at every important stage.'
-          }</div>
+  const {data:projects,error}=await supabaseClient
+    .from('projects')
+    .select(`
+      id,title,service_type,word_count,total_price,amount_paid,quote_currency,status,created_at,
+      milestones(id,name,amount,order_index,status),
+      project_updates(id,message,created_at),
+      project_files(id,file_name,storage_path,file_type,uploaded_by,created_at)
+    `)
+    .eq('client_id',cRow.id)
+    .order('created_at',{ascending:false});
+
+  document.getElementById('loading').style.display='none';
+
+  if(error){
+    console.error('[dashboard] projects error:',error);
+    showToast('Could not load your projects.',true);
+    return;
+  }
+
+  if(!projects||!projects.length){
+    document.getElementById('no-projects').style.display='block';
+    return;
+  }
+
+  allProjects=projects;
+  activeProjectId=activeProjectId&&projects.some(p=>p.id===activeProjectId)?activeProjectId:pickDefaultProject(projects);
+
+  document.getElementById('app-body').style.display='block';
+  populateAllProjectSelectors();
+  await refreshUnreadCount();
+  renderActiveTab();
+}
+
+/* ============================================================
+   UNREAD MESSAGE COUNT (bell + sidebar badge)
+   ============================================================ */
+async function refreshUnreadCount(){
+  const projectIds=allProjects.map(p=>p.id);
+  if(!projectIds.length)return;
+
+  const {count,error}=await supabaseClient
+    .from('messages')
+    .select('id',{count:'exact',head:true})
+    .in('project_id',projectIds)
+    .is('read_at',null)
+    .neq('sender_id',currentUserId);
+
+  if(error){
+    console.warn('[dashboard] unread count error:',error);
+    return;
+  }
+
+  const n=count||0;
+  const bellBadge=document.getElementById('bellBadge');
+  const sideBadge=document.getElementById('sideBadgeMessages');
+  bellBadge.textContent=n>9?'9+':String(n);
+  sideBadge.textContent=n>9?'9+':String(n);
+  bellBadge.classList.toggle('hidden',n===0);
+  sideBadge.classList.toggle('hidden',n===0);
+}
+
+/* ============================================================
+   PROJECT SELECTORS (shown on every detail tab if >1 project)
+   ============================================================ */
+function populateAllProjectSelectors(){
+  const rows=[
+    ['dashProjectSelectRow','dashProjectSelect'],
+    ['paymentsProjectSelectRow','paymentsProjectSelect'],
+    ['messagesProjectSelectRow','messagesProjectSelect'],
+    ['filesProjectSelectRow','filesProjectSelect'],
+    ['updatesProjectSelectRow','updatesProjectSelect']
+  ];
+
+  rows.forEach(([rowId,selectId])=>{
+    const row=document.getElementById(rowId);
+    const select=document.getElementById(selectId);
+    if(allProjects.length<2){
+      row.style.display='none';
+      return;
+    }
+    row.style.display='block';
+    select.innerHTML=allProjects.map(p=>
+      `<option value="${escapeHtml(p.id)}" ${p.id===activeProjectId?'selected':''}>${escapeHtml(p.title||'Untitled Project')}</option>`
+    ).join('');
+    select.onchange=()=>{
+      activeProjectId=select.value;
+      populateAllProjectSelectors();
+      renderActiveTab();
+    };
+  });
+}
+
+/* ============================================================
+   RENDER: DISPATCH BY TAB
+   ============================================================ */
+function renderActiveTab(){
+  const greetEl=document.getElementById('greetingText');
+  greetEl.innerHTML=`Welcome back, <em>${escapeHtml(currentUserFirstName)}</em>`;
+
+  if(activeTab==='dashboard')renderDashboardTab();
+  else if(activeTab==='projects')renderProjectsTab();
+  else if(activeTab==='payments')renderPaymentsTab();
+  else if(activeTab==='messages')renderMessagesTab();
+  else if(activeTab==='files')renderFilesTab();
+  else if(activeTab==='updates')renderUpdatesTab();
+  else if(activeTab==='profile')renderProfileTab();
+}
+
+/* ============================================================
+   DASHBOARD TAB
+   ============================================================ */
+function statusMeta(status,balance){
+  const s=(status||'pending').toLowerCase();
+  if(s==='completed')return{
+    pillClass:'completed',pillLabel:'Completed',icon:ICONS.star,
+    html:'<strong>Congratulations!</strong> Your project has been completed. Thank you for trusting Greywright with your work.'
+  };
+  if(s==='review')return{
+    pillClass:'review',pillLabel:'In Review',icon:ICONS.clock,
+    html:'Your manuscript is with our team for final review. We\'ll notify you the moment it\'s ready.'
+  };
+  if(s==='in_progress')return{
+    pillClass:'in_progress',pillLabel:'In Progress',icon:ICONS.clock,
+    html:balance>0
+      ?'Your project is moving through the Greywright editorial process. A milestone payment is currently available below.'
+      :'Your project is moving through the Greywright editorial process. Nothing is required from you right now.'
+  };
+  return{
+    pillClass:'pending',pillLabel:'Pending',icon:ICONS.clock,
+    html:'We\'re getting your project underway. We\'ll be in touch as soon as work begins.'
+  };
+}
+
+function renderDashboardTab(){
+  const project=getActiveProject();
+  const cardEl=document.getElementById('dashCurrentCard');
+
+  if(!project){
+    cardEl.innerHTML='';
+    return;
+  }
+
+  const currency=project.quote_currency||'NGN';
+  const totalPrice=Number(project.total_price||0);
+  const amountPaid=Number(project.amount_paid||0);
+  const balance=Math.max(0,totalPrice-amountPaid);
+  const pct=totalPrice>0?Math.min(100,Math.round((amountPaid/totalPrice)*100)):0;
+  const meta=statusMeta(project.status,balance);
+
+  cardEl.innerHTML=`
+    <div class="current-card">
+      <div class="cc-top">
+        <div>
+          <div class="eyebrow">Current Project</div>
+          <div class="cc-title">${escapeHtml(project.service_type||project.title||'Editorial Project')}</div>
+          <span class="cc-word-pill">${project.word_count?Number(project.word_count).toLocaleString()+' words':escapeHtml(project.title||'')}</span>
+        </div>
+        <div>
+          <div class="eyebrow" style="text-align:right;margin-bottom:8px;">Status</div>
+          <span class="status-pill ${meta.pillClass}">${ICONS.check}${meta.pillLabel}</span>
         </div>
       </div>
 
-      <div class="two-column">
-        <div class="lux-card next-card">
-          <div class="card-kicker">Your next step</div>
-          <div class="next-title">${
-            completed?'Your manuscript is ready.':'We are looking after your manuscript.'
-          }</div>
-          <div class="next-text">${
-            completed
-              ? 'Nothing further is required from you right now. Your completed materials can be accessed below.'
-              : (balance>0
-                ? 'Your next available milestone is shown below. When payment is required, you can continue securely from this portal.'
-                : 'Nothing is required from you at this moment. We will update this space whenever your attention is needed.')
-          }</div>
-          ${completed&&files.length?'<a class="action-btn" href="#library">View manuscript library <span>→</span></a>':''}
-        </div>
-
-        <div class="lux-card">
-          <div class="card-kicker">Project investment</div>
-          <div class="investment">
-            <div class="money-main">
-              <div class="money-label">Total project fee</div>
-              <div class="money-value">${formatMoney(totalPrice,currency)}</div>
-            </div>
-            <div>
-              <div class="money-label">Paid</div>
-              <div class="money-small">${formatMoney(amountPaid,currency)}</div>
-            </div>
-            <div>
-              <div class="money-label">Remaining</div>
-              <div class="money-small ${balance>0?'balance-positive':''}">${formatMoney(balance,currency)}</div>
-            </div>
-          </div>
-          <div class="paid-note">${balance<=0?'Your project is fully paid.':'Payments are handled securely through this private portal.'}</div>
-        </div>
+      <div class="cc-stats">
+        <div><div class="cc-stat-label">Total</div><div class="cc-stat-value">${formatMoney(totalPrice,currency)}</div></div>
+        <div><div class="cc-stat-label">Paid</div><div class="cc-stat-value">${formatMoney(amountPaid,currency)}</div></div>
+        <div><div class="cc-stat-label">Balance</div><div class="cc-stat-value">${formatMoney(balance,currency)}</div></div>
       </div>
 
-      <section class="section">
-        <div class="section-head">
-          <div>
-            <div class="section-kicker">The publishing journey</div>
-            <div class="section-title">Your editorial journey</div>
-          </div>
-          <p class="section-intro">A clear view of where your manuscript has been, where it is now, and what comes next.</p>
-        </div>
-        <div class="journey" data-journey></div>
-        <div class="milestones-list" style="margin-top:18px" data-milestones></div>
-      </section>
+      <div class="cc-progress-row"><span class="cc-word-pill" style="background:none;padding:0;color:var(--ink-faint);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;">Progress</span><span class="cc-progress-pct">${pct}%</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
 
-      <section class="section" id="library">
-        <div class="section-head">
-          <div>
-            <div class="section-kicker">Your documents</div>
-            <div class="section-title">Manuscript library</div>
-          </div>
-          <p class="section-intro">Your submitted manuscripts and Greywright deliverables, kept together in one private place.</p>
-        </div>
-        <div class="library" data-files></div>
-        <div class="upload-panel">
-          <div class="upload-title">Send something to Greywright</div>
-          <div class="upload-copy">Upload a revised manuscript or supporting document directly to this project.</div>
-          <div class="upload-row">
-            <input type="file" class="manuscript-file-input" data-project-id="${escapeHtml(project.id)}">
-            <button type="button" class="upload-btn upload-manuscript-btn" data-project-id="${escapeHtml(project.id)}">Upload to Greywright</button>
-          </div>
-        </div>
-      </section>
+      <div class="cc-message">${meta.icon}<p>${meta.html}</p></div>
 
-      <section class="section">
-        <div class="section-head">
-          <div>
-            <div class="section-kicker">Private correspondence</div>
-            <div class="section-title">Your editorial desk</div>
-          </div>
-          <p class="section-intro">A private line to the Greywright team whenever you need to ask a question or share an update.</p>
-        </div>
-        <div class="chat-box">
-          <div class="chat-header">
-            <div class="chat-header-title">Greywright Team</div>
-            <div class="chat-status" data-chat-status="${escapeHtml(project.id)}">Connecting…</div>
-          </div>
-          <div class="chat-messages" id="chat-messages-${escapeHtml(project.id)}">
-            <div class="chat-empty">Preparing your correspondence…</div>
-          </div>
-          <div class="chat-compose">
-            <textarea class="chat-input" id="chat-input-${escapeHtml(project.id)}" data-project-id="${escapeHtml(project.id)}" placeholder="Write to your editorial team…" rows="2"></textarea>
-            <button type="button" class="chat-send" data-project-id="${escapeHtml(project.id)}">Send</button>
-          </div>
-        </div>
-      </section>
+      <svg class="cc-illustration" viewBox="0 0 150 150" fill="none" stroke="currentColor" stroke-width="1.2">
+        <path d="M110 20 C90 45 70 70 55 95 C50 103 48 112 48 120" stroke-linecap="round"/>
+        <path d="M110 20 C118 26 122 34 118 42 C110 55 90 75 60 100 C55 104 50 106 45 106" stroke-linecap="round"/>
+        <ellipse cx="45" cy="122" rx="16" ry="10"/>
+        <path d="M33 122 v10 a16 6 0 0 0 24 0 v-10"/>
+      </svg>
+    </div>
+  `;
 
-      ${updates.length?`
-      <section class="section">
-        <div class="section-head">
-          <div>
-            <div class="section-kicker">A record of your project</div>
-            <div class="section-title">The editor's journal</div>
-          </div>
-          <p class="section-intro">Important moments and updates from the life of your manuscript.</p>
-        </div>
-        <div class="updates-section">
-          ${updates.map(update=>`
-            <div class="update-item">
-              <div class="update-date">${formatDate(update.created_at)}</div>
-              <div>${escapeHtml(update.message)}</div>
-            </div>
-          `).join('')}
-        </div>
-      </section>`:''}
+  renderDashMilestonePreview(project);
+  renderDashFilesPreview(project);
+  renderDashUpdatesPreview(project);
+  renderDashMessagesPreview(project);
+}
 
-      <div class="closing">
-        <div class="closing-mark">✦</div>
-        <h2>Your manuscript deserves more than a transaction.</h2>
-        <p>Thank you for entrusting your work to Greywright Publishing House. We are committed to thoughtful editorial attention, clear communication, and a publishing experience worthy of your book.</p>
-        <div class="closing-signature">— Greywright Publishing House</div>
+function renderDashMilestonePreview(project){
+  const el=document.getElementById('dashMilestonePreview');
+  const milestones=(project.milestones||[]).slice().sort((a,b)=>Number(a.order_index||0)-Number(b.order_index||0));
+
+  if(!milestones.length){
+    el.innerHTML='<p class="empty-note">No milestones have been added to this project yet.</p>';
+    return;
+  }
+
+  const firstUnpaid=milestones.findIndex(m=>m.status!=='paid');
+  const focus=firstUnpaid===-1?milestones[milestones.length-1]:milestones[firstUnpaid];
+  const isPaid=focus.status==='paid';
+  const currency=project.quote_currency||'NGN';
+
+  el.innerHTML=`
+    <div class="ms-row">
+      <div class="ms-left">
+        <div class="ms-icon ${isPaid?'paid':'pending'}">${isPaid?ICONS.check:''}</div>
+        <div>
+          <div class="ms-name">${escapeHtml(focus.name)}</div>
+          <div class="ms-amount">${formatMoney(focus.amount,currency)}</div>
+        </div>
+      </div>
+      <div class="ms-right">
+        <span style="font-size:12.5px;color:${isPaid?'var(--success)':'var(--brass)'};font-weight:600;">${isPaid?'Paid':'Due'}</span>
+        <span class="ms-status-label ${isPaid?'':'locked'}">${isPaid?'Completed':'Awaiting payment'}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderDashFilesPreview(project){
+  const el=document.getElementById('dashFilesPreview');
+  const files=(project.project_files||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,2);
+
+  let html='';
+  if(!files.length){
+    html+='<p class="empty-note">No files have been added yet.</p>';
+  }else{
+    html+=files.map(f=>`
+      <div class="file-row">
+        <div class="file-info">
+          <div class="file-icon">${ICONS.file}</div>
+          <div>
+            <div class="file-name">${escapeHtml(f.file_name)}<span class="file-badge ${f.file_type==='deliverable'?'deliverable':'manuscript'}">${escapeHtml(f.file_type||'file')}</span></div>
+            <div class="file-meta">${formatDate(f.created_at)}</div>
+          </div>
+        </div>
+        <button class="icon-btn" data-download="${escapeHtml(f.storage_path)}">${ICONS.download}</button>
+      </div>
+    `).join('');
+  }
+
+  html+=`
+    <div class="upload-row-panel">
+      <div class="file-info">${ICONS.upload}<div><div class="file-name" style="font-size:13px;">Upload new manuscript</div><div class="upload-hint">Supported formats: .docx, .pdf, .rtf</div></div></div>
+      <input type="file" class="hidden-file-input" data-upload-input="${escapeHtml(project.id)}">
+    </div>
+    <button class="upload-btn" style="margin-top:10px;width:100%;" data-upload-btn="${escapeHtml(project.id)}">Upload File</button>
+  `;
+
+  el.innerHTML=html;
+  wireFileActions(el);
+}
+
+function renderDashUpdatesPreview(project){
+  const el=document.getElementById('dashUpdatesPreview');
+  const updates=(project.project_updates||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,2);
+
+  if(!updates.length){
+    el.innerHTML='<p class="empty-note">No updates have been posted yet.</p>';
+    return;
+  }
+
+  el.innerHTML=updates.map(u=>`
+    <div class="upd-row">
+      <div class="upd-dot"></div>
+      <div class="upd-body">
+        <div class="upd-title-row">
+          <div style="font-weight:600;font-size:13.5px;">Project Update</div>
+          <div class="upd-date">${formatDate(u.created_at)}</div>
+        </div>
+        <div class="upd-msg">${escapeHtml(u.message)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function renderDashMessagesPreview(project){
+  const el=document.getElementById('dashMessagesPreview');
+  el.innerHTML='<p class="empty-note">Loading…</p>';
+
+  const {data,error}=await supabaseClient
+    .from('messages')
+    .select('id,sender_id,message,read_at,created_at')
+    .eq('project_id',project.id)
+    .order('created_at',{ascending:false})
+    .limit(2);
+
+  if(error){
+    el.innerHTML='<p class="empty-note">Could not load messages.</p>';
+    return;
+  }
+
+  if(!data||!data.length){
+    el.innerHTML='<p class="empty-note">No messages yet. Say hello to the Greywright team.</p>';
+    return;
+  }
+
+  el.innerHTML=data.map(m=>{
+    const isMine=m.sender_id===currentUserId;
+    return `
+      <div class="msg-prev-row">
+        <div class="msg-avatar ${isMine?'me':'them'}">${isMine?escapeHtml(currentUserFirstName[0]||'Y'):'GT'}</div>
+        <div class="msg-prev-body">
+          <div class="msg-prev-top">
+            <span class="msg-prev-name">${isMine?'You':'Greywright Team'}</span>
+            <span class="msg-prev-date">${formatDate(m.created_at)}</span>
+          </div>
+          <div class="msg-prev-snippet">${escapeHtml(m.message)}</div>
+          ${isMine?`<div class="msg-prev-status">${m.read_at?'✓ Read':'Sent'}</div>`:''}
+        </div>
       </div>
     `;
+  }).join('');
+}
 
-    container.appendChild(shell);
+/* ============================================================
+   PROJECTS TAB
+   ============================================================ */
+function renderProjectsTab(){
+  const grid=document.getElementById('projGrid');
+  grid.innerHTML=allProjects.map(p=>{
+    const currency=p.quote_currency||'NGN';
+    const totalPrice=Number(p.total_price||0);
+    const amountPaid=Number(p.amount_paid||0);
+    const pct=totalPrice>0?Math.min(100,Math.round((amountPaid/totalPrice)*100)):0;
+    const meta=statusMeta(p.status,totalPrice-amountPaid);
+    return `
+      <div class="proj-card" data-open-project="${escapeHtml(p.id)}">
+        <div class="eyebrow">${escapeHtml(p.service_type||'Editorial Project')}</div>
+        <h4>${escapeHtml(p.title||'Untitled Project')}</h4>
+        <span class="status-pill ${meta.pillClass}">${meta.pillLabel}</span>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
 
-    /* Journey */
-    const journeyEl=shell.querySelector('[data-journey]');
-    const journeyLabels=milestones.slice(0,4);
+  grid.querySelectorAll('[data-open-project]').forEach(card=>{
+    card.addEventListener('click',()=>{
+      activeProjectId=card.dataset.openProject;
+      populateAllProjectSelectors();
+      setActiveTab('dashboard');
+    });
+  });
+}
 
-    if(journeyLabels.length===0){
-      journeyEl.innerHTML='<div style="padding:25px;color:var(--ink-faint)">Your editorial journey will appear here once milestones are added to the project.</div>';
-    }else{
-      journeyLabels.forEach((ms,i)=>{
-        const paid=ms.status==='paid';
-        const current=!paid&&i===firstUnpaidIndex;
-        const step=document.createElement('div');
-        step.className='journey-step '+(paid?'paid ':'')+(current?'current':'');
-        step.innerHTML=`
-          <div class="journey-node">${paid?'✓':String(i+1).padStart(2,'0')}</div>
-          <div class="journey-name">${escapeHtml(ms.name)}</div>
-          <div class="journey-status">${paid?'Completed':current?'Current stage':'Upcoming'}</div>
-        `;
-        journeyEl.appendChild(step);
-      });
-    }
+/* ============================================================
+   PAYMENTS TAB
+   ============================================================ */
+function renderPaymentsTab(){
+  const project=getActiveProject();
+  const panel=document.getElementById('paymentsPanel');
+  if(!project){panel.innerHTML='';return;}
 
-    /* Milestones */
-    const listEl=shell.querySelector('[data-milestones]');
-    if(!milestones.length){
-      listEl.innerHTML='<div class="no-files">No milestone information is available yet.</div>';
-    }
+  const milestones=(project.milestones||[]).slice().sort((a,b)=>Number(a.order_index||0)-Number(b.order_index||0));
+  const currency=project.quote_currency||'NGN';
+  const firstUnpaidIndex=milestones.findIndex(m=>m.status!=='paid');
 
-    milestones.forEach((ms,i)=>{
-      const isPaid=ms.status==='paid';
-      const isPayable=!isPaid&&i===firstUnpaidIndex;
-      const isLocked=!isPaid&&!isPayable;
+  if(!milestones.length){
+    panel.innerHTML='<p class="empty-note">No milestones have been added to this project yet.</p>';
+    return;
+  }
 
-      const row=document.createElement('div');
-      row.className='milestone';
-      row.innerHTML=`
+  panel.innerHTML=milestones.map((ms,i)=>{
+    const isPaid=ms.status==='paid';
+    const isPayable=!isPaid&&i===firstUnpaidIndex;
+    const isLocked=!isPaid&&!isPayable;
+    return `
+      <div class="ms-row">
         <div class="ms-left">
-          <div class="ms-icon ${isPaid?'paid':isLocked?'locked':'pending'}">${isPaid?'✓':''}</div>
+          <div class="ms-icon ${isPaid?'paid':isLocked?'locked':'pending'}">${isPaid?ICONS.check:''}</div>
           <div>
             <div class="ms-name">${escapeHtml(ms.name)}</div>
             <div class="ms-amount">${formatMoney(ms.amount,currency)}</div>
           </div>
         </div>
-        <div class="ms-right"></div>
-      `;
+        <div class="ms-right" data-ms-right="${escapeHtml(ms.id)}">
+          ${isPaid
+            ?`<span style="color:var(--success);font-weight:600;font-size:12.5px;">Paid</span>`
+            :isPayable
+              ?`<button class="pay-btn" data-pay="${escapeHtml(ms.id)}">Pay ${formatMoney(ms.amount,currency)}</button>`
+              :`<span style="color:var(--ink-faint);font-size:12.5px;">Upcoming</span>`
+          }
+        </div>
+      </div>
+    `;
+  }).join('');
 
-      const rightEl=row.querySelector('.ms-right');
-
-      if(isPaid){
-        rightEl.innerHTML='<span class="ms-badge paid">Paid</span>';
-      }else if(isPayable){
-        const btn=document.createElement('button');
-        btn.className='pay-btn';
-        btn.textContent=`Pay ${formatMoney(ms.amount,currency)}`;
-        btn.addEventListener('click',()=>payMilestone(ms.id,btn));
-        rightEl.appendChild(btn);
-      }else{
-        rightEl.innerHTML='<span class="ms-badge locked">Upcoming</span>';
-      }
-
-      listEl.appendChild(row);
-    });
-
-    /* Files */
-    const filesEl=shell.querySelector('[data-files]');
-    if(!files.length){
-      filesEl.innerHTML='<div class="no-files">No documents have been added yet.</div>';
-    }else{
-      files.forEach(file=>{
-        const row=document.createElement('div');
-        row.className='file-row';
-        row.innerHTML=`
-          <div class="file-info">
-            <div class="file-icon">Aa</div>
-            <div>
-              <div class="file-name">
-                ${escapeHtml(file.file_name)}
-                <span class="file-badge ${file.file_type==='deliverable'?'deliverable':'manuscript'}">${escapeHtml(file.file_type||'file')}</span>
-              </div>
-              <div class="file-meta">${formatDate(file.created_at)}</div>
-            </div>
-          </div>
-        `;
-        const btn=document.createElement('button');
-        btn.className='download-btn';
-        btn.textContent='Open / Download';
-        btn.addEventListener('click',()=>downloadFile(file.storage_path));
-        row.appendChild(btn);
-        filesEl.appendChild(row);
-      });
-    }
-
-    setupProjectChat(project.id);
-  });
-
-  container.querySelectorAll('.upload-manuscript-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>uploadManuscript(btn.dataset.projectId,btn));
-  });
-
-  container.querySelectorAll('.chat-send').forEach(btn=>{
-    btn.addEventListener('click',()=>sendMessage(btn.dataset.projectId,btn));
-  });
-
-  container.querySelectorAll('.chat-input').forEach(input=>{
-    input.addEventListener('keydown',event=>{
-      if(event.key==='Enter'&&!event.shiftKey){
-        event.preventDefault();
-        const btn=container.querySelector(`.chat-send[data-project-id="${CSS.escape(input.dataset.projectId)}"]`);
-        if(btn)sendMessage(input.dataset.projectId,btn);
-      }
-    });
+  panel.querySelectorAll('[data-pay]').forEach(btn=>{
+    btn.addEventListener('click',()=>payMilestone(btn.dataset.pay,btn));
   });
 }
 
+/* ============================================================
+   FILES TAB
+   ============================================================ */
+function renderFilesTab(){
+  const project=getActiveProject();
+  const panel=document.getElementById('filesPanel');
+  if(!project){panel.innerHTML='';return;}
+
+  const files=(project.project_files||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+
+  let html='';
+  if(!files.length){
+    html+='<p class="empty-note">No files have been added to this project yet.</p>';
+  }else{
+    html+=files.map(f=>`
+      <div class="file-row">
+        <div class="file-info">
+          <div class="file-icon">${ICONS.file}</div>
+          <div>
+            <div class="file-name">${escapeHtml(f.file_name)}<span class="file-badge ${f.file_type==='deliverable'?'deliverable':'manuscript'}">${escapeHtml(f.file_type||'file')}</span></div>
+            <div class="file-meta">${formatDate(f.created_at)}</div>
+          </div>
+        </div>
+        <button class="icon-btn" data-download="${escapeHtml(f.storage_path)}">${ICONS.download}</button>
+      </div>
+    `).join('');
+  }
+
+  html+=`
+    <div class="upload-row-panel">
+      <div class="file-info">${ICONS.upload}<div><div class="file-name" style="font-size:13px;">Upload new manuscript</div><div class="upload-hint">Supported formats: .docx, .pdf, .rtf</div></div></div>
+      <input type="file" class="hidden-file-input" data-upload-input="${escapeHtml(project.id)}">
+    </div>
+    <button class="upload-btn" style="margin-top:10px;" data-upload-btn="${escapeHtml(project.id)}">Upload File</button>
+  `;
+
+  panel.innerHTML=html;
+  wireFileActions(panel);
+}
+
+function wireFileActions(container){
+  container.querySelectorAll('[data-download]').forEach(btn=>{
+    btn.addEventListener('click',()=>downloadFile(btn.dataset.download));
+  });
+  container.querySelectorAll('[data-upload-btn]').forEach(btn=>{
+    btn.addEventListener('click',()=>uploadManuscript(btn.dataset.uploadBtn,btn));
+  });
+}
+
+/* ============================================================
+   UPDATES TAB
+   ============================================================ */
+function renderUpdatesTab(){
+  const project=getActiveProject();
+  const panel=document.getElementById('updatesPanel');
+  if(!project){panel.innerHTML='';return;}
+
+  const updates=(project.project_updates||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+
+  if(!updates.length){
+    panel.innerHTML='<p class="empty-note">No updates have been posted for this project yet.</p>';
+    return;
+  }
+
+  panel.innerHTML=updates.map(u=>`
+    <div class="upd-row">
+      <div class="upd-dot"></div>
+      <div class="upd-body">
+        <div class="upd-title-row">
+          <div style="font-weight:600;font-size:14.5px;">Project Update</div>
+          <div class="upd-date">${formatDate(u.created_at)}</div>
+        </div>
+        <div class="upd-msg">${escapeHtml(u.message)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   PROFILE TAB
+   ============================================================ */
+function renderProfileTab(){
+  const card=document.getElementById('profileCard');
+  card.innerHTML=`
+    <div class="profile-row"><span class="profile-label">Full Name</span><span class="profile-value">${escapeHtml(clientRow?.name||'—')}</span></div>
+    <div class="profile-row"><span class="profile-label">Email</span><span class="profile-value">${escapeHtml(clientRow?.email||'—')}</span></div>
+    <div class="profile-row"><span class="profile-label">Client Since</span><span class="profile-value">${formatDate(clientRow?.created_at)||'—'}</span></div>
+  `;
+}
+
+/* ============================================================
+   MESSAGES TAB (full chat)
+   ============================================================ */
+function renderMessagesTab(){
+  const project=getActiveProject();
+  const box=document.getElementById('messagesChatBox');
+  if(!project){box.innerHTML='';return;}
+
+  box.innerHTML=`
+    <div class="chat-header">
+      <div class="chat-header-title">Greywright Team</div>
+      <div class="chat-status" id="chatStatusEl">Connecting…</div>
+    </div>
+    <div class="chat-messages" id="chatMessagesEl"><div class="chat-empty">Loading conversation…</div></div>
+    <div class="chat-compose">
+      <textarea class="chat-input" id="chatInputEl" placeholder="Write to your editorial team…" rows="2"></textarea>
+      <button type="button" class="chat-send" id="chatSendBtn">Send</button>
+    </div>
+  `;
+
+  document.getElementById('chatSendBtn').addEventListener('click',()=>sendMessage(project.id));
+  document.getElementById('chatInputEl').addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){
+      e.preventDefault();
+      sendMessage(project.id);
+    }
+  });
+
+  setupProjectChat(project.id);
+}
+
 async function loadMessages(projectId){
-  const messagesEl=document.getElementById(`chat-messages-${projectId}`);
-  if(!messagesEl)return;
+  const el=document.getElementById('chatMessagesEl');
+  if(!el||activeProjectId!==projectId)return;
 
   const {data,error}=await supabaseClient
     .from('messages')
@@ -1018,88 +1364,70 @@ async function loadMessages(projectId){
     .order('created_at',{ascending:true});
 
   if(error){
-    console.error('[chat] Could not load messages:',error);
-    messagesEl.innerHTML='<div class="chat-empty">Could not load messages.</div>';
+    console.error('[chat] load error:',error);
+    el.innerHTML='<div class="chat-empty">Could not load messages.</div>';
     return;
   }
-
-  renderMessages(projectId,data||[]);
+  renderMessages(data||[]);
+  refreshUnreadCount();
 }
 
-function renderMessages(projectId,messages){
-  const messagesEl=document.getElementById(`chat-messages-${projectId}`);
-  if(!messagesEl)return;
+function renderMessages(messages){
+  const el=document.getElementById('chatMessagesEl');
+  if(!el)return;
 
   if(!messages.length){
-    messagesEl.innerHTML='<div class="chat-empty"><div><strong>No messages yet.</strong><br>Send a message to the Greywright team whenever you need us.</div></div>';
+    el.innerHTML='<div class="chat-empty"><div><strong>No messages yet.</strong><br>Send a message to the Greywright team whenever you need us.</div></div>';
     return;
   }
 
-  messagesEl.innerHTML=messages.map(message=>{
-    const isClient=message.sender_id===currentUserId;
-    const date=new Date(message.created_at);
-
+  el.innerHTML=messages.map(m=>{
+    const isClient=m.sender_id===currentUserId;
+    const d=new Date(m.created_at);
     return `
       <div class="chat-message ${isClient?'client':'admin'}">
         <div class="chat-bubble">
           <div class="chat-sender">${isClient?'You':'Greywright Team'}</div>
-          <div>${escapeHtml(message.message)}</div>
-          <div class="chat-time">${date.toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+          <div>${escapeHtml(m.message)}</div>
+          <div class="chat-time">${d.toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
         </div>
       </div>
     `;
   }).join('');
 
-  messagesEl.scrollTop=messagesEl.scrollHeight;
-  markMessagesRead(projectId,messages);
+  el.scrollTop=el.scrollHeight;
+  markMessagesRead(messages);
 }
 
-async function markMessagesRead(projectId,messages){
-  const unreadIds=messages
-    .filter(message=>message.sender_id!==currentUserId&&!message.read_at)
-    .map(message=>message.id);
-
+async function markMessagesRead(messages){
+  const unreadIds=messages.filter(m=>m.sender_id!==currentUserId&&!m.read_at).map(m=>m.id);
   if(!unreadIds.length)return;
-
-  const {error}=await supabaseClient
-    .from('messages')
-    .update({read_at:new Date().toISOString()})
-    .in('id',unreadIds);
-
-  if(error)console.warn('[chat] Could not mark messages read:',error);
+  const {error}=await supabaseClient.from('messages').update({read_at:new Date().toISOString()}).in('id',unreadIds);
+  if(error)console.warn('[chat] mark read error:',error);
 }
 
-async function sendMessage(projectId,btn){
-  const input=document.getElementById(`chat-input-${projectId}`);
-  if(!input)return;
+async function sendMessage(projectId){
+  const input=document.getElementById('chatInputEl');
+  const btn=document.getElementById('chatSendBtn');
+  if(!input||!btn)return;
 
   const message=input.value.trim();
   if(!message)return;
 
   btn.disabled=true;
-  const originalText=btn.textContent;
+  const original=btn.textContent;
   btn.textContent='Sending…';
 
   try{
     const {data:{session}}=await supabaseClient.auth.getSession();
+    if(!session){window.location.href='login.html';return;}
 
-    if(!session){
-      window.location.href='login.html';
-      return;
-    }
-
-    currentUserId=session.user.id;
-
-    const {error}=await supabaseClient
-      .from('messages')
-      .insert({
-        project_id:projectId,
-        sender_id:session.user.id,
-        message
-      });
+    const {error}=await supabaseClient.from('messages').insert({
+      project_id:projectId,sender_id:session.user.id,message
+    });
 
     if(error){
-      console.error('[chat] Send error:',error);
+      console.error('[chat] send error:',error);
       showToast('Could not send message: '+error.message,true);
       return;
     }
@@ -1108,7 +1436,7 @@ async function sendMessage(projectId,btn){
     await loadMessages(projectId);
   }finally{
     btn.disabled=false;
-    btn.textContent=originalText;
+    btn.textContent=original;
   }
 }
 
@@ -1116,118 +1444,75 @@ async function setupProjectChat(projectId){
   await loadMessages(projectId);
 
   if(chatChannels[projectId]){
-    const statusEl=document.querySelector(`[data-chat-status="${CSS.escape(projectId)}"]`);
-    if(statusEl){
-      statusEl.textContent='Live';
-      statusEl.classList.add('connected');
-    }
+    const s=document.getElementById('chatStatusEl');
+    if(s){s.textContent='Live';s.classList.add('connected');}
     return;
   }
 
-  const statusEl=document.querySelector(`[data-chat-status="${CSS.escape(projectId)}"]`);
-
   const channel=supabaseClient
     .channel(`project-messages-${projectId}`)
-    .on('postgres_changes',{
-      event:'INSERT',
-      schema:'public',
-      table:'messages',
-      filter:`project_id=eq.${projectId}`
-    },async()=>{await loadMessages(projectId);})
-    .on('postgres_changes',{
-      event:'UPDATE',
-      schema:'public',
-      table:'messages',
-      filter:`project_id=eq.${projectId}`
-    },async()=>{await loadMessages(projectId);})
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`project_id=eq.${projectId}`},async()=>{
+      await loadMessages(projectId);
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages',filter:`project_id=eq.${projectId}`},async()=>{
+      await loadMessages(projectId);
+    })
     .subscribe(status=>{
-      if(!statusEl)return;
-
-      if(status==='SUBSCRIBED'){
-        statusEl.textContent='Live';
-        statusEl.classList.add('connected');
-      }else if(status==='CHANNEL_ERROR'){
-        statusEl.textContent='Connection error';
-        statusEl.classList.remove('connected');
-      }else if(status==='TIMED_OUT'){
-        statusEl.textContent='Connection timed out';
-        statusEl.classList.remove('connected');
-      }else{
-        statusEl.textContent='Connecting…';
-        statusEl.classList.remove('connected');
-      }
+      const s=document.getElementById('chatStatusEl');
+      if(!s||activeProjectId!==projectId)return;
+      if(status==='SUBSCRIBED'){s.textContent='Live';s.classList.add('connected');}
+      else if(status==='CHANNEL_ERROR'){s.textContent='Connection error';s.classList.remove('connected');}
+      else if(status==='TIMED_OUT'){s.textContent='Connection timed out';s.classList.remove('connected');}
+      else{s.textContent='Connecting…';s.classList.remove('connected');}
     });
 
   chatChannels[projectId]=channel;
 }
 
+/* ============================================================
+   FILE DOWNLOAD / UPLOAD
+   ============================================================ */
 async function downloadFile(path){
-  if(!path){
-    showToast('This file has no storage path.',true);
-    return;
-  }
-
-  const {data,error}=await supabaseClient.storage
-    .from('project-files')
-    .createSignedUrl(path,60*5);
-
+  if(!path){showToast('This file has no storage path.',true);return;}
+  const {data,error}=await supabaseClient.storage.from('project-files').createSignedUrl(path,60*5);
   if(error||!data?.signedUrl){
-    console.error('[files] Download error:',error);
+    console.error('[files] download error:',error);
     showToast('Could not generate download link.',true);
     return;
   }
-
   window.open(data.signedUrl,'_blank','noopener');
 }
 
 async function uploadManuscript(projectId,btn){
-  const input=document.querySelector(`.manuscript-file-input[data-project-id="${CSS.escape(projectId)}"]`);
+  const input=document.querySelector(`[data-upload-input="${CSS.escape(projectId)}"]`);
   if(!input)return;
-
   const file=input.files[0];
-
-  if(!file){
-    showToast('Choose a file first.',true);
-    return;
-  }
+  if(!file){showToast('Choose a file first.',true);return;}
 
   btn.disabled=true;
-  const originalText=btn.textContent;
+  const original=btn.textContent;
   btn.textContent='Uploading…';
 
   try{
     const {data:{session}}=await supabaseClient.auth.getSession();
-
-    if(!session){
-      window.location.href='login.html';
-      return;
-    }
+    if(!session){window.location.href='login.html';return;}
 
     const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
     const storagePath=`${projectId}/manuscript/${Date.now()}_${safeName}`;
 
-    const {error:uploadErr}=await supabaseClient.storage
-      .from('project-files')
-      .upload(storagePath,file);
-
+    const {error:uploadErr}=await supabaseClient.storage.from('project-files').upload(storagePath,file);
     if(uploadErr){
-      console.error('[dashboard] Upload error:',uploadErr);
+      console.error('[dashboard] upload error:',uploadErr);
       showToast(uploadErr.message,true);
       return;
     }
 
-    const {error:dbErr}=await supabaseClient
-      .from('project_files')
-      .insert({
-        project_id:projectId,
-        file_name:file.name,
-        storage_path:storagePath,
-        file_type:'manuscript',
-        uploaded_by:'client'
-      });
+    const {error:dbErr}=await supabaseClient.from('project_files').insert({
+      project_id:projectId,file_name:file.name,storage_path:storagePath,file_type:'manuscript',uploaded_by:'client'
+    });
 
     if(dbErr){
-      console.error('[dashboard] File DB error:',dbErr);
+      console.error('[dashboard] file db error:',dbErr);
       showToast('The file uploaded, but its record could not be created: '+dbErr.message,true);
       return;
     }
@@ -1237,73 +1522,61 @@ async function uploadManuscript(projectId,btn){
     await loadDashboard();
   }finally{
     btn.disabled=false;
-    btn.textContent=originalText;
+    btn.textContent=original;
   }
 }
 
+/* ============================================================
+   MILESTONE PAYMENT (Paystack + server-side verify)
+   ============================================================ */
 async function payMilestone(milestoneId,btn){
   btn.disabled=true;
-  const originalText=btn.textContent;
+  const original=btn.textContent;
   btn.textContent='Starting checkout…';
 
   try{
     const {data:{session}}=await supabaseClient.auth.getSession();
-
-    if(!session){
-      window.location.href='login.html';
-      return;
-    }
+    if(!session){window.location.href='login.html';return;}
 
     const res=await fetch('/api/initialize-milestone-payment',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':`Bearer ${session.access_token}`
-      },
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
       body:JSON.stringify({milestone_id:milestoneId})
     });
-
     const data=await res.json();
 
     if(!res.ok||!data.access_code){
       throw new Error(data.error||'Could not start checkout.');
     }
 
-    btn.textContent=originalText;
+    btn.textContent=original;
     btn.disabled=false;
 
     const paystackPop=new PaystackPop();
-
     paystackPop.resumeTransaction(data.access_code,{
       onSuccess:transaction=>{
         showToast('Payment received — confirming with our records…');
         confirmMilestonePayment(transaction?.reference);
       },
-      onCancel:()=>{
-        showToast('Checkout closed. You can try again anytime.');
-      },
+      onCancel:()=>showToast('Checkout closed. You can try again anytime.'),
       onError:err=>{
-        console.error('[dashboard] Paystack error:',err);
+        console.error('[dashboard] paystack error:',err);
         showToast('Something went wrong during checkout. Please try again.',true);
       }
     });
   }catch(err){
-    console.error('[dashboard] Payment error:',err);
+    console.error('[dashboard] payment error:',err);
     showToast(err.message||'Something went wrong. Please try again.',true);
   }finally{
     btn.disabled=false;
-    btn.textContent=originalText;
+    btn.textContent=original;
   }
 }
 
 /*
  * Actively verifies the payment with our server (which checks directly
- * with Paystack) instead of only waiting for the Paystack webhook to
- * update the database on its own. This is what actually marks the
- * milestone paid in the common case; waitForConfirmation() below is kept
- * only as a fallback in case this call itself fails (e.g. a dropped
- * connection right after checkout), since the webhook may still land a
- * few seconds later even if this request doesn't succeed.
+ * with Paystack) instead of only waiting for the webhook. waitForConfirmation
+ * is kept only as a fallback in case this call itself fails.
  */
 async function confirmMilestonePayment(reference){
   if(!reference){
@@ -1313,38 +1586,25 @@ async function confirmMilestonePayment(reference){
 
   try{
     const {data:{session}}=await supabaseClient.auth.getSession();
-
-    if(!session){
-      window.location.href='login.html';
-      return;
-    }
+    if(!session){window.location.href='login.html';return;}
 
     const res=await fetch('/api/verify-milestone-payment',{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'Authorization':`Bearer ${session.access_token}`
-      },
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${session.access_token}`},
       body:JSON.stringify({reference})
     });
-
     const data=await res.json();
 
     if(!res.ok||!data.verified){
-      console.error('[dashboard] Milestone verify failed:',data);
-      showToast(
-        (data.error||'Could not confirm your payment automatically.')+
-        ' Refreshing your project — if it still shows unpaid, please contact us with your payment reference: '+
-        reference,
-        true
-      );
+      console.error('[dashboard] verify failed:',data);
+      showToast((data.error||'Could not confirm your payment automatically.')+' Refreshing — if it still shows unpaid, contact us with reference: '+reference,true);
       return waitForConfirmation();
     }
 
     showToast('Payment confirmed. Your project has been updated.');
     await loadDashboard();
   }catch(err){
-    console.error('[dashboard] Milestone verify crash:',err);
+    console.error('[dashboard] verify crash:',err);
     showToast('Payment received, but we could not confirm it automatically. Retrying…',true);
     await waitForConfirmation();
   }
@@ -1352,58 +1612,21 @@ async function confirmMilestonePayment(reference){
 
 async function waitForConfirmation(){
   for(let i=0;i<6;i++){
-    await new Promise(resolve=>setTimeout(resolve,1500));
+    await new Promise(r=>setTimeout(r,1500));
     await loadDashboard();
   }
 }
 
-function formatDate(dateValue){
-  if(!dateValue)return '';
-  const date=new Date(dateValue);
-  if(Number.isNaN(date.getTime()))return '';
-  return date.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
-}
-
-function escapeHtml(str){
-  const div=document.createElement('div');
-  div.textContent=String(str??'');
-  return div.innerHTML;
-}
-
+/* ============================================================
+   CLEANUP + START
+   ============================================================ */
 window.addEventListener('beforeunload',()=>{
-  Object.keys(chatChannels).forEach(projectId=>{
-    const channel=chatChannels[projectId];
-    if(channel)supabaseClient.removeChannel(channel);
+  Object.keys(chatChannels).forEach(pid=>{
+    if(chatChannels[pid])supabaseClient.removeChannel(chatChannels[pid]);
   });
 });
 
 loadDashboard();
-
-/* Mobile navigation */
-const menuToggle=document.getElementById('menuToggle');
-menuToggle.addEventListener('click',()=>{
-  const open=menuToggle.getAttribute('aria-expanded')==='true';
-
-  if(!open){
-    const existing=document.getElementById('mobileQuickNav');
-    if(existing)return;
-
-    const panel=document.createElement('div');
-    panel.id='mobileQuickNav';
-    panel.style.cssText='position:absolute;top:100%;left:0;right:0;background:var(--paper);border-bottom:1px solid var(--line);padding:14px 18px;box-shadow:0 12px 30px rgba(0,0,0,.06);';
-    panel.innerHTML=`
-      <a href="../index.html#services" style="display:block;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;">Services</a>
-      <a href="../index.html#quote-calculator" style="display:block;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;">Get an Estimate</a>
-      <a href="../index.html#process" style="display:block;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;">Process</a>
-      <a href="../index.html#contact" style="display:block;padding:9px 0;font-size:13px;">Contact</a>
-    `;
-    document.querySelector('.site-header').appendChild(panel);
-    menuToggle.setAttribute('aria-expanded','true');
-  }else{
-    document.getElementById('mobileQuickNav')?.remove();
-    menuToggle.setAttribute('aria-expanded','false');
-  }
-});
 </script>
 </body>
 </html>

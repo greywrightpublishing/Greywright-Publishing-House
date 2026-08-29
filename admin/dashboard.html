@@ -26,6 +26,7 @@
   --line: rgba(27,24,20,0.16);
   --success: #3C5E45;
   --error: #8C3B2E;
+  --sidebar-w: 246px;
 
   --display: 'Cormorant Garamond', serif;
   --body: 'Spectral', Georgia, serif;
@@ -61,86 +62,184 @@ em {
   color: var(--oxblood);
 }
 
-header {
-  background: var(--ink);
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  border-bottom: 1px solid rgba(244,238,223,0.1);
-}
+/* ============================================================
+   ADMIN SHELL — sidebar (ink/"backstage") + content (paper)
+   Mirrors the client portal's sidebar app-shell pattern, but
+   with the chrome inverted (dark sidebar vs. the client's
+   cream one) so the two feel like one family while staying
+   visually distinct: client-facing = paper, staff-facing = ink.
+   ============================================================ */
 
-.header-inner {
+#screen-loading {
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 56px;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
+  justify-content: center;
+  color: var(--ink-faint);
+  font-style: italic;
 }
 
-.brand {
+.admin-shell {
+  display: flex;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.admin-sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 250;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  border: 1px solid rgba(244,238,223,0.2);
+  border-radius: 2px;
+  color: var(--paper);
+}
+.admin-sidebar-toggle svg { width: 18px; height: 18px; }
+
+.admin-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  background: rgba(27,24,20,0.5);
+}
+
+.admin-sidebar {
+  width: var(--sidebar-w);
+  flex: 0 0 auto;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--ink);
+  color: rgba(244,238,223,0.85);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+}
+
+.admin-crest {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  border: 1px solid var(--brass);
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-crest img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.admin-brand {
+  text-align: center;
   font-family: var(--display);
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
   color: var(--paper);
+  margin-bottom: 8px;
 }
-
-.brand em {
+.admin-brand em {
+  font-style: italic;
   color: var(--brass);
+  font-weight: 600;
 }
 
-.logout-btn {
-  font-size: 12px;
-  letter-spacing: 0.06em;
+.admin-caption {
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(244,238,223,0.6);
-  background: none;
-  border: 1px solid rgba(244,238,223,0.2);
-  padding: 6px 14px;
-  cursor: pointer;
-  border-radius: 2px;
-}
-
-.logout-btn:hover {
-  color: var(--paper);
-  border-color: rgba(244,238,223,0.5);
-}
-
-.wrap {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 24px 80px;
+  color: var(--brass);
+  margin-bottom: 28px;
 }
 
 .tabs {
   display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--line);
-  margin-bottom: 32px;
-  overflow-x: auto;
+  flex-direction: column;
+  gap: 2px;
+  border-bottom: none;
+  margin-bottom: 0;
+  overflow-x: visible;
+  flex: 1;
 }
 
 .tab {
-  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
   cursor: pointer;
   font-size: 14px;
-  color: var(--ink-faint);
+  color: rgba(244,238,223,0.65);
   white-space: nowrap;
-  border-bottom: 2px solid transparent;
+  border-bottom: none;
+  border-left: 2px solid transparent;
+  border-radius: 2px;
+  transition: background .15s ease, color .15s ease;
+}
+.tab svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+.tab:hover {
+  background: rgba(244,238,223,0.06);
+  color: var(--paper);
 }
 
 .tab.active {
-  color: var(--oxblood);
-  border-bottom-color: var(--oxblood);
+  color: var(--brass);
+  border-bottom-color: transparent;
+  border-left-color: var(--brass);
+  background: rgba(163,131,56,0.1);
+  font-weight: 600;
 }
 
-.panel {
-  display: none;
+.admin-sidebar .logout-btn {
+  margin-top: 24px;
+  width: 100%;
+  justify-content: center;
+  display: flex;
 }
 
-.panel.active {
-  display: block;
+.admin-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 44px 32px 90px;
+}
+
+.admin-page-title {
+  margin-bottom: 28px;
+}
+.admin-page-title .eyebrow {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 6px;
+}
+.admin-page-title h2 {
+  font-size: 28px;
 }
 
 .card {
@@ -455,15 +554,6 @@ td:first-child {
   color: var(--paper);
 }
 
-#screen-loading {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--ink-faint);
-  font-style: italic;
-}
-
 .file-upload-box {
   margin-top: 20px;
   padding-top: 20px;
@@ -631,6 +721,21 @@ td:first-child {
   cursor: default;
 }
 
+@media (max-width: 900px) {
+  .admin-sidebar-toggle { display: flex; }
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    box-shadow: 0 0 40px rgba(0,0,0,.3);
+  }
+  .admin-sidebar.open { transform: translateX(0); }
+  .admin-sidebar-backdrop.open { display: block; }
+  .wrap { padding: 70px 20px 70px; }
+}
+
 @media (max-width: 640px) {
   .row2,
   .row3 {
@@ -677,27 +782,54 @@ td:first-child {
 
 <div id="screen-app" style="display:none;">
 
-<header>
-  <div class="header-inner">
-    <div class="brand">Greywright <em>Admin</em></div>
-    <button class="logout-btn" id="logoutBtn">Sign out</button>
+<button class="admin-sidebar-toggle" id="adminSidebarToggle" aria-label="Open menu">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="admin-sidebar-backdrop" id="adminSidebarBackdrop"></div>
+
+<div class="admin-shell">
+
+<aside class="admin-sidebar" id="adminSidebar">
+
+  <div class="admin-crest">
+    <img src="../images/img-04.png" alt="Greywright Publishing House crest">
   </div>
-</header>
+  <div class="admin-brand">Greywright <em>Admin</em></div>
+  <div class="admin-caption">Staff Workspace</div>
 
+  <div class="tabs">
+    <div class="tab active" data-panel="panel-clients">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6.5 8-6.5s6.5 2 8 6.5"/></svg>
+      Clients
+    </div>
+    <div class="tab" data-panel="panel-projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>
+      Projects
+    </div>
+    <div class="tab" data-panel="panel-payments">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      Payments
+    </div>
+    <div class="tab" data-panel="panel-quotes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/><line x1="8" y1="13" x2="14" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+      Quote Generator
+    </div>
+    <div class="tab" data-panel="panel-files">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
+      Files
+    </div>
+    <div class="tab" data-panel="panel-messages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Messages
+    </div>
+  </div>
+
+  <button class="logout-btn" id="logoutBtn">Sign out</button>
+
+</aside>
+
+<main class="admin-main">
 <div class="wrap">
-
-<div class="tabs">
-  <div class="tab active" data-panel="panel-clients">Clients</div>
-  <div class="tab" data-panel="panel-projects">Projects</div>
-  <div class="tab" data-panel="panel-payments">Payments</div>
-  <div class="tab" data-panel="panel-quotes">Quote Generator</div>
-  <div class="tab" data-panel="panel-files">Files</div>
-  <div class="tab" data-panel="panel-messages">Messages</div>
-</div>
-
-<!-- =========================================================
-     CLIENTS
-========================================================= -->
 
 <div class="panel active" id="panel-clients">
 
@@ -1279,6 +1411,10 @@ Send
 
 </div>
 
+
+</div>
+</main>
+
 </div>
 </div>
 
@@ -1519,11 +1655,6 @@ currency === 'USD'
 }
 
 
-/*
- * Kept as a thin wrapper so any code that still calls the old
- * NGN-only name keeps working, but everything new should call
- * formatMoney(amount, currency) directly.
- */
 function nairaFromKobo(k) {
 
 return formatMoney(k, 'NGN');
@@ -4388,6 +4519,31 @@ redirectToLogin();
 
 });
 
+</script>
+
+<script>
+/* ============================================================
+   MOBILE SIDEBAR TOGGLE (visual-only, does not touch app logic)
+============================================================ */
+const adminSidebarToggle = document.getElementById('adminSidebarToggle');
+const adminSidebar = document.getElementById('adminSidebar');
+const adminSidebarBackdrop = document.getElementById('adminSidebarBackdrop');
+
+function closeAdminSidebar() {
+  adminSidebar.classList.remove('open');
+  adminSidebarBackdrop.classList.remove('open');
+}
+
+adminSidebarToggle.addEventListener('click', () => {
+  adminSidebar.classList.add('open');
+  adminSidebarBackdrop.classList.add('open');
+});
+
+adminSidebarBackdrop.addEventListener('click', closeAdminSidebar);
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', closeAdminSidebar);
+});
 </script>
 
 </body>

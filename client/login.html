@@ -1249,7 +1249,20 @@ document
                 data: {
                   full_name:
                     name
-                }
+                },
+
+                /*
+                 * Without this, Supabase falls back to whatever
+                 * "Site URL" is configured in the dashboard when
+                 * the confirmation link is clicked. That field is
+                 * currently set to http://localhost:3000 — fine
+                 * for local dev, broken for a real client clicking
+                 * "Confirm My Email" from their inbox. Being
+                 * explicit here means the confirmation flow works
+                 * correctly regardless of what Site URL is set to.
+                 */
+                emailRedirectTo:
+                  `${window.location.origin}/client/login.html`
               }
             });
 

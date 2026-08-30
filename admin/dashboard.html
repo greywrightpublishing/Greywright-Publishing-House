@@ -208,6 +208,14 @@ em {
   font-weight: 600;
 }
 
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
 .admin-sidebar .logout-btn {
   margin-top: 24px;
   width: 100%;
@@ -2423,15 +2431,26 @@ milestoneTotalKobo !==
 totalPriceKobo
 ) {
 
+const symbol =
+CURRENCY_SYMBOLS[projectCurrency] ||
+projectCurrency + ' ';
+
+const locale =
+projectCurrency === 'NGN'
+?
+'en-NG'
+:
+'en-US';
+
 return showStatus(
 'project-status',
 'error',
 
-`Milestones (₦${(
+`Milestones (${symbol}${(
 milestoneTotalKobo / 100
-).toLocaleString('en-NG')})
+).toLocaleString(locale)})
 must add up to the total price
-(₦${priceNaira.toLocaleString('en-NG')}).`
+(${symbol}${priceNaira.toLocaleString(locale)}).`
 );
 
 }

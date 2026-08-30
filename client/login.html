@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -352,6 +351,27 @@
     display: block;
   }
 
+  .forgot-link {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .forgot-link:hover {
+    color: var(--oxblood);
+  }
+
+  .forgot-intro {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0 0 20px;
+    line-height: 1.6;
+  }
+
   /* ── FOOTER ─────────────────────────────────────────────────────── */
 
   footer {
@@ -515,6 +535,47 @@
 
   </button>
 
+  <a href="#" class="forgot-link" id="forgotPasswordLink">
+    Forgot your password?
+  </a>
+
+</form>
+
+
+<!-- FORGOT PASSWORD -->
+
+<form
+  id="form-forgot"
+  class="form">
+
+  <p class="forgot-intro">
+    Enter the email on your account and we'll send you a link to reset your password.
+  </p>
+
+  <label for="fp-email">
+    Email
+  </label>
+
+  <input
+    type="email"
+    id="fp-email"
+    required
+    autocomplete="email"
+  />
+
+  <button
+    type="submit"
+    class="submit-btn"
+    id="forgotBtn">
+
+    Send Reset Link
+
+  </button>
+
+  <a href="#" class="forgot-link" id="backToSignInLink">
+    ← Back to Sign In
+  </a>
+
 </form>
 
 
@@ -619,20 +680,6 @@ const SUPABASE_URL =
 const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 
-
-/*
- * IMPORTANT:
- *
- * Do NOT call this variable "supabase".
- *
- * The Supabase CDN already exposes window.supabase.
- * Using "const supabase" here caused:
- *
- * Identifier 'supabase' has already been declared
- *
- * which prevented the rest of this page's JavaScript
- * from running.
- */
 
 const supabaseClient =
   window.supabase.createClient(
@@ -819,6 +866,189 @@ async function linkClient(
   }
 
 }
+
+
+/* ============================================================
+   FORGOT PASSWORD — SHOW / HIDE
+   ============================================================ */
+
+document
+  .getElementById('forgotPasswordLink')
+  .addEventListener('click', event => {
+
+    event.preventDefault();
+
+    document
+      .querySelectorAll('.tab')
+      .forEach(t => t.classList.remove('active'));
+
+    document
+      .querySelectorAll('.form')
+      .forEach(form => form.classList.remove('active'));
+
+    document
+      .getElementById('form-forgot')
+      .classList.add('active');
+
+    statusEl.className = 'status';
+
+  });
+
+
+document
+  .getElementById('backToSignInLink')
+  .addEventListener('click', event => {
+
+    event.preventDefault();
+
+    document
+      .querySelectorAll('.form')
+      .forEach(form => form.classList.remove('active'));
+
+    document
+      .querySelector('.tab[data-tab="signin"]')
+      .classList.add('active');
+
+    document
+      .getElementById('form-signin')
+      .classList.add('active');
+
+    statusEl.className = 'status';
+
+  });
+
+
+/* ============================================================
+   FORGOT PASSWORD — SEND RESET LINK
+   ============================================================ */
+
+/*
+ * IMPORTANT (one-time setup in the Supabase dashboard):
+ *
+ * Supabase will only redirect to URLs that are explicitly
+ * allow-listed under Authentication -> URL Configuration ->
+ * Redirect URLs. Add:
+ *
+ *   https://www.greywrightpublishing.com/client/reset-password.html
+ *
+ * (and the equivalent for any staging/preview domain you use)
+ * or this reset link will silently fail to redirect correctly
+ * even though the email itself sends fine.
+ */
+
+document
+  .getElementById('form-forgot')
+  .addEventListener(
+    'submit',
+    async event => {
+
+      event.preventDefault();
+
+
+      const btn =
+        document.getElementById(
+          'forgotBtn'
+        );
+
+
+      btn.disabled = true;
+
+
+      const originalText =
+        btn.textContent;
+
+
+      btn.textContent =
+        'Sending…';
+
+
+      const email =
+        document
+          .getElementById('fp-email')
+          .value
+          .trim()
+          .toLowerCase();
+
+
+      try {
+
+        const {
+          error
+        } =
+          await supabaseClient.auth
+            .resetPasswordForEmail(
+              email,
+              {
+                redirectTo:
+                  `${window.location.origin}/client/reset-password.html`
+              }
+            );
+
+
+        if (error) {
+
+          console.error(
+            '[login] Reset request error:',
+            error
+          );
+
+
+          showStatus(
+            error.message ||
+            'Could not send a reset link. Please try again.',
+            'error'
+          );
+
+
+          return;
+
+        }
+
+
+        /*
+         * Supabase intentionally does not reveal whether an
+         * account exists for this email (to avoid leaking who
+         * has an account), so this same message is shown either
+         * way. That's expected behaviour, not a bug.
+         */
+
+        showStatus(
+          'If an account exists for that email, a reset link is on its way. Check your inbox.',
+          'success'
+        );
+
+
+        document
+          .getElementById('fp-email')
+          .value = '';
+
+
+      } catch (err) {
+
+        console.error(
+          '[login] Reset request crash:',
+          err
+        );
+
+
+        showStatus(
+          err.message ||
+          'Could not send a reset link. Please try again.',
+          'error'
+        );
+
+
+      } finally {
+
+        btn.disabled = false;
+
+        btn.textContent =
+          originalText;
+
+      }
+
+    }
+  );
 
 
 /* ============================================================

@@ -26,655 +26,312 @@
   --oxblood-deep:#4F1219;
   --brass:#9C7B2E;
   --brass-soft:rgba(156,123,46,.12);
-  --line:rgba(27,24,20,.14);
+  --line:rgba(27,24,20,.15);
   --success:#3C5E45;
   --info:#2980b9;
   --display:'Cormorant Garamond',Georgia,serif;
   --body:'Spectral',Georgia,serif;
-  --sidebar-w:264px;
-  --topbar-h:72px;
+  --maxw:1180px;
+  --contentw:820px;
 }
 
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
-  margin:0;
-  min-height:100vh;
-  background:var(--paper);
-  color:var(--ink);
-  font-family:var(--body);
-  font-size:15.5px;
-  line-height:1.6;
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:16.5px;line-height:1.65;
+  position:relative;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 a{color:inherit;text-decoration:none}
-button,input,textarea,select{font:inherit}
+button,input,textarea{font:inherit}
 button{cursor:pointer}
-::-webkit-scrollbar{width:8px;height:8px}
-::-webkit-scrollbar-thumb{background:var(--paper-deep);border-radius:4px}
 
-/* ============================================================
-   TOPBAR
-   ============================================================ */
-
-.topbar{
-  position:sticky;top:0;z-index:200;
-  height:var(--topbar-h);
-  background:rgba(244,238,223,.94);
-  backdrop-filter:blur(10px);
+/* ============================================================ HEADER */
+header.site-header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(244,238,223,.93);backdrop-filter:blur(8px);
   border-bottom:1px solid var(--line);
+}
+.nav-row{
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 28px;
+  padding:18px 32px;max-width:var(--maxw);margin:0 auto;gap:12px;
 }
 .brandmark{
-  font-family:var(--display);font-size:21px;font-weight:700;
+  font-family:var(--display);font-size:22px;font-weight:700;
   display:flex;align-items:baseline;gap:8px;white-space:nowrap;
 }
-.brandmark em{font-style:italic;font-weight:600;color:var(--oxblood)}
-.topbar-right{display:flex;align-items:center;gap:14px}
-.sidebar-toggle{
-  display:none;
-  width:38px;height:38px;align-items:center;justify-content:center;
-  background:none;border:1px solid var(--line);border-radius:2px;
-}
-.sidebar-toggle svg{width:18px;height:18px}
-.bell-btn{
-  position:relative;
-  width:38px;height:38px;
-  display:flex;align-items:center;justify-content:center;
-  background:none;border:1px solid var(--line);border-radius:2px;
-  color:var(--ink-soft);
-}
-.bell-btn:hover{border-color:var(--oxblood);color:var(--oxblood)}
-.bell-btn svg{width:17px;height:17px}
-.badge-dot{
-  position:absolute;top:-6px;right:-6px;
-  min-width:18px;height:18px;padding:0 4px;border-radius:9px;
-  background:var(--oxblood);color:var(--paper);
-  font-size:10px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  border:2px solid var(--paper);
-}
-.badge-dot.hidden{display:none}
+.brandmark em{font-style:italic;color:var(--oxblood);font-weight:600}
 .signout-btn{
   border:1px solid var(--ink);background:transparent;color:var(--ink);
-  padding:9px 18px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;
-  border-radius:2px;transition:background .2s ease,color .2s ease;
+  padding:10px 20px;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+  border-radius:2px;transition:background .2s,color .2s;
 }
 .signout-btn:hover{background:var(--ink);color:var(--paper)}
 
-/* ============================================================
-   APP SHELL
-   ============================================================ */
-
-.app-shell{display:flex;align-items:flex-start;min-height:calc(100vh - var(--topbar-h))}
-
-/* ── sidebar ── */
-.sidebar{
-  width:var(--sidebar-w);flex:0 0 auto;
-  position:sticky;top:var(--topbar-h);
-  height:calc(100vh - var(--topbar-h));
-  overflow-y:auto;
-  border-right:1px solid var(--line);
-  padding:30px 22px;
-  display:flex;flex-direction:column;
-}
-.sidebar-crest{
-  width:88px;height:88px;margin:0 auto 12px;
-  border-radius:50%;border:1px solid var(--brass);
-  padding:6px;display:flex;align-items:center;justify-content:center;
-}
-.sidebar-crest img{width:100%;height:100%;object-fit:contain;border-radius:50%}
-.sidebar-caption{
-  text-align:center;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--brass);margin-bottom:30px;
-}
-.side-nav{display:flex;flex-direction:column;gap:2px;margin-bottom:26px}
-.side-link{
-  display:flex;align-items:center;gap:12px;
-  padding:11px 12px;border-radius:2px;
-  border-left:2px solid transparent;
-  color:var(--ink-soft);font-size:14.5px;
-  transition:background .15s ease,color .15s ease;
-}
-.side-link svg{width:17px;height:17px;flex:0 0 auto}
-.side-link:hover{background:var(--paper-deep);color:var(--ink)}
-.side-link.active{
-  background:var(--paper-deep);color:var(--oxblood);
-  border-left-color:var(--oxblood);font-weight:600;
-}
-.side-link .lbl{flex:1;min-width:0}
-.side-badge{
-  min-width:18px;height:18px;padding:0 5px;border-radius:9px;
-  background:var(--oxblood);color:var(--paper);
-  font-size:10px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-}
-.side-badge.hidden{display:none}
-
-.sidebar-support{
-  margin-top:auto;
-  border:1px solid var(--line);padding:20px;
-  background:var(--paper-deep);
-}
-.sidebar-support svg{width:20px;height:20px;color:var(--brass);margin-bottom:10px}
-.sidebar-support h4{
-  font-family:var(--display);font-size:17px;margin:0 0 6px;
-}
-.sidebar-support p{font-size:12.5px;color:var(--ink-soft);margin:0 0 12px;line-height:1.55}
-.sidebar-support button{
-  background:none;border:none;padding:0;color:var(--oxblood);
-  font-size:12.5px;font-weight:600;letter-spacing:.03em;
-  display:inline-flex;align-items:center;gap:6px;
-}
-.sidebar-support button svg{width:12px;height:12px;margin:0}
-
-.sidebar-backdrop{
-  display:none;position:fixed;inset:0;z-index:150;
-  background:rgba(27,24,20,.45);
-}
-
-/* ── main content ── */
-.content{flex:1;min-width:0;padding:40px 44px 90px}
-.content-inner{max-width:1180px;margin:0 auto}
-
-#loading,#no-projects{text-align:center;padding:90px 24px;color:var(--ink-soft)}
-.spin{
-  width:28px;height:28px;margin:0 auto 16px;
-  border:2px solid var(--paper-deep);border-top-color:var(--oxblood);
-  border-radius:50%;animation:sp 0.85s linear infinite;
-}
-@keyframes sp{to{transform:rotate(360deg)}}
-#no-projects{display:none}
-
+/* ============================================================ ORNAMENTS */
 .eyebrow{
   font-family:var(--display);font-style:italic;font-weight:600;
-  font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);
-  margin-bottom:10px;
+  font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--oxblood);
+  display:flex;align-items:center;gap:12px;margin-bottom:14px;
 }
+.eyebrow .stroke{flex:0 0 32px;height:1px;background:var(--brass)}
+.divider{display:flex;align-items:center;gap:16px;margin:36px 0}
+.divider .line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--line) 30%,var(--line) 70%,transparent)}
+.divider svg{width:20px;height:20px;color:var(--brass);flex:0 0 auto}
 
-/* ── dashboard hero ── */
-.dash-hero{
-  display:flex;justify-content:space-between;align-items:flex-start;gap:30px;
-  margin-bottom:36px;flex-wrap:wrap;
-}
-.dash-hero h1{
-  font-family:var(--display);font-size:clamp(30px,4vw,42px);margin:0;line-height:1.1;
-}
-.dash-hero h1 em{font-style:italic;color:var(--oxblood)}
-.dash-hero .sub{color:var(--ink-soft);font-size:15px;margin-top:8px}
-.quote-card{
-  flex:0 0 auto;max-width:300px;border:1px solid var(--line);
-  background:var(--white);padding:20px 22px;position:relative;
-}
-.quote-card svg{width:22px;height:16px;color:var(--brass);margin-bottom:10px}
-.quote-card p{font-family:var(--display);font-style:italic;font-size:16px;margin:0;line-height:1.4}
-.quote-card cite{display:block;margin-top:10px;font-size:11.5px;color:var(--ink-faint);font-style:normal}
+/* ============================================================ MAIN WRAP */
+.wrap{max-width:var(--contentw);margin:0 auto;padding:56px 24px 100px;position:relative;z-index:1}
+#loading,#no-projects{text-align:center;padding:100px 24px;color:var(--ink-soft);font-family:var(--display);font-style:italic;font-size:19px}
+#no-projects{display:none}
 
-/* ── project selector (multi-project tabs) ── */
-.project-select-row{margin-bottom:24px}
-.project-select-row select{
-  border:1px solid var(--line);background:var(--white);color:var(--ink);
-  padding:9px 12px;font-size:13.5px;border-radius:2px;
-}
+/* reveal-on-scroll, matching the main site */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+.reveal.is-visible{opacity:1;transform:translateY(0)}
 
-/* ── current project card ── */
-.current-card{
-  position:relative;overflow:hidden;
-  background:var(--white);border:1px solid var(--line);
-  padding:36px 40px;margin-bottom:28px;
+/* ============================================================ HERO */
+.portal-hero{margin-bottom:8px}
+.portal-hero h1{font-family:var(--display);font-size:clamp(34px,5vw,50px);line-height:1.1;margin:0}
+.portal-hero h1 em{font-style:italic;color:var(--oxblood)}
+.portal-hero p{color:var(--ink-soft);font-size:16px;margin-top:14px;max-width:520px}
+
+/* ============================================================ FRAMED PROJECT CARD */
+.framed{
+  position:relative;background:var(--white);border:1px solid var(--line);padding:42px 46px;
 }
-.cc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
-.cc-title{font-family:var(--display);font-size:28px;letter-spacing:.02em;text-transform:uppercase;margin:0 0 10px}
-.cc-word-pill{
-  display:inline-block;font-size:12px;color:var(--ink-soft);
-  background:var(--paper-deep);padding:4px 12px;border-radius:20px;
-}
+.framed::before,.framed::after{content:"";position:absolute;width:18px;height:18px;border:1px solid var(--brass)}
+.framed::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.framed::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+
+.proj-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.proj-title{font-family:var(--display);font-size:clamp(26px,3.4vw,34px);line-height:1.15;margin:6px 0 6px}
+.proj-meta{font-size:14px;color:var(--ink-faint);font-style:italic}
 .status-pill{
-  font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  padding:6px 14px;border-radius:20px;white-space:nowrap;
-  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:6px 15px;border-radius:20px;white-space:nowrap;
 }
 .status-pill.completed{background:rgba(60,94,69,.1);color:var(--success);border:1px solid rgba(60,94,69,.25)}
 .status-pill.in_progress{background:var(--brass-soft);color:var(--brass);border:1px solid rgba(156,123,46,.3)}
 .status-pill.review{background:rgba(41,128,185,.1);color:var(--info);border:1px solid rgba(41,128,185,.25)}
 .status-pill.pending{background:var(--paper-deep);color:var(--ink-faint);border:1px solid var(--line)}
 
-.cc-stats{display:flex;gap:44px;margin:26px 0;flex-wrap:wrap}
-.cc-stat-label{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:4px}
-.cc-stat-value{font-family:var(--display);font-size:22px;font-weight:700}
+.stat-row{display:flex;gap:40px;margin:30px 0 6px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--line)}
+.stat-label{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:4px}
+.stat-value{font-family:var(--display);font-size:24px;font-weight:700}
 
-.cc-progress-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.cc-progress-pct{font-family:var(--display);font-weight:700;font-size:15px;color:var(--oxblood)}
-.progress-track{height:5px;background:var(--paper-deep);overflow:hidden}
-.progress-fill{height:100%;background:var(--oxblood);transition:width .5s ease}
+.progress-area{margin-top:26px}
+.progress-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.progress-row span:first-child{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}
+.progress-pct{font-family:var(--display);font-weight:700;color:var(--oxblood)}
+.progress-track{height:4px;background:var(--paper-deep);overflow:hidden}
+.progress-fill{height:100%;background:var(--oxblood);transition:width .6s ease}
+.progress-note{margin-top:14px;font-size:14px;color:var(--ink-soft);line-height:1.6}
 
-.cc-message{
-  margin-top:22px;padding:16px 18px;border:1px solid var(--line);
-  background:var(--paper-deep);display:flex;gap:12px;align-items:flex-start;
+/* ============================================================ SERVICE DESCRIPTION BLOCK */
+.service-block{margin-top:70px}
+.service-hook{
+  font-family:var(--display);font-style:italic;font-size:24px;line-height:1.4;color:var(--oxblood);
+  margin:6px 0 20px;
 }
-.cc-message svg{width:18px;height:18px;color:var(--brass);flex:0 0 auto;margin-top:2px}
-.cc-message p{margin:0;font-size:13.5px;color:var(--ink-soft);line-height:1.55}
-.cc-message strong{color:var(--ink);font-weight:600}
-
-.cc-illustration{
-  position:absolute;right:-10px;bottom:-10px;width:150px;height:150px;
-  color:var(--paper-deep);opacity:.9;pointer-events:none;
+.service-lede{font-size:16px;color:var(--ink-soft);line-height:1.75;max-width:680px}
+.service-cols{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:34px}
+.service-col h4{
+  font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);
+  font-family:var(--display);font-style:italic;font-weight:600;margin-bottom:14px;
 }
-@media(max-width:760px){.cc-illustration{display:none}}
-
-/* ── two-col preview grid ── */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-bottom:22px}
-.panel{background:var(--white);border:1px solid var(--line);padding:26px}
-.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px}
-.panel-head h3{font-family:var(--display);font-size:21px;margin:0}
-.view-all{
-  font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--oxblood);
-  display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
-  background:none;border:none;
+.service-list{list-style:none;padding:0;margin:0;display:grid;gap:11px}
+.service-list li{font-size:14.5px;color:var(--ink);line-height:1.5;padding-left:20px;position:relative}
+.service-list li::before{content:"—";position:absolute;left:0;color:var(--oxblood)}
+.service-bestfor{display:flex;flex-wrap:wrap;gap:8px;margin-top:30px}
+.service-bestfor span{
+  font-size:12.5px;color:var(--ink-soft);background:var(--paper-deep);
+  border:1px solid var(--line);border-radius:30px;padding:6px 15px;
 }
-.view-all svg{width:11px;height:11px}
-.view-all:hover{color:var(--oxblood-deep)}
-.panel .empty-note{font-size:13px;color:var(--ink-faint);padding:10px 0;font-style:italic}
+.service-outcome{
+  margin-top:32px;padding:22px 26px;background:var(--paper-deep);border-left:3px solid var(--oxblood);
+}
+.service-outcome p{font-family:var(--display);font-style:italic;font-size:18px;color:var(--ink);line-height:1.5;margin:0}
 
-/* ── milestone rows (preview + full) ── */
-.ms-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
-.ms-row:first-child{border-top:none}
-.ms-left{display:flex;align-items:center;gap:13px;min-width:0}
+/* ============================================================ SECTION HEADS */
+.section{margin-top:76px}
+.section h2{font-family:var(--display);font-size:30px;margin:0 0 8px}
+.section .sub{color:var(--ink-soft);font-size:14.5px;margin:0 0 28px;max-width:560px}
+
+/* ============================================================ MILESTONES — journey ledger */
+.milestones-list{position:relative}
+.milestones-list::before{
+  content:"";position:absolute;top:28px;bottom:28px;left:16px;width:1px;background:var(--line);z-index:0;
+}
+.milestone{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0}
+.ms-left{display:flex;align-items:center;gap:18px;min-width:0}
 .ms-icon{
-  width:30px;height:30px;border-radius:50%;flex:0 0 auto;
-  display:flex;align-items:center;justify-content:center;background:var(--paper)
+  width:32px;height:32px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-style:italic;font-weight:600;font-size:13.5px;background:var(--paper);
 }
-.ms-icon svg{width:14px;height:14px}
-.ms-icon.paid{background:var(--oxblood);color:var(--paper)}
+.ms-icon.paid{background:var(--oxblood);border:1px solid var(--oxblood);color:var(--paper);font-style:normal}
 .ms-icon.pending{border:1.5px solid var(--brass);color:var(--brass)}
 .ms-icon.locked{border:1.5px solid var(--line);color:var(--ink-faint)}
-.ms-name{font-weight:600;font-size:14.5px;text-transform:uppercase;letter-spacing:.03em}
-.ms-amount{font-size:12.5px;color:var(--ink-soft);margin-top:1px}
+.ms-name{font-family:var(--display);font-size:18px;font-weight:600}
+.ms-amount{font-size:13px;color:var(--ink-soft);margin-top:1px}
 .ms-right{text-align:right;flex:0 0 auto}
-.ms-status-label{font-size:11px;color:var(--success);text-transform:uppercase;letter-spacing:.05em;display:block;margin-top:2px}
-.ms-status-label.locked{color:var(--ink-faint)}
 .pay-btn{
   border:1px solid var(--oxblood);background:var(--oxblood);color:var(--paper);
-  padding:9px 18px;font-size:12px;letter-spacing:.03em;border-radius:2px;
+  padding:10px 20px;font-size:12.5px;letter-spacing:.03em;border-radius:2px;
 }
 .pay-btn:hover:not(:disabled){background:var(--oxblood-deep)}
 .pay-btn:disabled{opacity:.55;cursor:default}
+.ms-status-label{font-size:12px;font-weight:600}
+.ms-status-label.paid-label{color:var(--success)}
+.ms-status-label.locked-label{color:var(--ink-faint)}
 
-/* ── files ── */
-.file-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+/* ============================================================ FILES */
+.file-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
 .file-row:first-child{border-top:none}
-.file-info{display:flex;align-items:center;gap:13px;min-width:0}
-.file-icon{
-  width:36px;height:42px;border:1px solid var(--line);background:var(--paper-deep);
-  display:flex;align-items:center;justify-content:center;flex:0 0 auto;color:var(--oxblood)
-}
-.file-icon svg{width:16px;height:16px}
-.file-name{font-weight:600;font-size:14px;overflow-wrap:anywhere}
-.file-meta{font-size:11.5px;color:var(--ink-faint);margin-top:2px}
-.file-badge{
-  font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
-  margin-left:8px;padding:2px 8px;border-radius:10px;
-}
+.file-name{font-weight:600;font-size:15px;overflow-wrap:anywhere}
+.file-meta{font-size:12px;color:var(--ink-faint);margin-top:2px}
+.file-badge{font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-left:8px;padding:2px 9px;border-radius:10px}
 .file-badge.deliverable{background:rgba(60,94,69,.1);color:var(--success)}
 .file-badge.manuscript{background:var(--brass-soft);color:var(--brass)}
-.icon-btn{
-  width:36px;height:36px;flex:0 0 auto;border:1px solid var(--line);background:none;
-  display:flex;align-items:center;justify-content:center;border-radius:2px;color:var(--ink-soft);
+.download-btn{
+  border:1px solid var(--line);background:none;color:var(--ink-soft);padding:8px 16px;
+  font-size:12px;letter-spacing:.03em;border-radius:2px;white-space:nowrap;
 }
-.icon-btn:hover{border-color:var(--oxblood);color:var(--oxblood)}
-.icon-btn svg{width:15px;height:15px}
-.upload-row-panel{
-  display:flex;align-items:center;justify-content:space-between;gap:14px;
-  padding:14px 0;border-top:1px dashed rgba(156,123,46,.4);margin-top:6px;
-}
-.upload-row-panel .file-info{color:var(--ink-soft)}
-.upload-row-panel svg{width:16px;height:16px;color:var(--brass)}
+.download-btn:hover{border-color:var(--oxblood);color:var(--oxblood)}
+.no-files{font-size:14px;color:var(--ink-faint);font-style:italic;padding:10px 0}
+.upload-row{display:flex;gap:12px;align-items:center;margin-top:20px;flex-wrap:wrap;padding-top:18px;border-top:1px dashed rgba(156,123,46,.4)}
+.upload-row input[type=file]{font-size:13px;flex:1;min-width:200px;color:var(--ink-soft)}
 .upload-btn{
-  background:var(--oxblood);color:var(--paper);border:none;
-  padding:9px 16px;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;border-radius:2px;
-  white-space:nowrap;
+  background:var(--ink);color:var(--paper);border:none;padding:10px 20px;
+  font-size:12px;letter-spacing:.04em;text-transform:uppercase;border-radius:2px;
 }
 .upload-btn:disabled{opacity:.6}
-.upload-hint{font-size:11px;color:var(--ink-faint);margin-top:1px}
-input[type=file].hidden-file-input{max-width:170px;font-size:11px}
 
-/* ── updates ── */
-.upd-row{padding:14px 0;border-top:1px solid var(--line);display:flex;gap:14px;align-items:flex-start}
+/* ============================================================ CORRESPONDENCE (chat) */
+.corr-box{border:1px solid var(--line);background:var(--white)}
+.corr-header{
+  background:var(--ink);color:var(--paper);padding:18px 24px;
+  display:flex;align-items:center;gap:14px;
+}
+.corr-header img{width:34px;height:34px;border-radius:50%;flex:0 0 auto}
+.corr-header-text{flex:1;min-width:0}
+.corr-header-title{font-family:var(--display);font-style:italic;font-size:19px}
+.corr-status{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:rgba(244,238,223,.6)}
+.corr-status.connected{color:var(--brass)}
+.corr-messages{height:420px;overflow-y:auto;padding:26px;background:var(--paper-deep)}
+.corr-empty{height:100%;min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink-faint);font-family:var(--display);font-style:italic;font-size:15px;padding:30px}
+.corr-msg{display:flex;gap:12px;margin-bottom:20px;align-items:flex-start}
+.corr-msg.client{flex-direction:row-reverse}
+.corr-avatar{width:28px;height:28px;border-radius:50%;flex:0 0 auto;margin-top:2px}
+.corr-avatar.text-avatar{
+  background:var(--brass);color:var(--paper);display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-size:12px;font-weight:700;
+}
+.corr-bubble{max-width:70%;padding:14px 18px;font-size:14.5px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}
+.corr-msg.client .corr-bubble{background:var(--oxblood);color:var(--paper)}
+.corr-msg.admin .corr-bubble{background:var(--white);color:var(--ink);border:1px solid var(--line)}
+.corr-sender{font-family:var(--display);font-style:italic;font-size:11.5px;margin-bottom:4px;opacity:.75}
+.corr-time{font-size:10px;margin-top:6px;opacity:.6;text-align:right}
+.corr-compose{border-top:1px solid var(--line);padding:16px;background:var(--white);display:flex;gap:10px;align-items:flex-end}
+.corr-input{
+  flex:1;min-height:46px;max-height:130px;resize:vertical;border:1px solid var(--line);
+  padding:12px 14px;background:var(--white);outline:none;font-size:14.5px;
+}
+.corr-input:focus{border-color:var(--brass)}
+.corr-send{
+  background:var(--oxblood);color:var(--paper);border:none;padding:12px 22px;
+  font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;border-radius:2px;
+}
+.corr-send:disabled{opacity:.55}
+
+/* ============================================================ UPDATES */
+.upd-row{padding:18px 0;border-top:1px solid var(--line);display:flex;gap:16px;align-items:flex-start}
 .upd-row:first-child{border-top:none}
-.upd-dot{width:8px;height:8px;border-radius:50%;background:var(--oxblood);margin-top:6px;flex:0 0 auto}
-.upd-body{flex:1;min-width:0}
-.upd-title-row{display:flex;justify-content:space-between;gap:12px}
-.upd-msg{font-size:13.5px;color:var(--ink-soft);margin-top:2px}
-.upd-date{font-size:11px;color:var(--ink-faint);white-space:nowrap}
+.upd-dot{width:8px;height:8px;border-radius:50%;background:var(--oxblood);margin-top:7px;flex:0 0 auto}
+.upd-date{font-family:var(--display);font-style:italic;font-size:12.5px;color:var(--brass);margin-bottom:3px}
+.upd-msg{font-size:15px;color:var(--ink-soft)}
 
-/* ── messages preview (inbox-style rows) ── */
-.msg-prev-row{display:flex;gap:12px;padding:13px 0;border-top:1px solid var(--line)}
-.msg-prev-row:first-child{border-top:none}
-.msg-avatar{
-  width:34px;height:34px;border-radius:50%;flex:0 0 auto;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:700;color:var(--paper);
-}
-.msg-avatar.them{background:var(--oxblood)}
-.msg-avatar.me{background:var(--brass)}
-.msg-prev-body{flex:1;min-width:0}
-.msg-prev-top{display:flex;justify-content:space-between;gap:10px}
-.msg-prev-name{font-weight:600;font-size:13.5px}
-.msg-prev-date{font-size:11px;color:var(--ink-faint);white-space:nowrap}
-.msg-prev-snippet{font-size:13px;color:var(--ink-soft);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.msg-prev-status{font-size:10.5px;color:var(--ink-faint);margin-top:3px}
-.open-msgs-btn{
-  display:block;width:100%;text-align:center;margin-top:14px;
-  border:1px solid var(--ink);background:transparent;color:var(--ink);
-  padding:10px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;border-radius:2px;
-}
-.open-msgs-btn:hover{background:var(--ink);color:var(--paper)}
+/* ============================================================ CLOSING */
+.closing{margin-top:90px;padding:56px 20px;text-align:center;border-top:1px solid var(--line)}
+.closing-mark{width:56px;height:56px;margin:0 auto 18px;opacity:.9}
+.closing h2{font-family:var(--display);font-size:32px;font-weight:500;margin:0}
+.closing p{max-width:540px;margin:16px auto 0;color:var(--ink-soft);font-size:14.5px;line-height:1.7}
+.closing-sig{margin-top:18px;color:var(--oxblood);font-style:italic;font-family:var(--display);font-size:17px}
 
-/* ── full chat (Messages tab) ── */
-.chat-box{border:1px solid var(--line);background:var(--white)}
-.chat-header{background:var(--ink);color:var(--paper);padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
-.chat-header-title{font-family:var(--display);font-style:italic;font-size:19px}
-.chat-status{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:rgba(244,238,223,.6)}
-.chat-status.connected{color:var(--brass)}
-.chat-messages{height:440px;overflow-y:auto;padding:22px;background:var(--paper-deep)}
-.chat-empty{height:100%;min-height:200px;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--ink-faint);font-style:italic;padding:30px}
-.chat-message{display:flex;margin-bottom:14px}
-.chat-message.client{justify-content:flex-end}
-.chat-message.admin{justify-content:flex-start}
-.chat-bubble{max-width:72%;padding:11px 15px;font-size:13.5px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
-.chat-message.client .chat-bubble{background:var(--oxblood);color:var(--paper)}
-.chat-message.admin .chat-bubble{background:var(--white);color:var(--ink);border:1px solid var(--line)}
-.chat-sender{font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;opacity:.7}
-.chat-time{font-size:10px;margin-top:5px;opacity:.6;text-align:right}
-.chat-compose{border-top:1px solid var(--line);padding:14px;background:var(--white);display:flex;gap:10px;align-items:flex-end}
-.chat-input{flex:1;min-height:44px;max-height:130px;resize:vertical;border:1px solid var(--line);padding:11px 13px;background:var(--white);outline:none;font-size:13.5px}
-.chat-input:focus{border-color:var(--brass)}
-.chat-send{background:var(--oxblood);color:var(--paper);border:none;padding:11px 20px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;border-radius:2px}
-.chat-send:disabled{opacity:.55}
-
-/* ── profile / support ── */
-.simple-card{background:var(--white);border:1px solid var(--line);padding:32px;max-width:520px}
-.profile-row{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid var(--line)}
-.profile-row:first-child{border-top:none}
-.profile-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
-.profile-value{font-family:var(--display);font-size:16px}
-.support-email{
-  display:inline-flex;align-items:center;gap:8px;margin-top:16px;
-  color:var(--oxblood);font-weight:600;font-size:14.5px;
-}
-
-/* ── projects tab grid ── */
-.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
-.proj-card{background:var(--white);border:1px solid var(--line);padding:24px;cursor:pointer;transition:border-color .15s ease}
-.proj-card:hover{border-color:var(--oxblood)}
-.proj-card .eyebrow{margin-bottom:8px}
-.proj-card h4{font-family:var(--display);font-size:19px;margin:0 0 10px;line-height:1.2}
-.proj-card .progress-track{margin-top:14px}
-
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-
-.section-heading{margin-bottom:22px}
-.section-heading h2{font-family:var(--display);font-size:28px;margin:0}
-.section-heading p{color:var(--ink-soft);font-size:13.5px;margin:6px 0 0}
+footer{background:var(--ink);color:rgba(244,238,223,.7);padding:34px 0;position:relative;z-index:1}
+.footer-inner{max-width:var(--maxw);margin:auto;display:flex;justify-content:space-between;gap:14px;font-size:12px;flex-wrap:wrap;padding:0 32px}
+.footer-inner span:last-child{color:rgba(244,238,223,.42)}
 
 .toast{
-  position:fixed;bottom:26px;left:50%;transform:translateX(-50%);
-  background:var(--ink);color:var(--paper);padding:13px 22px;border-radius:2px;
-  font-size:13.5px;display:none;z-index:300;max-width:calc(100vw - 30px);text-align:center;
+  position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--paper);
+  padding:13px 24px;border-radius:2px;font-family:var(--display);font-style:italic;font-size:15px;
+  display:none;z-index:200;max-width:calc(100vw - 30px);text-align:center;
 }
 .toast.error{background:var(--oxblood)}
 .toast.visible{display:block}
 
-footer{background:var(--ink);color:rgba(244,238,223,.7);padding:26px 28px}
-.footer-inner{max-width:1180px;margin:auto;display:flex;justify-content:space-between;gap:12px;font-size:11.5px;flex-wrap:wrap}
-.footer-inner span:last-child{color:rgba(244,238,223,.42)}
+/* project separator when a client has more than one */
+.project-sep{margin:100px 0 0;padding-top:60px;border-top:2px solid var(--line)}
 
-@media(max-width:960px){
-  .sidebar-toggle{display:flex}
-  .sidebar{
-    position:fixed;top:0;left:0;height:100vh;z-index:200;
-    transform:translateX(-100%);transition:transform .25s ease;
-    background:var(--paper);padding-top:calc(var(--topbar-h) + 20px);
-  }
-  .sidebar.open{transform:translateX(0)}
-  .sidebar-backdrop.open{display:block}
-  .content{padding:26px 20px 70px}
-  .grid2{grid-template-columns:1fr}
-  .dash-hero{flex-direction:column}
-  .quote-card{max-width:none}
-  .cc-stats{gap:28px}
+@media(max-width:700px){
+  .framed{padding:30px 24px}
+  .service-cols{grid-template-columns:1fr}
+  .stat-row{gap:26px}
+  .corr-messages{height:360px}
+  .corr-bubble{max-width:85%}
+  .corr-compose{flex-direction:column;align-items:stretch}
+  .corr-send{width:100%}
 }
 </style>
 </head>
 
 <body>
 
-<header class="topbar">
-  <div style="display:flex;align-items:center;gap:14px;">
-    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Open menu">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-    </button>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="quatrefoil" viewBox="0 0 40 40">
+    <g fill="none" stroke="currentColor" stroke-width="1.1">
+      <path d="M20,6 C24,11 24,16 20,18 C16,16 16,11 20,6 Z"/>
+      <path d="M20,34 C16,29 16,24 20,22 C24,24 24,29 20,34 Z"/>
+      <path d="M6,20 C11,16 16,16 18,20 C16,24 11,24 6,20 Z"/>
+      <path d="M34,20 C29,24 24,24 22,20 C24,16 29,16 34,20 Z"/>
+      <circle cx="20" cy="20" r="2" fill="currentColor" stroke="none"/>
+    </g>
+  </symbol>
+</svg>
+
+<header class="site-header">
+  <div class="nav-row">
     <a href="../index.html#top" class="brandmark">Greywright <em>Client Portal</em></a>
-  </div>
-  <div class="topbar-right">
-    <button class="bell-btn" id="bellBtn" aria-label="Messages">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span class="badge-dot hidden" id="bellBadge">0</span>
-    </button>
     <button class="signout-btn" id="signOutBtn">Sign Out</button>
   </div>
 </header>
 
-<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+<div class="wrap">
 
-<div class="app-shell">
+  <div id="loading">Preparing your private publishing room…</div>
+  <div id="no-projects">
+    <p style="font-size:24px;">Your publishing room is ready.</p>
+    <p style="font-size:15px;font-style:normal;">No projects are currently connected to this account. If you believe this is an error, please contact the Greywright team.</p>
+  </div>
 
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-crest">
-      <img src="../images/img-04.png" alt="Greywright Publishing House crest">
+  <div id="app-body" style="display:none;">
+    <section class="portal-hero reveal">
+      <div class="eyebrow"><span class="stroke"></span>Greywright Publishing House · Private Client Area</div>
+      <h1 id="greetingText">Welcome back</h1>
+      <p>A private space for your manuscript, your editorial progress, your files, and your conversations with the Greywright team.</p>
+    </section>
+
+    <div id="projectsContainer"></div>
+
+    <div class="closing reveal">
+      <img src="https://www.greywrightpublishing.com/images/wax-seal.png" class="closing-mark" alt="">
+      <h2>Your manuscript deserves more than a transaction.</h2>
+      <p>Thank you for entrusting your work to Greywright Publishing House. We are committed to thoughtful editorial attention, clear communication, and a publishing experience worthy of your book.</p>
+      <div class="closing-sig">— Greywright Publishing House</div>
     </div>
-    <div class="sidebar-caption">Private Client Portal</div>
+  </div>
 
-    <nav class="side-nav" id="sideNav">
-      <a href="#" class="side-link" data-tab="dashboard">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
-        <span class="lbl">Dashboard</span>
-      </a>
-      <a href="#" class="side-link" data-tab="projects">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>
-        <span class="lbl">Projects</span>
-      </a>
-      <a href="#" class="side-link" data-tab="payments">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-        <span class="lbl">Payments</span>
-      </a>
-      <a href="#" class="side-link" data-tab="messages">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <span class="lbl">Messages</span>
-        <span class="side-badge hidden" id="sideBadgeMessages">0</span>
-      </a>
-      <a href="#" class="side-link" data-tab="files">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
-        <span class="lbl">Files</span>
-      </a>
-      <a href="#" class="side-link" data-tab="updates">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12a9 9 0 1 1-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>
-        <span class="lbl">Updates</span>
-      </a>
-      <a href="#" class="side-link" data-tab="profile">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4.5 5-6.5 8-6.5s6.5 2 8 6.5"/></svg>
-        <span class="lbl">Profile</span>
-      </a>
-      <a href="#" class="side-link" data-tab="support">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2-3 4"/><line x1="12" y1="17.5" x2="12" y2="17.5"/></svg>
-        <span class="lbl">Support</span>
-      </a>
-    </nav>
-
-    <div class="sidebar-support">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2 9 9l-7 1 5 5-1.5 7L12 18l6.5 4L17 15l5-5-7-1-3-7Z"/></svg>
-      <h4>Need Something?</h4>
-      <p>We're here to help you bring your story to life.</p>
-      <button type="button" id="sidebarSupportBtn">
-        Contact Support
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </button>
-    </div>
-  </aside>
-
-  <main class="content">
-    <div class="content-inner">
-
-      <div id="loading"><div class="spin"></div>Preparing your private publishing room…</div>
-      <div id="no-projects">
-        <strong style="font-family:var(--display);font-size:24px;">Your publishing room is ready.</strong>
-        <p>No projects are currently connected to this account. If you believe this is an error, please contact the Greywright team.</p>
-      </div>
-
-      <div id="app-body" style="display:none;">
-
-        <!-- DASHBOARD -->
-        <section class="tab-panel active" id="tab-dashboard">
-          <div class="dash-hero">
-            <div>
-              <div class="eyebrow">Greywright Publishing House · Client Portal</div>
-              <h1 id="greetingText">Welcome back</h1>
-              <p class="sub">Here's what's happening with your project.</p>
-            </div>
-            <div class="quote-card">
-              <svg viewBox="0 0 32 24" fill="currentColor"><path d="M2 24V14.6C2 8.2 5.6 3.2 12 0L13.6 3.4C9.6 5.6 7.6 8.4 7.4 12H12V24H2ZM18 24V14.6C18 8.2 21.6 3.2 28 0L29.6 3.4C25.6 5.6 23.6 8.4 23.4 12H28V24H18Z"/></svg>
-              <p>Great stories deserve extraordinary care.</p>
-              <cite>— The Greywright Team</cite>
-            </div>
-          </div>
-
-          <div class="project-select-row" id="dashProjectSelectRow" style="display:none;">
-            <select id="dashProjectSelect"></select>
-          </div>
-
-          <div id="dashCurrentCard"></div>
-
-          <div class="grid2">
-            <div class="panel">
-              <div class="panel-head">
-                <h3>Milestones</h3>
-                <button class="view-all" data-goto="payments">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-              </div>
-              <div id="dashMilestonePreview"></div>
-            </div>
-            <div class="panel">
-              <div class="panel-head">
-                <h3>Project Files</h3>
-                <button class="view-all" data-goto="files">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-              </div>
-              <div id="dashFilesPreview"></div>
-            </div>
-          </div>
-
-          <div class="grid2">
-            <div class="panel">
-              <div class="panel-head">
-                <h3>Recent Updates</h3>
-                <button class="view-all" data-goto="updates">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-              </div>
-              <div id="dashUpdatesPreview"></div>
-            </div>
-            <div class="panel">
-              <div class="panel-head">
-                <h3>Messages</h3>
-                <button class="view-all" data-goto="messages">View All <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-              </div>
-              <div id="dashMessagesPreview"></div>
-              <button class="open-msgs-btn" data-goto="messages">Open Messages →</button>
-            </div>
-          </div>
-        </section>
-
-        <!-- PROJECTS -->
-        <section class="tab-panel" id="tab-projects">
-          <div class="section-heading">
-            <h2>Your Projects</h2>
-            <p>Every manuscript Greywright is currently looking after, or has completed, for this account.</p>
-          </div>
-          <div class="proj-grid" id="projGrid"></div>
-        </section>
-
-        <!-- PAYMENTS -->
-        <section class="tab-panel" id="tab-payments">
-          <div class="section-heading">
-            <h2>Payments &amp; Milestones</h2>
-            <p>The full payment ledger for this project, staged by milestone.</p>
-          </div>
-          <div class="project-select-row" id="paymentsProjectSelectRow" style="display:none;">
-            <select id="paymentsProjectSelect"></select>
-          </div>
-          <div class="panel" id="paymentsPanel"></div>
-        </section>
-
-        <!-- MESSAGES -->
-        <section class="tab-panel" id="tab-messages">
-          <div class="section-heading">
-            <h2>Your Editorial Desk</h2>
-            <p>A private line to the Greywright team for this project.</p>
-          </div>
-          <div class="project-select-row" id="messagesProjectSelectRow" style="display:none;">
-            <select id="messagesProjectSelect"></select>
-          </div>
-          <div class="chat-box" id="messagesChatBox"></div>
-        </section>
-
-        <!-- FILES -->
-        <section class="tab-panel" id="tab-files">
-          <div class="section-heading">
-            <h2>Manuscript Library</h2>
-            <p>Your submitted manuscripts and Greywright deliverables for this project.</p>
-          </div>
-          <div class="project-select-row" id="filesProjectSelectRow" style="display:none;">
-            <select id="filesProjectSelect"></select>
-          </div>
-          <div class="panel" id="filesPanel"></div>
-        </section>
-
-        <!-- UPDATES -->
-        <section class="tab-panel" id="tab-updates">
-          <div class="section-heading">
-            <h2>The Editor's Journal</h2>
-            <p>Important moments and updates from the life of this manuscript.</p>
-          </div>
-          <div class="project-select-row" id="updatesProjectSelectRow" style="display:none;">
-            <select id="updatesProjectSelect"></select>
-          </div>
-          <div class="panel" id="updatesPanel"></div>
-        </section>
-
-        <!-- PROFILE -->
-        <section class="tab-panel" id="tab-profile">
-          <div class="section-heading">
-            <h2>Your Profile</h2>
-            <p>Account details on file with Greywright Publishing House.</p>
-          </div>
-          <div class="simple-card" id="profileCard"></div>
-        </section>
-
-        <!-- SUPPORT -->
-        <section class="tab-panel" id="tab-support">
-          <div class="section-heading">
-            <h2>Support</h2>
-            <p>Reach the Greywright team directly with any question about your project.</p>
-          </div>
-          <div class="simple-card">
-            <p style="margin:0 0 4px;color:var(--ink-soft);font-size:14px;">Email us any time — we typically respond within 24–48 hours.</p>
-            <a class="support-email" href="mailto:greywrightpublishing@gmail.com">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
-              greywrightpublishing@gmail.com
-            </a>
-          </div>
-        </section>
-
-      </div>
-    </div>
-  </main>
 </div>
 
 <footer>
@@ -688,33 +345,110 @@ footer{background:var(--ink);color:rgba(244,238,223,.7);padding:26px 28px}
 
 <script>
 /* ============================================================
-   SUPABASE / CONFIG
+   SUPABASE
    ============================================================ */
 const SUPABASE_URL='https://dusfpsafuhopdiyjrhyh.supabase.co';
 const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR1c2Zwc2FmdWhvcGRpeWpyaHloIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNjA4MDQsImV4cCI6MjA5NzczNjgwNH0.O70DJZi3nzCARQ3SU1qRkTbf4Q3kp9FmUf8VaiPDB8A';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
 
 const CURRENCY_SYMBOLS={USD:'$',NGN:'₦'};
-
-/* ============================================================
-   STATE
-   ============================================================ */
 let currentUserId=null;
 let currentUserFirstName='Client';
-let clientRow=null;
-let allProjects=[];
-let activeProjectId=null;
-let activeTab='dashboard';
 const chatChannels={};
 
 /* ============================================================
-   HELPERS
+   SERVICE DESCRIPTIONS
+   (identical content to the "What We Offer" service modals on
+   the main site, so a client reading this recognizes it as the
+   same standard, not a lesser summary written just for them)
    ============================================================ */
-function escapeHtml(str){
-  const div=document.createElement('div');
-  div.textContent=String(str??'');
-  return div.innerHTML;
+const SERVICE_INFO={
+  developmental:{
+    title:'Developmental Editing',
+    hook:'Your manuscript isn\u2019t failing because of the writing \u2014 it\u2019s failing because of the structure.',
+    lede:'Most books don\u2019t lose readers to grammar. They lose them because the foundation doesn\u2019t hold long enough to earn their attention. If a draft feels almost there but not yet confident enough to publish, this is the stage that closes that gap.',
+    refine:['Structural flow and chapter architecture','Logical progression of ideas from chapter to chapter','Depth versus redundancy across the manuscript','Reader engagement across the full arc'],
+    receive:['Full structural diagnostic report','Chapter-by-chapter breakdown','In-manuscript strategic comments','A revision roadmap: what to fix first, second, third'],
+    bestFor:['First drafts','Nonfiction manuscripts','Memoirs & thought leadership','Academic or concept-heavy writing'],
+    outcome:'You stop guessing what\u2019s wrong with the manuscript \u2014 and start seeing exactly how to fix it.'
+  },
+  line:{
+    title:'Line Editing',
+    hook:'The idea is strong. The sentences are what\u2019s holding it back.',
+    lede:'A manuscript can be structurally sound and still lose readers, because the writing doesn\u2019t pull them forward sentence to sentence. This is where a book starts to read like something a stranger would keep reading.',
+    refine:['Sentence clarity and readability','Flow between ideas and paragraphs','Rhythm and pacing of the prose','Tone consistency across chapters','Word efficiency and precision'],
+    receive:['Fully tracked manuscript edits','Margin comments explaining key changes','Refined sentence structure throughout','Style and tone notes for consistency'],
+    bestFor:['Completed drafts','Nonfiction & memoir','Authors preparing to publish','Writers stuck between draft and final'],
+    outcome:'Your manuscript stops sounding written \u2014 and starts sounding published.'
+  },
+  copy:{
+    title:'Copyediting',
+    hook:'This is where a manuscript becomes credible.',
+    lede:'Readers don\u2019t always notice careful writing, but they notice inconsistency immediately \u2014 and it costs trust. Copyediting removes the small things that quietly undermine an otherwise finished manuscript.',
+    refine:['Grammar and sentence-level accuracy','Punctuation consistency','Word usage and clarity','Naming and terminology consistency','Style guide alignment (APA, Chicago, and others as needed)'],
+    receive:['Fully copyedited manuscript','Tracked Changes version','Clean formatted version on request','Consistency and style report'],
+    bestFor:['Near-final drafts','Self-publishing authors','Print or ebook preparation','Already structurally edited manuscripts'],
+    outcome:'Your manuscript stops feeling self-published \u2014 and starts feeling professionally produced.'
+  },
+  proof:{
+    title:'Proofreading',
+    hook:'The final gate between your manuscript and your readers.',
+    lede:'At this point the book is done. Now it has to be clean. This is the last inspection, where everything that slipped through earlier passes gets caught and removed before anyone else sees it.',
+    refine:['Absolute spelling accuracy','Punctuation consistency','Clean sentence presentation','Final formatting alignment','Reading smoothness at publication level'],
+    receive:['Final proofread manuscript','Marked corrections','Clean final version, if needed','Final error summary'],
+    bestFor:['Fully edited manuscripts','Self-publishing uploads (KDP, print, ebook)','Final pre-publication stage'],
+    outcome:'Your book is no longer just finished. It\u2019s ready to publish without hesitation.'
+  },
+  academic:{
+    title:'Academic Editing',
+    hook:'Where your research becomes readable, credible, and defensible.',
+    lede:'Academic work rarely fails because the research is weak. It fails because the writing doesn\u2019t communicate it clearly enough. Good research deserves a clear delivery.',
+    refine:['Argument structure and flow','Academic tone and clarity','Paragraph coherence','Citation accuracy (APA, MLA, Chicago, Harvard)','Readability without losing depth'],
+    receive:['Edited academic manuscript','Tracked Changes file','Citation and reference correction','Style compliance review'],
+    bestFor:['Theses & dissertations','Journal articles','Research papers','Academic essays'],
+    outcome:'Your work doesn\u2019t just contain knowledge \u2014 it communicates it.'
+  },
+  ghost:{
+    title:'Ghostwriting',
+    hook:'Your ideas, fully transformed into a publishable book.',
+    lede:'You don\u2019t need to write a book to have one \u2014 you need the right process to turn your thinking into structured, compelling writing, in your own voice.',
+    refine:['Concept shaping and outlining','Chapter structuring','Full manuscript writing','Voice alignment with your tone','Flow and readability start to finish'],
+    receive:['Complete, fully written manuscript','Structured outline approval stage','Revision rounds, by agreement','Publication-ready final draft'],
+    bestFor:['Nonfiction books','Business or authority books','Faith-based & personal development','Thought leadership writing'],
+    outcome:'You don\u2019t struggle with the writing \u2014 you receive a finished book.'
+  },
+  consult:{
+    title:'Publishing Consultation',
+    hook:'Stop guessing. Start publishing with clarity.',
+    lede:'Most authors don\u2019t fail because they can\u2019t publish \u2014 they fail because they choose the wrong path too early. The problem usually isn\u2019t capability. It\u2019s direction.',
+    refine:['Traditional vs. self vs. hybrid publishing','Which path actually fits your goals','Market readiness and timing','Platform selection strategy','Book positioning and category choice'],
+    receive:['One-on-one consultation session','Personalized publishing roadmap','Clear step-by-step action plan','Recommendations based on your manuscript'],
+    bestFor:['First-time authors','Confused or undecided writers','Pre-publication planning'],
+    outcome:'You stop guessing \u2014 and start publishing with direction.'
+  },
+  kdp:{
+    title:'KDP Publishing Support',
+    hook:'From final manuscript to live Amazon book \u2014 without confusion or errors.',
+    lede:'Most authors don\u2019t fail at writing. They fail at uploading, formatting, and setting the book up correctly on Amazon. A finished manuscript still needs technical precision.',
+    refine:['Print-ready interior formatting','Kindle ebook formatting','File conversion and validation','Amazon KDP upload readiness','Metadata and listing structure guidance'],
+    receive:['Fully formatted manuscript (print + ebook)','KDP-ready upload files','Step-by-step upload guidance','Final pre-publication check'],
+    bestFor:['Self-publishing authors','First-time Amazon publishers','Already edited and finalized manuscripts'],
+    outcome:'Your manuscript doesn\u2019t just exist \u2014 it gets published correctly the first time.'
+  }
+};
+const SERVICE_NAME_MAP={
+  'developmental editing':'developmental','line editing':'line','copyediting':'copy','copy editing':'copy',
+  'proofreading':'proof','academic editing':'academic','ghostwriting':'ghost',
+  'publishing consultation':'consult','kdp publishing support':'kdp','kdp support':'kdp'
+};
+function lookupServiceInfo(serviceType){
+  if(!serviceType)return null;
+  const key=SERVICE_NAME_MAP[serviceType.trim().toLowerCase()];
+  return key?SERVICE_INFO[key]:null;
 }
+
+/* ============================================================ HELPERS */
+function escapeHtml(str){const d=document.createElement('div');d.textContent=String(str??'');return d.innerHTML;}
 function formatMoney(cents,currency){
   const n=Number(cents||0);
   const symbol=CURRENCY_SYMBOLS[currency]||currency+' ';
@@ -724,7 +458,13 @@ function formatDate(v){
   if(!v)return '';
   const d=new Date(v);
   if(Number.isNaN(d.getTime()))return '';
-  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+}
+function toRoman(num){
+  const table=[[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];
+  let n=num,res='';
+  for(const [v,s] of table){while(n>=v){res+=s;n-=v;}}
+  return res||String(num);
 }
 function showToast(msg,isError=false){
   const el=document.getElementById('toast');
@@ -732,112 +472,58 @@ function showToast(msg,isError=false){
   el.className='toast visible'+(isError?' error':'');
   setTimeout(()=>{el.className='toast';},5000);
 }
-function getActiveProject(){
-  return allProjects.find(p=>p.id===activeProjectId)||null;
-}
-function pickDefaultProject(list){
-  if(!list.length)return null;
-  const priority={in_progress:0,review:0,pending:1,completed:2};
-  const sorted=list.slice().sort((a,b)=>{
-    const pa=priority[a.status]??1, pb=priority[b.status]??1;
-    if(pa!==pb)return pa-pb;
-    return new Date(b.created_at)-new Date(a.created_at);
-  });
-  return sorted[0].id;
+
+/* ============================================================ SCROLL REVEAL (same pattern as the main site) */
+function initScrollReveal(){
+  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const els=document.querySelectorAll('.reveal:not(.is-visible)');
+  if(reduceMotion||!('IntersectionObserver' in window)){
+    els.forEach(el=>el.classList.add('is-visible'));
+    return;
+  }
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  },{threshold:.1});
+  els.forEach(el=>io.observe(el));
 }
 
-const ICONS={
-  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
-  star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 9 9l-7 1 5 5-1.5 7L12 18l6.5 4L17 15l5-5-7-1-3-7Z"/></svg>',
-  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>',
-  file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>',
-  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>',
-  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v12"/><path d="m6 12 6 6 6-6"/><path d="M4 20h16"/></svg>'
-};
-
-/* ============================================================
-   SIGN OUT
-   ============================================================ */
+/* ============================================================ SIGN OUT */
 document.getElementById('signOutBtn').addEventListener('click',async()=>{
   Object.keys(chatChannels).forEach(pid=>{
     if(chatChannels[pid])supabaseClient.removeChannel(chatChannels[pid]);
-    delete chatChannels[pid];
   });
   await supabaseClient.auth.signOut();
   window.location.href='login.html';
 });
 
-/* ============================================================
-   MOBILE SIDEBAR TOGGLE
-   ============================================================ */
-const sidebarEl=document.getElementById('sidebar');
-const sidebarBackdrop=document.getElementById('sidebarBackdrop');
-function closeSidebar(){
-  sidebarEl.classList.remove('open');
-  sidebarBackdrop.classList.remove('open');
-}
-document.getElementById('sidebarToggle').addEventListener('click',()=>{
-  sidebarEl.classList.add('open');
-  sidebarBackdrop.classList.add('open');
-});
-sidebarBackdrop.addEventListener('click',closeSidebar);
-
-/* ============================================================
-   TAB NAVIGATION
-   ============================================================ */
-function setActiveTab(tab){
-  activeTab=tab;
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById(`tab-${tab}`).classList.add('active');
-  document.querySelectorAll('.side-link').forEach(a=>a.classList.toggle('active',a.dataset.tab===tab));
-  closeSidebar();
-  renderActiveTab();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-document.querySelectorAll('.side-link').forEach(a=>{
-  a.addEventListener('click',e=>{
-    e.preventDefault();
-    setActiveTab(a.dataset.tab);
-  });
-});
-document.querySelectorAll('[data-goto]').forEach(el=>{
-  el.addEventListener('click',()=>setActiveTab(el.dataset.goto));
-});
-document.getElementById('bellBtn').addEventListener('click',()=>setActiveTab('messages'));
-document.getElementById('sidebarSupportBtn').addEventListener('click',()=>setActiveTab('support'));
-
-/* ============================================================
-   LOAD DASHBOARD DATA
-   ============================================================ */
+/* ============================================================ LOAD DASHBOARD */
 async function loadDashboard(){
   const {data:{session}}=await supabaseClient.auth.getSession();
-  if(!session){
-    window.location.href='login.html';
-    return;
-  }
+  if(!session){window.location.href='login.html';return;}
   currentUserId=session.user.id;
 
-  const {data:cRow,error:cErr}=await supabaseClient
-    .from('clients')
-    .select('id,name,email,created_at')
-    .eq('profile_id',currentUserId)
-    .maybeSingle();
+  const {data:clientRow,error:clientError}=await supabaseClient
+    .from('clients').select('id,name').eq('profile_id',currentUserId).maybeSingle();
 
-  if(cErr){
-    console.error('[dashboard] client lookup error:',cErr);
+  if(clientError){
+    console.error('[dashboard] client lookup error:',clientError);
     showToast('Could not load your account.',true);
     return;
   }
 
-  if(!cRow){
+  if(!clientRow){
     document.getElementById('loading').style.display='none';
     document.getElementById('no-projects').style.display='block';
     return;
   }
 
-  clientRow=cRow;
-  currentUserFirstName=(cRow.name||'Client').trim().split(/\s+/)[0];
+  currentUserFirstName=(clientRow.name||'Client').trim().split(/\s+/)[0];
+  document.getElementById('greetingText').innerHTML=`Welcome back, <em>${escapeHtml(currentUserFirstName)}</em>`;
 
   const {data:projects,error}=await supabaseClient
     .from('projects')
@@ -847,7 +533,7 @@ async function loadDashboard(){
       project_updates(id,message,created_at),
       project_files(id,file_name,storage_path,file_type,uploaded_by,created_at)
     `)
-    .eq('client_id',cRow.id)
+    .eq('client_id',clientRow.id)
     .order('created_at',{ascending:false});
 
   document.getElementById('loading').style.display='none';
@@ -863,554 +549,277 @@ async function loadDashboard(){
     return;
   }
 
-  allProjects=projects;
-  activeProjectId=activeProjectId&&projects.some(p=>p.id===activeProjectId)?activeProjectId:pickDefaultProject(projects);
-
   document.getElementById('app-body').style.display='block';
-  populateAllProjectSelectors();
-  await refreshUnreadCount();
-  renderActiveTab();
+  renderProjects(projects);
+  initScrollReveal();
 }
 
-/* ============================================================
-   UNREAD MESSAGE COUNT (bell + sidebar badge)
-   ============================================================ */
-async function refreshUnreadCount(){
-  const projectIds=allProjects.map(p=>p.id);
-  if(!projectIds.length)return;
-
-  const {count,error}=await supabaseClient
-    .from('messages')
-    .select('id',{count:'exact',head:true})
-    .in('project_id',projectIds)
-    .is('read_at',null)
-    .neq('sender_id',currentUserId);
-
-  if(error){
-    console.warn('[dashboard] unread count error:',error);
-    return;
-  }
-
-  const n=count||0;
-  const bellBadge=document.getElementById('bellBadge');
-  const sideBadge=document.getElementById('sideBadgeMessages');
-  bellBadge.textContent=n>9?'9+':String(n);
-  sideBadge.textContent=n>9?'9+':String(n);
-  bellBadge.classList.toggle('hidden',n===0);
-  sideBadge.classList.toggle('hidden',n===0);
-}
-
-/* ============================================================
-   PROJECT SELECTORS (shown on every detail tab if >1 project)
-   ============================================================ */
-function populateAllProjectSelectors(){
-  const rows=[
-    ['dashProjectSelectRow','dashProjectSelect'],
-    ['paymentsProjectSelectRow','paymentsProjectSelect'],
-    ['messagesProjectSelectRow','messagesProjectSelect'],
-    ['filesProjectSelectRow','filesProjectSelect'],
-    ['updatesProjectSelectRow','updatesProjectSelect']
-  ];
-
-  rows.forEach(([rowId,selectId])=>{
-    const row=document.getElementById(rowId);
-    const select=document.getElementById(selectId);
-    if(allProjects.length<2){
-      row.style.display='none';
-      return;
-    }
-    row.style.display='block';
-    select.innerHTML=allProjects.map(p=>
-      `<option value="${escapeHtml(p.id)}" ${p.id===activeProjectId?'selected':''}>${escapeHtml(p.title||'Untitled Project')}</option>`
-    ).join('');
-    select.onchange=()=>{
-      activeProjectId=select.value;
-      populateAllProjectSelectors();
-      renderActiveTab();
-    };
-  });
-}
-
-/* ============================================================
-   RENDER: DISPATCH BY TAB
-   ============================================================ */
-function renderActiveTab(){
-  const greetEl=document.getElementById('greetingText');
-  greetEl.innerHTML=`Welcome back, <em>${escapeHtml(currentUserFirstName)}</em>`;
-
-  if(activeTab==='dashboard')renderDashboardTab();
-  else if(activeTab==='projects')renderProjectsTab();
-  else if(activeTab==='payments')renderPaymentsTab();
-  else if(activeTab==='messages')renderMessagesTab();
-  else if(activeTab==='files')renderFilesTab();
-  else if(activeTab==='updates')renderUpdatesTab();
-  else if(activeTab==='profile')renderProfileTab();
-}
-
-/* ============================================================
-   DASHBOARD TAB
-   ============================================================ */
+/* ============================================================ STATUS MESSAGING */
 function statusMeta(status,balance){
   const s=(status||'pending').toLowerCase();
-  if(s==='completed')return{
-    pillClass:'completed',pillLabel:'Completed',icon:ICONS.star,
-    html:'<strong>Congratulations!</strong> Your project has been completed. Thank you for trusting Greywright with your work.'
-  };
-  if(s==='review')return{
-    pillClass:'review',pillLabel:'In Review',icon:ICONS.clock,
-    html:'Your manuscript is with our team for final review. We\'ll notify you the moment it\'s ready.'
-  };
-  if(s==='in_progress')return{
-    pillClass:'in_progress',pillLabel:'In Progress',icon:ICONS.clock,
-    html:balance>0
-      ?'Your project is moving through the Greywright editorial process. A milestone payment is currently available below.'
-      :'Your project is moving through the Greywright editorial process. Nothing is required from you right now.'
-  };
-  return{
-    pillClass:'pending',pillLabel:'Pending',icon:ICONS.clock,
-    html:'We\'re getting your project underway. We\'ll be in touch as soon as work begins.'
-  };
+  if(s==='completed')return{cls:'completed',label:'Completed',msg:'Your project has reached completion. Your final materials are available in your manuscript library below.'};
+  if(s==='review')return{cls:'review',label:'In Review',msg:'Your manuscript is with our team for final review. We\u2019ll notify you the moment it\u2019s ready.'};
+  if(s==='in_progress')return{cls:'in_progress',label:'In Progress',msg:balance>0?'Your project is moving through the Greywright editorial process. A milestone payment is currently available below.':'Your project is moving through the Greywright editorial process. Nothing is required from you right now.'};
+  return{cls:'pending',label:'Pending',msg:'We\u2019re getting your project underway. We\u2019ll be in touch as soon as work begins.'};
 }
 
-function renderDashboardTab(){
-  const project=getActiveProject();
-  const cardEl=document.getElementById('dashCurrentCard');
+/* ============================================================ RENDER PROJECTS */
+function renderProjects(projects){
+  const container=document.getElementById('projectsContainer');
+  container.innerHTML='';
 
-  if(!project){
-    cardEl.innerHTML='';
-    return;
-  }
+  projects.forEach((project,idx)=>{
+    const currency=project.quote_currency||'NGN';
+    const totalPrice=Number(project.total_price||0);
+    const amountPaid=Number(project.amount_paid||0);
+    const balance=Math.max(0,totalPrice-amountPaid);
+    const pct=totalPrice>0?Math.min(100,Math.round((amountPaid/totalPrice)*100)):0;
+    const meta=statusMeta(project.status,balance);
+    const serviceInfo=lookupServiceInfo(project.service_type);
 
-  const currency=project.quote_currency||'NGN';
-  const totalPrice=Number(project.total_price||0);
-  const amountPaid=Number(project.amount_paid||0);
-  const balance=Math.max(0,totalPrice-amountPaid);
-  const pct=totalPrice>0?Math.min(100,Math.round((amountPaid/totalPrice)*100)):0;
-  const meta=statusMeta(project.status,balance);
+    const milestones=(project.milestones||[]).slice().sort((a,b)=>Number(a.order_index||0)-Number(b.order_index||0));
+    const firstUnpaidIndex=milestones.findIndex(m=>m.status!=='paid');
+    const files=(project.project_files||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    const updates=(project.project_updates||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
 
-  cardEl.innerHTML=`
-    <div class="current-card">
-      <div class="cc-top">
-        <div>
-          <div class="eyebrow">Current Project</div>
-          <div class="cc-title">${escapeHtml(project.service_type||project.title||'Editorial Project')}</div>
-          <span class="cc-word-pill">${project.word_count?Number(project.word_count).toLocaleString()+' words':escapeHtml(project.title||'')}</span>
-        </div>
-        <div>
-          <div class="eyebrow" style="text-align:right;margin-bottom:8px;">Status</div>
-          <span class="status-pill ${meta.pillClass}">${ICONS.check}${meta.pillLabel}</span>
-        </div>
-      </div>
+    const section=document.createElement('section');
+    if(idx>0)section.className='project-sep';
 
-      <div class="cc-stats">
-        <div><div class="cc-stat-label">Total</div><div class="cc-stat-value">${formatMoney(totalPrice,currency)}</div></div>
-        <div><div class="cc-stat-label">Paid</div><div class="cc-stat-value">${formatMoney(amountPaid,currency)}</div></div>
-        <div><div class="cc-stat-label">Balance</div><div class="cc-stat-value">${formatMoney(balance,currency)}</div></div>
-      </div>
+    section.innerHTML=`
 
-      <div class="cc-progress-row"><span class="cc-word-pill" style="background:none;padding:0;color:var(--ink-faint);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;">Progress</span><span class="cc-progress-pct">${pct}%</span></div>
-      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-
-      <div class="cc-message">${meta.icon}<p>${meta.html}</p></div>
-
-      <svg class="cc-illustration" viewBox="0 0 150 150" fill="none" stroke="currentColor" stroke-width="1.2">
-        <path d="M110 20 C90 45 70 70 55 95 C50 103 48 112 48 120" stroke-linecap="round"/>
-        <path d="M110 20 C118 26 122 34 118 42 C110 55 90 75 60 100 C55 104 50 106 45 106" stroke-linecap="round"/>
-        <ellipse cx="45" cy="122" rx="16" ry="10"/>
-        <path d="M33 122 v10 a16 6 0 0 0 24 0 v-10"/>
-      </svg>
-    </div>
-  `;
-
-  renderDashMilestonePreview(project);
-  renderDashFilesPreview(project);
-  renderDashUpdatesPreview(project);
-  renderDashMessagesPreview(project);
-}
-
-function renderDashMilestonePreview(project){
-  const el=document.getElementById('dashMilestonePreview');
-  const milestones=(project.milestones||[]).slice().sort((a,b)=>Number(a.order_index||0)-Number(b.order_index||0));
-
-  if(!milestones.length){
-    el.innerHTML='<p class="empty-note">No milestones have been added to this project yet.</p>';
-    return;
-  }
-
-  const firstUnpaid=milestones.findIndex(m=>m.status!=='paid');
-  const focus=firstUnpaid===-1?milestones[milestones.length-1]:milestones[firstUnpaid];
-  const isPaid=focus.status==='paid';
-  const currency=project.quote_currency||'NGN';
-
-  el.innerHTML=`
-    <div class="ms-row">
-      <div class="ms-left">
-        <div class="ms-icon ${isPaid?'paid':'pending'}">${isPaid?ICONS.check:''}</div>
-        <div>
-          <div class="ms-name">${escapeHtml(focus.name)}</div>
-          <div class="ms-amount">${formatMoney(focus.amount,currency)}</div>
-        </div>
-      </div>
-      <div class="ms-right">
-        <span style="font-size:12.5px;color:${isPaid?'var(--success)':'var(--brass)'};font-weight:600;">${isPaid?'Paid':'Due'}</span>
-        <span class="ms-status-label ${isPaid?'':'locked'}">${isPaid?'Completed':'Awaiting payment'}</span>
-      </div>
-    </div>
-  `;
-}
-
-function renderDashFilesPreview(project){
-  const el=document.getElementById('dashFilesPreview');
-  const files=(project.project_files||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,2);
-
-  let html='';
-  if(!files.length){
-    html+='<p class="empty-note">No files have been added yet.</p>';
-  }else{
-    html+=files.map(f=>`
-      <div class="file-row">
-        <div class="file-info">
-          <div class="file-icon">${ICONS.file}</div>
+      <div class="framed reveal">
+        <div class="proj-top">
           <div>
-            <div class="file-name">${escapeHtml(f.file_name)}<span class="file-badge ${f.file_type==='deliverable'?'deliverable':'manuscript'}">${escapeHtml(f.file_type||'file')}</span></div>
+            <div class="eyebrow" style="margin-bottom:6px;"><span class="stroke"></span>${escapeHtml(project.service_type||'Editorial Project')}</div>
+            <div class="proj-title">${escapeHtml(project.title||'Untitled Project')}</div>
+            <div class="proj-meta">${project.word_count?Number(project.word_count).toLocaleString()+' words':'Your Greywright editorial project'}</div>
+          </div>
+          <span class="status-pill ${meta.cls}">${meta.label}</span>
+        </div>
+
+        <div class="stat-row">
+          <div><div class="stat-label">Total</div><div class="stat-value">${formatMoney(totalPrice,currency)}</div></div>
+          <div><div class="stat-label">Paid</div><div class="stat-value">${formatMoney(amountPaid,currency)}</div></div>
+          <div><div class="stat-label">Balance</div><div class="stat-value">${formatMoney(balance,currency)}</div></div>
+        </div>
+
+        <div class="progress-area">
+          <div class="progress-row"><span>Progress</span><span class="progress-pct">${pct}%</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <p class="progress-note">${meta.msg}</p>
+        </div>
+      </div>
+
+      ${serviceInfo?`
+      <div class="service-block reveal">
+        <div class="eyebrow"><span class="stroke"></span>About Your Service</div>
+        <div class="service-hook">${escapeHtml(serviceInfo.hook)}</div>
+        <p class="service-lede">${escapeHtml(serviceInfo.lede)}</p>
+        <div class="service-cols">
+          <div class="service-col">
+            <h4>What We Refine</h4>
+            <ul class="service-list">${serviceInfo.refine.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>
+          </div>
+          <div class="service-col">
+            <h4>What You Receive</h4>
+            <ul class="service-list">${serviceInfo.receive.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div class="service-col" style="margin-top:30px;">
+          <h4>Best For</h4>
+          <div class="service-bestfor">${serviceInfo.bestFor.map(x=>`<span>${escapeHtml(x)}</span>`).join('')}</div>
+        </div>
+        <div class="service-outcome"><p>${escapeHtml(serviceInfo.outcome)}</p></div>
+      </div>
+      `:''}
+
+      <div class="section reveal">
+        <h2>Milestones</h2>
+        <p class="sub">The payment stages for this project, in order.</p>
+        <div class="milestones-list" data-milestones></div>
+      </div>
+
+      <div class="section reveal">
+        <h2>Manuscript Library</h2>
+        <p class="sub">Your submitted manuscripts and Greywright deliverables, kept together in one private place.</p>
+        <div data-files></div>
+        <div class="upload-row">
+          <input type="file" class="manuscript-file-input" data-project-id="${escapeHtml(project.id)}">
+          <button type="button" class="upload-btn upload-manuscript-btn" data-project-id="${escapeHtml(project.id)}">Upload to Greywright</button>
+        </div>
+      </div>
+
+      <div class="section reveal">
+        <h2>Correspondence</h2>
+        <p class="sub">A private line to the Greywright editorial team for this project.</p>
+        <div class="corr-box">
+          <div class="corr-header">
+            <img src="https://www.greywrightpublishing.com/images/wax-seal.png" alt="">
+            <div class="corr-header-text">
+              <div class="corr-header-title">The Greywright Team</div>
+              <div class="corr-status" data-chat-status="${escapeHtml(project.id)}">Connecting…</div>
+            </div>
+          </div>
+          <div class="corr-messages" id="chat-messages-${escapeHtml(project.id)}"><div class="corr-empty">Loading conversation…</div></div>
+          <div class="corr-compose">
+            <textarea class="corr-input" id="chat-input-${escapeHtml(project.id)}" data-project-id="${escapeHtml(project.id)}" placeholder="Write to your editorial team…" rows="2"></textarea>
+            <button type="button" class="corr-send" data-project-id="${escapeHtml(project.id)}">Send</button>
+          </div>
+        </div>
+      </div>
+
+      ${updates.length?`
+      <div class="section reveal">
+        <h2>The Editor's Journal</h2>
+        <p class="sub">Important moments and updates from the life of this manuscript.</p>
+        <div>${updates.map(u=>`
+          <div class="upd-row">
+            <div class="upd-dot"></div>
+            <div><div class="upd-date">${formatDate(u.created_at)}</div><div class="upd-msg">${escapeHtml(u.message)}</div></div>
+          </div>
+        `).join('')}</div>
+      </div>`:''}
+    `;
+
+    container.appendChild(section);
+
+    /* milestones */
+    const msListEl=section.querySelector('[data-milestones]');
+    if(!milestones.length){
+      msListEl.innerHTML='<p class="no-files">No milestones have been added to this project yet.</p>';
+    }else{
+      milestones.forEach((ms,i)=>{
+        const isPaid=ms.status==='paid';
+        const isPayable=!isPaid&&i===firstUnpaidIndex;
+        const isLocked=!isPaid&&!isPayable;
+        const row=document.createElement('div');
+        row.className='milestone';
+        row.innerHTML=`
+          <div class="ms-left">
+            <div class="ms-icon ${isPaid?'paid':isLocked?'locked':'pending'}">${isPaid?'✓':toRoman(i+1)}</div>
+            <div><div class="ms-name">${escapeHtml(ms.name)}</div><div class="ms-amount">${formatMoney(ms.amount,currency)}</div></div>
+          </div>
+          <div class="ms-right"></div>
+        `;
+        const rightEl=row.querySelector('.ms-right');
+        if(isPaid){
+          rightEl.innerHTML='<span class="ms-status-label paid-label">Paid</span>';
+        }else if(isPayable){
+          const btn=document.createElement('button');
+          btn.className='pay-btn';
+          btn.textContent=`Pay ${formatMoney(ms.amount,currency)}`;
+          btn.addEventListener('click',()=>payMilestone(ms.id,btn));
+          rightEl.appendChild(btn);
+        }else{
+          rightEl.innerHTML='<span class="ms-status-label locked-label">Upcoming</span>';
+        }
+        msListEl.appendChild(row);
+      });
+    }
+
+    /* files */
+    const filesEl=section.querySelector('[data-files]');
+    if(!files.length){
+      filesEl.innerHTML='<p class="no-files">No files have been added yet.</p>';
+    }else{
+      files.forEach(f=>{
+        const row=document.createElement('div');
+        row.className='file-row';
+        row.innerHTML=`
+          <div>
+            <span class="file-name">${escapeHtml(f.file_name)}<span class="file-badge ${f.file_type==='deliverable'?'deliverable':'manuscript'}">${escapeHtml(f.file_type||'file')}</span></span>
             <div class="file-meta">${formatDate(f.created_at)}</div>
           </div>
-        </div>
-        <button class="icon-btn" data-download="${escapeHtml(f.storage_path)}">${ICONS.download}</button>
-      </div>
-    `).join('');
-  }
+        `;
+        const btn=document.createElement('button');
+        btn.className='download-btn';
+        btn.textContent='Download';
+        btn.addEventListener('click',()=>downloadFile(f.storage_path));
+        row.appendChild(btn);
+        filesEl.appendChild(row);
+      });
+    }
 
-  html+=`
-    <div class="upload-row-panel">
-      <div class="file-info">${ICONS.upload}<div><div class="file-name" style="font-size:13px;">Upload new manuscript</div><div class="upload-hint">Supported formats: .docx, .pdf, .rtf</div></div></div>
-      <input type="file" class="hidden-file-input" data-upload-input="${escapeHtml(project.id)}">
-    </div>
-    <button class="upload-btn" style="margin-top:10px;width:100%;" data-upload-btn="${escapeHtml(project.id)}">Upload File</button>
-  `;
+    setupProjectChat(project.id);
+  });
 
-  el.innerHTML=html;
-  wireFileActions(el);
-}
-
-function renderDashUpdatesPreview(project){
-  const el=document.getElementById('dashUpdatesPreview');
-  const updates=(project.project_updates||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)).slice(0,2);
-
-  if(!updates.length){
-    el.innerHTML='<p class="empty-note">No updates have been posted yet.</p>';
-    return;
-  }
-
-  el.innerHTML=updates.map(u=>`
-    <div class="upd-row">
-      <div class="upd-dot"></div>
-      <div class="upd-body">
-        <div class="upd-title-row">
-          <div style="font-weight:600;font-size:13.5px;">Project Update</div>
-          <div class="upd-date">${formatDate(u.created_at)}</div>
-        </div>
-        <div class="upd-msg">${escapeHtml(u.message)}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-async function renderDashMessagesPreview(project){
-  const el=document.getElementById('dashMessagesPreview');
-  el.innerHTML='<p class="empty-note">Loading…</p>';
-
-  const {data,error}=await supabaseClient
-    .from('messages')
-    .select('id,sender_id,message,read_at,created_at')
-    .eq('project_id',project.id)
-    .order('created_at',{ascending:false})
-    .limit(2);
-
-  if(error){
-    el.innerHTML='<p class="empty-note">Could not load messages.</p>';
-    return;
-  }
-
-  if(!data||!data.length){
-    el.innerHTML='<p class="empty-note">No messages yet. Say hello to the Greywright team.</p>';
-    return;
-  }
-
-  el.innerHTML=data.map(m=>{
-    const isMine=m.sender_id===currentUserId;
-    return `
-      <div class="msg-prev-row">
-        <div class="msg-avatar ${isMine?'me':'them'}">${isMine?escapeHtml(currentUserFirstName[0]||'Y'):'GT'}</div>
-        <div class="msg-prev-body">
-          <div class="msg-prev-top">
-            <span class="msg-prev-name">${isMine?'You':'Greywright Team'}</span>
-            <span class="msg-prev-date">${formatDate(m.created_at)}</span>
-          </div>
-          <div class="msg-prev-snippet">${escapeHtml(m.message)}</div>
-          ${isMine?`<div class="msg-prev-status">${m.read_at?'✓ Read':'Sent'}</div>`:''}
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-/* ============================================================
-   PROJECTS TAB
-   ============================================================ */
-function renderProjectsTab(){
-  const grid=document.getElementById('projGrid');
-  grid.innerHTML=allProjects.map(p=>{
-    const currency=p.quote_currency||'NGN';
-    const totalPrice=Number(p.total_price||0);
-    const amountPaid=Number(p.amount_paid||0);
-    const pct=totalPrice>0?Math.min(100,Math.round((amountPaid/totalPrice)*100)):0;
-    const meta=statusMeta(p.status,totalPrice-amountPaid);
-    return `
-      <div class="proj-card" data-open-project="${escapeHtml(p.id)}">
-        <div class="eyebrow">${escapeHtml(p.service_type||'Editorial Project')}</div>
-        <h4>${escapeHtml(p.title||'Untitled Project')}</h4>
-        <span class="status-pill ${meta.pillClass}">${meta.pillLabel}</span>
-        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-      </div>
-    `;
-  }).join('');
-
-  grid.querySelectorAll('[data-open-project]').forEach(card=>{
-    card.addEventListener('click',()=>{
-      activeProjectId=card.dataset.openProject;
-      populateAllProjectSelectors();
-      setActiveTab('dashboard');
+  container.querySelectorAll('.upload-manuscript-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>uploadManuscript(btn.dataset.projectId,btn));
+  });
+  container.querySelectorAll('.corr-send').forEach(btn=>{
+    btn.addEventListener('click',()=>sendMessage(btn.dataset.projectId,btn));
+  });
+  container.querySelectorAll('.corr-input').forEach(input=>{
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter'&&!e.shiftKey){
+        e.preventDefault();
+        const btn=container.querySelector(`.corr-send[data-project-id="${CSS.escape(input.dataset.projectId)}"]`);
+        if(btn)sendMessage(input.dataset.projectId,btn);
+      }
     });
   });
+
+  initScrollReveal();
 }
 
-/* ============================================================
-   PAYMENTS TAB
-   ============================================================ */
-function renderPaymentsTab(){
-  const project=getActiveProject();
-  const panel=document.getElementById('paymentsPanel');
-  if(!project){panel.innerHTML='';return;}
-
-  const milestones=(project.milestones||[]).slice().sort((a,b)=>Number(a.order_index||0)-Number(b.order_index||0));
-  const currency=project.quote_currency||'NGN';
-  const firstUnpaidIndex=milestones.findIndex(m=>m.status!=='paid');
-
-  if(!milestones.length){
-    panel.innerHTML='<p class="empty-note">No milestones have been added to this project yet.</p>';
-    return;
-  }
-
-  panel.innerHTML=milestones.map((ms,i)=>{
-    const isPaid=ms.status==='paid';
-    const isPayable=!isPaid&&i===firstUnpaidIndex;
-    const isLocked=!isPaid&&!isPayable;
-    return `
-      <div class="ms-row">
-        <div class="ms-left">
-          <div class="ms-icon ${isPaid?'paid':isLocked?'locked':'pending'}">${isPaid?ICONS.check:''}</div>
-          <div>
-            <div class="ms-name">${escapeHtml(ms.name)}</div>
-            <div class="ms-amount">${formatMoney(ms.amount,currency)}</div>
-          </div>
-        </div>
-        <div class="ms-right" data-ms-right="${escapeHtml(ms.id)}">
-          ${isPaid
-            ?`<span style="color:var(--success);font-weight:600;font-size:12.5px;">Paid</span>`
-            :isPayable
-              ?`<button class="pay-btn" data-pay="${escapeHtml(ms.id)}">Pay ${formatMoney(ms.amount,currency)}</button>`
-              :`<span style="color:var(--ink-faint);font-size:12.5px;">Upcoming</span>`
-          }
-        </div>
-      </div>
-    `;
-  }).join('');
-
-  panel.querySelectorAll('[data-pay]').forEach(btn=>{
-    btn.addEventListener('click',()=>payMilestone(btn.dataset.pay,btn));
-  });
-}
-
-/* ============================================================
-   FILES TAB
-   ============================================================ */
-function renderFilesTab(){
-  const project=getActiveProject();
-  const panel=document.getElementById('filesPanel');
-  if(!project){panel.innerHTML='';return;}
-
-  const files=(project.project_files||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
-
-  let html='';
-  if(!files.length){
-    html+='<p class="empty-note">No files have been added to this project yet.</p>';
-  }else{
-    html+=files.map(f=>`
-      <div class="file-row">
-        <div class="file-info">
-          <div class="file-icon">${ICONS.file}</div>
-          <div>
-            <div class="file-name">${escapeHtml(f.file_name)}<span class="file-badge ${f.file_type==='deliverable'?'deliverable':'manuscript'}">${escapeHtml(f.file_type||'file')}</span></div>
-            <div class="file-meta">${formatDate(f.created_at)}</div>
-          </div>
-        </div>
-        <button class="icon-btn" data-download="${escapeHtml(f.storage_path)}">${ICONS.download}</button>
-      </div>
-    `).join('');
-  }
-
-  html+=`
-    <div class="upload-row-panel">
-      <div class="file-info">${ICONS.upload}<div><div class="file-name" style="font-size:13px;">Upload new manuscript</div><div class="upload-hint">Supported formats: .docx, .pdf, .rtf</div></div></div>
-      <input type="file" class="hidden-file-input" data-upload-input="${escapeHtml(project.id)}">
-    </div>
-    <button class="upload-btn" style="margin-top:10px;" data-upload-btn="${escapeHtml(project.id)}">Upload File</button>
-  `;
-
-  panel.innerHTML=html;
-  wireFileActions(panel);
-}
-
-function wireFileActions(container){
-  container.querySelectorAll('[data-download]').forEach(btn=>{
-    btn.addEventListener('click',()=>downloadFile(btn.dataset.download));
-  });
-  container.querySelectorAll('[data-upload-btn]').forEach(btn=>{
-    btn.addEventListener('click',()=>uploadManuscript(btn.dataset.uploadBtn,btn));
-  });
-}
-
-/* ============================================================
-   UPDATES TAB
-   ============================================================ */
-function renderUpdatesTab(){
-  const project=getActiveProject();
-  const panel=document.getElementById('updatesPanel');
-  if(!project){panel.innerHTML='';return;}
-
-  const updates=(project.project_updates||[]).slice().sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
-
-  if(!updates.length){
-    panel.innerHTML='<p class="empty-note">No updates have been posted for this project yet.</p>';
-    return;
-  }
-
-  panel.innerHTML=updates.map(u=>`
-    <div class="upd-row">
-      <div class="upd-dot"></div>
-      <div class="upd-body">
-        <div class="upd-title-row">
-          <div style="font-weight:600;font-size:14.5px;">Project Update</div>
-          <div class="upd-date">${formatDate(u.created_at)}</div>
-        </div>
-        <div class="upd-msg">${escapeHtml(u.message)}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ============================================================
-   PROFILE TAB
-   ============================================================ */
-function renderProfileTab(){
-  const card=document.getElementById('profileCard');
-  card.innerHTML=`
-    <div class="profile-row"><span class="profile-label">Full Name</span><span class="profile-value">${escapeHtml(clientRow?.name||'—')}</span></div>
-    <div class="profile-row"><span class="profile-label">Email</span><span class="profile-value">${escapeHtml(clientRow?.email||'—')}</span></div>
-    <div class="profile-row"><span class="profile-label">Client Since</span><span class="profile-value">${formatDate(clientRow?.created_at)||'—'}</span></div>
-  `;
-}
-
-/* ============================================================
-   MESSAGES TAB (full chat)
-   ============================================================ */
-function renderMessagesTab(){
-  const project=getActiveProject();
-  const box=document.getElementById('messagesChatBox');
-  if(!project){box.innerHTML='';return;}
-
-  box.innerHTML=`
-    <div class="chat-header">
-      <div class="chat-header-title">Greywright Team</div>
-      <div class="chat-status" id="chatStatusEl">Connecting…</div>
-    </div>
-    <div class="chat-messages" id="chatMessagesEl"><div class="chat-empty">Loading conversation…</div></div>
-    <div class="chat-compose">
-      <textarea class="chat-input" id="chatInputEl" placeholder="Write to your editorial team…" rows="2"></textarea>
-      <button type="button" class="chat-send" id="chatSendBtn">Send</button>
-    </div>
-  `;
-
-  document.getElementById('chatSendBtn').addEventListener('click',()=>sendMessage(project.id));
-  document.getElementById('chatInputEl').addEventListener('keydown',e=>{
-    if(e.key==='Enter'&&!e.shiftKey){
-      e.preventDefault();
-      sendMessage(project.id);
-    }
-  });
-
-  setupProjectChat(project.id);
-}
-
+/* ============================================================ CHAT */
 async function loadMessages(projectId){
-  const el=document.getElementById('chatMessagesEl');
-  if(!el||activeProjectId!==projectId)return;
+  const el=document.getElementById(`chat-messages-${projectId}`);
+  if(!el)return;
 
   const {data,error}=await supabaseClient
-    .from('messages')
-    .select('id,project_id,sender_id,message,read_at,created_at')
-    .eq('project_id',projectId)
-    .order('created_at',{ascending:true});
+    .from('messages').select('id,project_id,sender_id,message,read_at,created_at')
+    .eq('project_id',projectId).order('created_at',{ascending:true});
 
   if(error){
     console.error('[chat] load error:',error);
-    el.innerHTML='<div class="chat-empty">Could not load messages.</div>';
+    el.innerHTML='<div class="corr-empty">Could not load messages.</div>';
     return;
   }
-  renderMessages(data||[]);
-  refreshUnreadCount();
+  renderMessages(projectId,data||[]);
 }
 
-function renderMessages(messages){
-  const el=document.getElementById('chatMessagesEl');
+function renderMessages(projectId,messages){
+  const el=document.getElementById(`chat-messages-${projectId}`);
   if(!el)return;
 
   if(!messages.length){
-    el.innerHTML='<div class="chat-empty"><div><strong>No messages yet.</strong><br>Send a message to the Greywright team whenever you need us.</div></div>';
+    el.innerHTML='<div class="corr-empty">No messages yet. Say hello to the Greywright team.</div>';
     return;
   }
 
   el.innerHTML=messages.map(m=>{
     const isClient=m.sender_id===currentUserId;
     const d=new Date(m.created_at);
+    const avatar=isClient
+      ?`<div class="corr-avatar text-avatar">${escapeHtml((currentUserFirstName[0]||'Y').toUpperCase())}</div>`
+      :`<img class="corr-avatar" src="https://www.greywrightpublishing.com/images/wax-seal.png" alt="">`;
     return `
-      <div class="chat-message ${isClient?'client':'admin'}">
-        <div class="chat-bubble">
-          <div class="chat-sender">${isClient?'You':'Greywright Team'}</div>
+      <div class="corr-msg ${isClient?'client':'admin'}">
+        ${avatar}
+        <div class="corr-bubble">
+          <div class="corr-sender">${isClient?'You':'Greywright Team'}</div>
           <div>${escapeHtml(m.message)}</div>
-          <div class="chat-time">${d.toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+          <div class="corr-time">${d.toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
         </div>
       </div>
     `;
   }).join('');
 
   el.scrollTop=el.scrollHeight;
-  markMessagesRead(messages);
+  markMessagesRead(projectId,messages);
 }
 
-async function markMessagesRead(messages){
+async function markMessagesRead(projectId,messages){
   const unreadIds=messages.filter(m=>m.sender_id!==currentUserId&&!m.read_at).map(m=>m.id);
   if(!unreadIds.length)return;
   const {error}=await supabaseClient.from('messages').update({read_at:new Date().toISOString()}).in('id',unreadIds);
   if(error)console.warn('[chat] mark read error:',error);
 }
 
-async function sendMessage(projectId){
-  const input=document.getElementById('chatInputEl');
-  const btn=document.getElementById('chatSendBtn');
-  if(!input||!btn)return;
-
+async function sendMessage(projectId,btn){
+  const input=document.getElementById(`chat-input-${projectId}`);
+  if(!input)return;
   const message=input.value.trim();
   if(!message)return;
 
@@ -1444,34 +853,29 @@ async function setupProjectChat(projectId){
   await loadMessages(projectId);
 
   if(chatChannels[projectId]){
-    const s=document.getElementById('chatStatusEl');
+    const s=document.querySelector(`[data-chat-status="${CSS.escape(projectId)}"]`);
     if(s){s.textContent='Live';s.classList.add('connected');}
     return;
   }
 
+  const statusEl=document.querySelector(`[data-chat-status="${CSS.escape(projectId)}"]`);
+
   const channel=supabaseClient
     .channel(`project-messages-${projectId}`)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`project_id=eq.${projectId}`},async()=>{
-      await loadMessages(projectId);
-    })
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages',filter:`project_id=eq.${projectId}`},async()=>{
-      await loadMessages(projectId);
-    })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`project_id=eq.${projectId}`},async()=>{await loadMessages(projectId);})
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'messages',filter:`project_id=eq.${projectId}`},async()=>{await loadMessages(projectId);})
     .subscribe(status=>{
-      const s=document.getElementById('chatStatusEl');
-      if(!s||activeProjectId!==projectId)return;
-      if(status==='SUBSCRIBED'){s.textContent='Live';s.classList.add('connected');}
-      else if(status==='CHANNEL_ERROR'){s.textContent='Connection error';s.classList.remove('connected');}
-      else if(status==='TIMED_OUT'){s.textContent='Connection timed out';s.classList.remove('connected');}
-      else{s.textContent='Connecting…';s.classList.remove('connected');}
+      if(!statusEl)return;
+      if(status==='SUBSCRIBED'){statusEl.textContent='Live';statusEl.classList.add('connected');}
+      else if(status==='CHANNEL_ERROR'){statusEl.textContent='Connection error';statusEl.classList.remove('connected');}
+      else if(status==='TIMED_OUT'){statusEl.textContent='Connection timed out';statusEl.classList.remove('connected');}
+      else{statusEl.textContent='Connecting…';statusEl.classList.remove('connected');}
     });
 
   chatChannels[projectId]=channel;
 }
 
-/* ============================================================
-   FILE DOWNLOAD / UPLOAD
-   ============================================================ */
+/* ============================================================ FILES */
 async function downloadFile(path){
   if(!path){showToast('This file has no storage path.',true);return;}
   const {data,error}=await supabaseClient.storage.from('project-files').createSignedUrl(path,60*5);
@@ -1484,7 +888,7 @@ async function downloadFile(path){
 }
 
 async function uploadManuscript(projectId,btn){
-  const input=document.querySelector(`[data-upload-input="${CSS.escape(projectId)}"]`);
+  const input=document.querySelector(`[data-project-id="${CSS.escape(projectId)}"].manuscript-file-input`);
   if(!input)return;
   const file=input.files[0];
   if(!file){showToast('Choose a file first.',true);return;}
@@ -1526,9 +930,7 @@ async function uploadManuscript(projectId,btn){
   }
 }
 
-/* ============================================================
-   MILESTONE PAYMENT (Paystack + server-side verify)
-   ============================================================ */
+/* ============================================================ PAYMENTS */
 async function payMilestone(milestoneId,btn){
   btn.disabled=true;
   const original=btn.textContent;
@@ -1545,9 +947,7 @@ async function payMilestone(milestoneId,btn){
     });
     const data=await res.json();
 
-    if(!res.ok||!data.access_code){
-      throw new Error(data.error||'Could not start checkout.');
-    }
+    if(!res.ok||!data.access_code){throw new Error(data.error||'Could not start checkout.');}
 
     btn.textContent=original;
     btn.disabled=false;
@@ -1573,17 +973,11 @@ async function payMilestone(milestoneId,btn){
   }
 }
 
-/*
- * Actively verifies the payment with our server (which checks directly
- * with Paystack) instead of only waiting for the webhook. waitForConfirmation
- * is kept only as a fallback in case this call itself fails.
- */
 async function confirmMilestonePayment(reference){
   if(!reference){
     showToast('Payment received, but we could not read the transaction reference. Refreshing your project…',true);
     return waitForConfirmation();
   }
-
   try{
     const {data:{session}}=await supabaseClient.auth.getSession();
     if(!session){window.location.href='login.html';return;}
@@ -1597,7 +991,7 @@ async function confirmMilestonePayment(reference){
 
     if(!res.ok||!data.verified){
       console.error('[dashboard] verify failed:',data);
-      showToast((data.error||'Could not confirm your payment automatically.')+' Refreshing — if it still shows unpaid, contact us with reference: '+reference,true);
+      showToast((data.error||'Could not confirm your payment automatically.')+' Refreshing \u2014 if it still shows unpaid, contact us with reference: '+reference,true);
       return waitForConfirmation();
     }
 
@@ -1617,9 +1011,7 @@ async function waitForConfirmation(){
   }
 }
 
-/* ============================================================
-   CLEANUP + START
-   ============================================================ */
+/* ============================================================ CLEANUP + START */
 window.addEventListener('beforeunload',()=>{
   Object.keys(chatChannels).forEach(pid=>{
     if(chatChannels[pid])supabaseClient.removeChannel(chatChannels[pid]);
